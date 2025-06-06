@@ -6,7 +6,7 @@
     <title>Aralia: The Shattered Crown</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/3.0.1/simplex-noise.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
     <style>
         body {
             font-family: 'IM Fell English', serif;
@@ -103,267 +103,271 @@
     </div>
 
     <script>
-        // --- WORLD GENERATION ---
-        const world = {
-            width: 50,
-            height: 50,
-            noise: null, // Initialized in game.init()
-            terrainData: {
-                deep_ocean: { symbol: '≈', color: 'text-blue-800', names: ['The Abyssal Void', 'The Sunless Sea'] },
-                ocean: { symbol: '≈', color: 'text-blue-500', names: ['The Azure Expanse', 'The Sapphire Sea'] },
-                plains: { symbol: '.', color: 'text-green-700', names: ['The Rolling Plains', 'Verdant Fields'] },
-                forest: { symbol: 'T', color: 'text-green-500', names: ['The Whispering Woods', 'The Verdant Thicket'] },
-                hills: { symbol: '^', color: 'text-yellow-700', names: ['The Stony Hills', 'The Windswept Downs'] },
-                mountains: { symbol: 'M', color: 'text-gray-400', names: ['The Jagged Peaks', 'The Dragon\'s Tooth Range'] },
-                desert: { symbol: 's', color: 'text-yellow-400', names: ['The Sun-scorched Sands', 'The Glass Desert'] },
-                town: { symbol: '#', color: 'text-white', names: ['Oakhaven', 'Stonebridge', 'Last Hope'] }
-            },
-            getTileData(x, y) {
-                if (x < 0 || x >= this.width || y < 0 || y >= this.height) return null;
-                let e = this.noise.noise2D(x / 20, y / 20);
-                let m = this.noise.noise2D(x / 15 + 100, y / 15 + 100);
-                let terrainType;
-                if (e < -0.6) terrainType = 'deep_ocean';
-                else if (e < -0.2) terrainType = 'ocean';
-                else if (e > 0.6) terrainType = 'mountains';
-                else if (e > 0.4) terrainType = 'hills';
-                else {
-                    if (m < -0.3) terrainType = 'desert';
-                    else if (m > 0.3) terrainType = 'forest';
-                    else terrainType = 'plains';
+        // FIX: Wrap the entire game logic in window.onload to ensure
+        // all external scripts (like SimplexNoise) are loaded before any code runs.
+        window.onload = function() {
+            // --- WORLD GENERATION ---
+            const world = {
+                width: 50,
+                height: 50,
+                noise: new SimplexNoise('aralia'), // FIXED: Use version 2.4.0 which exports correctly
+                terrainData: {
+                    deep_ocean: { symbol: '≈', color: 'text-blue-800', names: ['The Abyssal Void', 'The Sunless Sea'] },
+                    ocean: { symbol: '≈', color: 'text-blue-500', names: ['The Azure Expanse', 'The Sapphire Sea'] },
+                    plains: { symbol: '.', color: 'text-green-700', names: ['The Rolling Plains', 'Verdant Fields'] },
+                    forest: { symbol: 'T', color: 'text-green-500', names: ['The Whispering Woods', 'The Verdant Thicket'] },
+                    hills: { symbol: '^', color: 'text-yellow-700', names: ['The Stony Hills', 'The Windswept Downs'] },
+                    mountains: { symbol: 'M', color: 'text-gray-400', names: ['The Jagged Peaks', 'The Dragon\'s Tooth Range'] },
+                    desert: { symbol: 's', color: 'text-yellow-400', names: ['The Sun-scorched Sands', 'The Glass Desert'] },
+                    town: { symbol: '#', color: 'text-white', names: ['Oakhaven', 'Stonebridge', 'Last Hope'] }
+                },
+                getTileData(x, y) {
+                    if (x < 0 || x >= this.width || y < 0 || y >= this.height) return null;
+                    let e = this.noise.noise2D(x / 20, y / 20);
+                    let m = this.noise.noise2D(x / 15 + 100, y / 15 + 100);
+                    let terrainType;
+                    if (e < -0.6) terrainType = 'deep_ocean';
+                    else if (e < -0.2) terrainType = 'ocean';
+                    else if (e > 0.6) terrainType = 'mountains';
+                    else if (e > 0.4) terrainType = 'hills';
+                    else {
+                        if (m < -0.3) terrainType = 'desert';
+                        else if (m > 0.3) terrainType = 'forest';
+                        else terrainType = 'plains';
+                    }
+                    if ((x === 25 && y === 25) || (this.noise.noise2D(x/10, y/10) > 0.8 && terrainType === 'plains')) {
+                        terrainType = 'town';
+                    }
+                    const data = this.terrainData[terrainType];
+                    const nameIndex = (x + y * this.width) % data.names.length;
+                    return { x, y, terrain: terrainType, ...data, name: data.names[nameIndex], description: `You are in ${data.names[nameIndex]}, a stretch of ${terrainType.replace('_', ' ')}.` };
                 }
-                if ((x === 25 && y === 25) || (this.noise.noise2D(x/10, y/10) > 0.8 && terrainType === 'plains')) {
-                    terrainType = 'town';
-                }
-                const data = this.terrainData[terrainType];
-                const nameIndex = (x + y * this.width) % data.names.length;
-                return { x, y, terrain: terrainType, ...data, name: data.names[nameIndex], description: `You are in ${data.names[nameIndex]}, a stretch of ${terrainType.replace('_', ' ')}.` };
-            }
-        };
+            };
 
-        // --- GAME STATE ---
-        const gameState = {
-            player: { x: 25, y: 25, name: 'Lyra' },
-            inventory: [],
-            itemLibrary: { // Pre-populate starting items
-                'Old Map': { icon: '🗺️', description: 'A tattered, well-worn map of a land you barely recognize.' },
-                'Herbs': { icon: '🌿', description: 'A bundle of common herbs, useful for simple poultices.' },
-                'Flint and Steel': { icon: '🔥', description: 'A reliable set for starting a fire.' }
-            },
-            log: [],
-            isApiCallInProgress: false,
-        };
+            // --- GAME STATE ---
+            const gameState = {
+                player: { x: 25, y: 25, name: 'Lyra' },
+                inventory: [],
+                itemLibrary: { // Pre-populate starting items
+                    'Old Map': { icon: '🗺️', description: 'A tattered, well-worn map of a land you barely recognize.' },
+                    'Herbs': { icon: '🌿', description: 'A bundle of common herbs, useful for simple poultices.' },
+                    'Flint and Steel': { icon: '🔥', description: 'A reliable set for starting a fire.' }
+                },
+                log: [],
+                isApiCallInProgress: false,
+            };
 
-        // --- GAME LOGIC ---
-        const game = {
-            init() {
-                world.noise = new SimplexNoise('aralia');
-                this.addItem('Old Map', 1, true);
-                this.addItem('Herbs', 3, true);
-                this.addItem('Flint and Steel', 1, true);
-                this.renderAll();
-                this.logMessage('You begin your journey in the town of Oakhaven. The vast world of Aralia awaits.');
-                this.generateContextualActions();
-            },
-            
-            async callGemini(prompt) {
-                if (gameState.isApiCallInProgress) { this.logMessage("You pause to consider your next move..."); return null; }
-                gameState.isApiCallInProgress = true;
-                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                try {
-                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
-                    const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0) return result.candidates[0].content.parts[0].text;
-                    throw new Error("Invalid API response.");
-                } catch (error) { console.error("Gemini API call failed:", error); return null; } finally { gameState.isApiCallInProgress = false; }
-            },
+            // --- GAME LOGIC ---
+            const game = {
+                init() {
+                    // No longer need to initialize noise here, it's done at the top level
+                    this.addItem('Old Map', 1, true);
+                    this.addItem('Herbs', 3, true);
+                    this.addItem('Flint and Steel', 1, true);
+                    this.renderAll();
+                    this.logMessage('You begin your journey in the town of Oakhaven. The vast world of Aralia awaits.');
+                    this.generateContextualActions();
+                },
+                
+                async callGemini(prompt) {
+                    if (gameState.isApiCallInProgress) { this.logMessage("You pause to consider your next move..."); return null; }
+                    gameState.isApiCallInProgress = true;
+                    const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    try {
+                        const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                        const result = await response.json();
+                        if (result.candidates && result.candidates.length > 0) return result.candidates[0].content.parts[0].text;
+                        throw new Error("Invalid API response.");
+                    } catch (error) { console.error("Gemini API call failed:", error); return null; } finally { gameState.isApiCallInProgress = false; }
+                },
 
-            async performAction(type, detail = '') {
-                if (gameState.isApiCallInProgress) { this.logMessage("You are busy. You cannot do that right now."); return; }
-                if (type === 'move') this.move(detail);
-                else if (type === 'wait') this.logMessage("You take a moment to survey your surroundings.");
-                else if (type === 'contextual') await this.handleContextualAction(detail);
-                this.renderAll();
-                await this.generateContextualActions();
-            },
-            
-            async handleContextualAction(actionText) {
-                const location = world.getTileData(gameState.player.x, gameState.player.y);
-                const inventoryList = gameState.inventory.map(item => `${item.name} (x${item.quantity})`).join(', ') || 'nothing';
-                const prompt = `You are a DM for the fantasy RPG Aralia. Player is at "${location.name}" and chose: "${actionText}". Inventory: ${inventoryList}. Describe the outcome in 1-2 sentences. If items change, use ITEM_ADD: [Item], [Qty] or ITEM_REMOVE: [Item], [Qty] on new lines.`;
-                this.logMessage(`You decide to: ${actionText}`);
-                const contextualActionsContainer = document.getElementById('contextual-actions');
-                contextualActionsContainer.innerHTML = '<div class="col-span-2 flex justify-center items-center"><span class="spinner"></span><p class="ml-2">Acting...</p></div>';
-                const result = await this.callGemini(prompt);
-                if(result) {
-                    const lines = result.trim().split('\n');
-                    this.logMessage(lines[0]);
-                    for(const line of lines.slice(1)) {
-                        if (line.startsWith('ITEM_ADD:')) {
-                            const [name, qty] = line.replace('ITEM_ADD:', '').split(',').map(s => s.trim());
-                            await this.addItem(name, parseInt(qty, 10) || 1);
-                        } else if (line.startsWith('ITEM_REMOVE:')) {
-                            const [name, qty] = line.replace('ITEM_REMOVE:', '').split(',').map(s => s.trim());
-                            this.removeItem(name, parseInt(qty, 10) || 1);
+                async performAction(type, detail = '') {
+                    if (gameState.isApiCallInProgress) { this.logMessage("You are busy. You cannot do that right now."); return; }
+                    if (type === 'move') this.move(detail);
+                    else if (type === 'wait') this.logMessage("You take a moment to survey your surroundings.");
+                    else if (type === 'contextual') await this.handleContextualAction(detail);
+                    this.renderAll();
+                    await this.generateContextualActions();
+                },
+                
+                async handleContextualAction(actionText) {
+                    const location = world.getTileData(gameState.player.x, gameState.player.y);
+                    const inventoryList = gameState.inventory.map(item => `${item.name} (x${item.quantity})`).join(', ') || 'nothing';
+                    const prompt = `You are a DM for the fantasy RPG Aralia. Player is at "${location.name}" and chose: "${actionText}". Inventory: ${inventoryList}. Describe the outcome in 1-2 sentences. If items change, use ITEM_ADD: [Item], [Qty] or ITEM_REMOVE: [Item], [Qty] on new lines.`;
+                    this.logMessage(`You decide to: ${actionText}`);
+                    const contextualActionsContainer = document.getElementById('contextual-actions');
+                    contextualActionsContainer.innerHTML = '<div class="col-span-2 flex justify-center items-center"><span class="spinner"></span><p class="ml-2">Acting...</p></div>';
+                    const result = await this.callGemini(prompt);
+                    if(result) {
+                        const lines = result.trim().split('\n');
+                        this.logMessage(lines[0]);
+                        for(const line of lines.slice(1)) {
+                            if (line.startsWith('ITEM_ADD:')) {
+                                const [name, qty] = line.replace('ITEM_ADD:', '').split(',').map(s => s.trim());
+                                await this.addItem(name, parseInt(qty, 10) || 1);
+                            } else if (line.startsWith('ITEM_REMOVE:')) {
+                                const [name, qty] = line.replace('ITEM_REMOVE:', '').split(',').map(s => s.trim());
+                                this.removeItem(name, parseInt(qty, 10) || 1);
+                            }
                         }
+                    } else this.logMessage("You try, but nothing seems to come of it.");
+                },
+                
+                async generateItemDetails(itemName) {
+                    this.logMessage(`[Discovered a new item: ${itemName}. Studying it...]`);
+                    const prompt = `You are a game master. Generate a short, flavorful description and a single emoji icon for a fantasy RPG item called "${itemName}". Format your response as: icon, description. Example: 💎, A shimmering blue gem, cool to the touch.`;
+                    const details = await this.callGemini(prompt);
+                    if (details) {
+                        const [icon, ...descriptionParts] = details.split(',');
+                        gameState.itemLibrary[itemName] = {
+                            icon: icon.trim(),
+                            description: descriptionParts.join(',').trim()
+                        };
+                    } else { // Fallback if API fails
+                        gameState.itemLibrary[itemName] = { icon: '❓', description: 'A mysterious and indescribable object.' };
                     }
-                } else this.logMessage("You try, but nothing seems to come of it.");
-            },
-            
-            async generateItemDetails(itemName) {
-                this.logMessage(`[Discovered a new item: ${itemName}. Studying it...]`);
-                const prompt = `You are a game master. Generate a short, flavorful description and a single emoji icon for a fantasy RPG item called "${itemName}". Format your response as: icon, description. Example: 💎, A shimmering blue gem, cool to the touch.`;
-                const details = await this.callGemini(prompt);
-                if (details) {
-                    const [icon, ...descriptionParts] = details.split(',');
-                    gameState.itemLibrary[itemName] = {
-                        icon: icon.trim(),
-                        description: descriptionParts.join(',').trim()
-                    };
-                } else { // Fallback if API fails
-                    gameState.itemLibrary[itemName] = { icon: '❓', description: 'A mysterious and indescribable object.' };
-                }
-            },
+                },
 
-            async addItem(itemName, quantity, silent = false) {
-                if (!gameState.itemLibrary[itemName]) {
-                    await this.generateItemDetails(itemName);
-                }
-                const existingItem = gameState.inventory.find(item => item.name === itemName);
-                if (existingItem) {
-                    existingItem.quantity += quantity;
-                } else {
-                    gameState.inventory.push({ name: itemName, quantity });
-                }
-                if (!silent) this.logMessage(`[Added ${quantity}x ${itemName} to inventory.]`);
-                this.renderInventory();
-            },
-
-            removeItem(itemName, quantity) {
-                const itemIndex = gameState.inventory.findIndex(item => item.name === itemName);
-                if (itemIndex > -1) {
-                    gameState.inventory[itemIndex].quantity -= quantity;
-                    if (gameState.inventory[itemIndex].quantity <= 0) {
-                        gameState.inventory.splice(itemIndex, 1);
+                async addItem(itemName, quantity, silent = false) {
+                    if (!gameState.itemLibrary[itemName]) {
+                        await this.generateItemDetails(itemName);
                     }
-                    this.logMessage(`[Removed ${quantity}x ${itemName} from inventory.]`);
+                    const existingItem = gameState.inventory.find(item => item.name === itemName);
+                    if (existingItem) {
+                        existingItem.quantity += quantity;
+                    } else {
+                        gameState.inventory.push({ name: itemName, quantity });
+                    }
+                    if (!silent) this.logMessage(`[Added ${quantity}x ${itemName} to inventory.]`);
                     this.renderInventory();
-                }
-            },
-            
-            async generateContextualActions() {
-                const contextualActionsContainer = document.getElementById('contextual-actions');
-                contextualActionsContainer.innerHTML = '<div class="col-span-2 flex justify-center items-center"><span class="spinner"></span><p class="ml-2">Thinking...</p></div>';
-                const location = world.getTileData(gameState.player.x, gameState.player.y);
-                const inventoryList = gameState.inventory.map(item => item.name).join(', ') || 'nothing';
-                const prompt = `You are a DM for a fantasy RPG. Player is at "${location.name}" (${location.terrain}). Inventory: ${inventoryList}. Provide a comma-separated list of exactly 6 creative, context-appropriate actions (not movement).`;
-                const actionsString = await this.callGemini(prompt);
-                contextualActionsContainer.innerHTML = '';
-                if (actionsString) {
-                    actionsString.split(',').map(a => a.trim()).slice(0, 6).forEach(actionText => {
-                        if (!actionText) return;
-                        const button = document.createElement('button');
-                        button.textContent = actionText;
-                        button.className = "bg-gray-600 hover:bg-sky-800 text-sky-100 font-bold py-2 px-3 rounded-lg text-sm";
-                        button.onclick = () => this.performAction('contextual', actionText);
-                        contextualActionsContainer.appendChild(button);
-                    });
-                } else contextualActionsContainer.innerHTML = '<p class="text-gray-500 col-span-2">Could not get actions.</p>';
-            },
+                },
 
-            move(direction) {
-                let { x, y } = gameState.player;
-                if (direction === 'north') y--;
-                if (direction === 'south') y++;
-                if (direction === 'west') x--;
-                if (direction === 'east') x++;
-                const newTile = world.getTileData(x, y);
-                if (!newTile) { this.logMessage("You cannot go that way. The edge of the world looms."); return; }
-                if (newTile.terrain.includes('ocean')) { this.logMessage("The ocean is too deep to cross without a ship."); return; }
-                gameState.player.x = x;
-                gameState.player.y = y;
-                this.logMessage(`You travel ${direction}.`);
-            },
-
-            logMessage(message) {
-                const logEl = document.getElementById('log');
-                const p = document.createElement('p');
-                p.textContent = message;
-                p.className = "text-gray-400";
-                if (message.startsWith('[')) p.className = "text-yellow-400/80 italic text-sm";
-                logEl.insertBefore(p, logEl.firstChild);
-            },
-
-            renderAll() {
-                const location = world.getTileData(gameState.player.x, gameState.player.y);
-                document.getElementById('player-name').textContent = gameState.player.name;
-                document.getElementById('location-name').textContent = location.name;
-                document.getElementById('location-description').textContent = location.description;
-                document.getElementById('player-location').textContent = `(${location.x}, ${location.y})`;
-                this.renderMap();
-                this.renderInventory();
-            },
-            
-            renderMap() {
-                const mapDisplay = document.getElementById('map-display');
-                const mapRadius = 7;
-                let mapHTML = '';
-                for (let r = -mapRadius; r <= mapRadius; r++) {
-                    let rowHTML = '';
-                    for (let c = -mapRadius; c <= mapRadius; c++) {
-                        const tileX = gameState.player.x + c;
-                        const tileY = gameState.player.y + r;
-                        if (r === 0 && c === 0) {
-                            rowHTML += '<span class="text-amber-300 font-bold">@</span> ';
-                        } else {
-                            const tile = world.getTileData(tileX, tileY);
-                            rowHTML += tile ? `<span class="${tile.color}">${tile.symbol}</span> ` : '  ';
+                removeItem(itemName, quantity) {
+                    const itemIndex = gameState.inventory.findIndex(item => item.name === itemName);
+                    if (itemIndex > -1) {
+                        gameState.inventory[itemIndex].quantity -= quantity;
+                        if (gameState.inventory[itemIndex].quantity <= 0) {
+                            gameState.inventory.splice(itemIndex, 1);
                         }
+                        this.logMessage(`[Removed ${quantity}x ${itemName} from inventory.]`);
+                        this.renderInventory();
                     }
-                    mapHTML += rowHTML.trimEnd() + '\n';
-                }
-                mapDisplay.innerHTML = mapHTML;
-            },
+                },
+                
+                async generateContextualActions() {
+                    const contextualActionsContainer = document.getElementById('contextual-actions');
+                    contextualActionsContainer.innerHTML = '<div class="col-span-2 flex justify-center items-center"><span class="spinner"></span><p class="ml-2">Thinking...</p></div>';
+                    const location = world.getTileData(gameState.player.x, gameState.player.y);
+                    const inventoryList = gameState.inventory.map(item => item.name).join(', ') || 'nothing';
+                    const prompt = `You are a DM for a fantasy RPG. Player is at "${location.name}" (${location.terrain}). Inventory: ${inventoryList}. Provide a comma-separated list of exactly 6 creative, context-appropriate actions (not movement).`;
+                    const actionsString = await this.callGemini(prompt);
+                    contextualActionsContainer.innerHTML = '';
+                    if (actionsString) {
+                        actionsString.split(',').map(a => a.trim()).slice(0, 6).forEach(actionText => {
+                            if (!actionText) return;
+                            const button = document.createElement('button');
+                            button.textContent = actionText;
+                            button.className = "bg-gray-600 hover:bg-sky-800 text-sky-100 font-bold py-2 px-3 rounded-lg text-sm";
+                            button.onclick = () => this.performAction('contextual', actionText);
+                            contextualActionsContainer.appendChild(button);
+                        });
+                    } else contextualActionsContainer.innerHTML = '<p class="text-gray-500 col-span-2">Could not get actions.</p>';
+                },
 
-            renderInventory() {
-                const inventoryList = document.getElementById('inventory-list');
-                inventoryList.innerHTML = '';
-                if (gameState.inventory.length === 0) {
-                    inventoryList.innerHTML = '<li class="italic text-gray-500">Your bags are empty.</li>';
-                } else {
-                    gameState.inventory.forEach(item => {
-                        const itemInfo = gameState.itemLibrary[item.name] || { icon: '❓', description: 'An unknown item.' };
-                        const li = document.createElement('li');
-                        li.className = "text-gray-300";
-                        li.title = itemInfo.description; // Hover tooltip
-                        li.innerHTML = `<span class="mr-2">${itemInfo.icon}</span> ${item.name} (x${item.quantity})`;
-                        inventoryList.appendChild(li);
-                    });
-                }
-            },
-            
-            async generateVividDescription() {
-                 if (gameState.isApiCallInProgress) return;
-                const describeButton = document.getElementById('describe-button');
-                const descriptionEl = document.getElementById('location-description');
-                const originalText = descriptionEl.textContent;
-                describeButton.disabled = true;
-                describeButton.innerHTML = '✨<span class="spinner"></span>';
-                const location = world.getTileData(gameState.player.x, gameState.player.y);
-                const prompt = `You are a DM for a fantasy RPG. Player is at "${location.name}". Description: "${location.description}". Write a more detailed, atmospheric paragraph (50-70 words).`;
-                const vividDescription = await this.callGemini(prompt);
-                if (vividDescription) descriptionEl.textContent = vividDescription;
-                else descriptionEl.textContent = originalText;
-                describeButton.disabled = false;
-                describeButton.innerHTML = '✨ Describe';
-            },
+                move(direction) {
+                    let { x, y } = gameState.player;
+                    if (direction === 'north') y--;
+                    if (direction === 'south') y++;
+                    if (direction === 'west') x--;
+                    if (direction === 'east') x++;
+                    const newTile = world.getTileData(x, y);
+                    if (!newTile) { this.logMessage("You cannot go that way. The edge of the world looms."); return; }
+                    if (newTile.terrain.includes('ocean')) { this.logMessage("The ocean is too deep to cross without a ship."); return; }
+                    gameState.player.x = x;
+                    gameState.player.y = y;
+                    this.logMessage(`You travel ${direction}.`);
+                },
+
+                logMessage(message) {
+                    const logEl = document.getElementById('log');
+                    const p = document.createElement('p');
+                    p.textContent = message;
+                    p.className = "text-gray-400";
+                    if (message.startsWith('[')) p.className = "text-yellow-400/80 italic text-sm";
+                    logEl.insertBefore(p, logEl.firstChild);
+                },
+
+                renderAll() {
+                    const location = world.getTileData(gameState.player.x, gameState.player.y);
+                    document.getElementById('player-name').textContent = gameState.player.name;
+                    document.getElementById('location-name').textContent = location.name;
+                    document.getElementById('location-description').textContent = location.description;
+                    document.getElementById('player-location').textContent = `(${location.x}, ${location.y})`;
+                    this.renderMap();
+                    this.renderInventory();
+                },
+                
+                renderMap() {
+                    const mapDisplay = document.getElementById('map-display');
+                    const mapRadius = 7;
+                    let mapHTML = '';
+                    for (let r = -mapRadius; r <= mapRadius; r++) {
+                        let rowHTML = '';
+                        for (let c = -mapRadius; c <= mapRadius; c++) {
+                            const tileX = gameState.player.x + c;
+                            const tileY = gameState.player.y + r;
+                            if (r === 0 && c === 0) {
+                                rowHTML += '<span class="text-amber-300 font-bold">@</span> ';
+                            } else {
+                                const tile = world.getTileData(tileX, tileY);
+                                rowHTML += tile ? `<span class="${tile.color}">${tile.symbol}</span> ` : '  ';
+                            }
+                        }
+                        mapHTML += rowHTML.trimEnd() + '\n';
+                    }
+                    mapDisplay.innerHTML = mapHTML;
+                },
+
+                renderInventory() {
+                    const inventoryList = document.getElementById('inventory-list');
+                    inventoryList.innerHTML = '';
+                    if (gameState.inventory.length === 0) {
+                        inventoryList.innerHTML = '<li class="italic text-gray-500">Your bags are empty.</li>';
+                    } else {
+                        gameState.inventory.forEach(item => {
+                            const itemInfo = gameState.itemLibrary[item.name] || { icon: '❓', description: 'An unknown item.' };
+                            const li = document.createElement('li');
+                            li.className = "text-gray-300";
+                            li.title = itemInfo.description; // Hover tooltip
+                            li.innerHTML = `<span class="mr-2">${itemInfo.icon}</span> ${item.name} (x${item.quantity})`;
+                            inventoryList.appendChild(li);
+                        });
+                    }
+                },
+                
+                async generateVividDescription() {
+                     if (gameState.isApiCallInProgress) return;
+                    const describeButton = document.getElementById('describe-button');
+                    const descriptionEl = document.getElementById('location-description');
+                    const originalText = descriptionEl.textContent;
+                    describeButton.disabled = true;
+                    describeButton.innerHTML = '✨<span class="spinner"></span>';
+                    const location = world.getTileData(gameState.player.x, gameState.player.y);
+                    const prompt = `You are a DM for a fantasy RPG. Player is at "${location.name}". Description: "${location.description}". Write a more detailed, atmospheric paragraph (50-70 words).`;
+                    const vividDescription = await this.callGemini(prompt);
+                    if (vividDescription) descriptionEl.textContent = vividDescription;
+                    else descriptionEl.textContent = originalText;
+                    describeButton.disabled = false;
+                    describeButton.innerHTML = '✨ Describe';
+                },
+            };
+
+            // Start the game
+            game.init();
         };
-
-        // FIX: Use window.onload to ensure all external scripts are fully loaded before the game starts.
-        window.onload = () => game.init();
     </script>
 </body>
 </html>
