@@ -169,20 +169,39 @@
                     this.generateContextualActions();
                 },
                 
-                async callGemini(prompt) {
-                    if (gameState.isApiCallInProgress) { this.logMessage("You pause to consider your next move..."); return null; }
-                    gameState.isApiCallInProgress = true;
-                    const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    try {
-                        const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
-                        const result = await response.json();
-                        if (result.candidates && result.candidates.length > 0) return result.candidates[0].content.parts[0].text;
-                        throw new Error("Invalid API response.");
-                    } catch (error) { console.error("Gemini API call failed:", error); return null; } finally { gameState.isApiCallInProgress = false; }
-                },
+			// This is the NEW callGemini function for index.html
+			async callGemini(prompt) {
+				if (gameState.isApiCallInProgress) { this.logMessage("You pause to consider your next move..."); return null; }
+				gameState.isApiCallInProgress = true;
+
+    // This is the new URL that points to YOUR serverless function
+    const apiUrl = '/api/gemini'; 
+
+    try {
+        // The payload now only needs the prompt
+        const payload = { prompt: prompt };
+
+        const response = await fetch(apiUrl, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(payload) 
+        });
+
+        if (!response.ok) {
+            throw new Error(`API Proxy Error: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        return result.text; // The serverless function sends back a simple { text: "..." } object
+
+    } catch (error) { 
+        console.error("API proxy call failed:", error); 
+        this.logMessage("[Error: The world's magic seems to be offline.]");
+        return null; 
+    } finally { 
+        gameState.isApiCallInProgress = false; 
+    }
+},
 
                 async performAction(type, detail = '') {
                     if (gameState.isApiCallInProgress) { this.logMessage("You are busy. You cannot do that right now."); return; }
