@@ -71,7 +71,10 @@
                 <div id="main-display" class="bg-black/20 p-4 rounded-md min-h-[12rem] mb-4 border border-gray-600">
                     <div class="flex justify-between items-start">
                         <h3 id="location-name" class="text-2xl font-bold text-amber-100 mb-2"></h3>
-                        <button id="describe-button" onclick="game.generateVividDescription()" class="bg-yellow-600/50 hover:bg-yellow-500/50 text-white text-xs font-bold py-1 px-2 rounded-lg flex items-center">✨ Describe</button>
+                        <div class="space-x-2">
+                            <button id="describe-button" onclick="game.generateVividDescription()" class="bg-yellow-600/50 hover:bg-yellow-500/50 text-white text-xs font-bold py-1 px-2 rounded-lg">✨ Describe</button>
+                            <button id="save-button" onclick="game.saveGame()" class="bg-gray-600 hover:bg-gray-500 text-white text-xs font-bold py-1 px-2 rounded-lg">💾 Save</button>
+                        </div>
                     </div>
                     <p id="location-description" class="text-gray-300"></p>
                 </div>
@@ -160,12 +163,14 @@
             // --- GAME LOGIC ---
             const game = {
                 init() {
-                    // No longer need to initialize noise here, it's done at the top level
-                    this.addItem('Old Map', 1, true);
-                    this.addItem('Herbs', 3, true);
-                    this.addItem('Flint and Steel', 1, true);
+                    // Load saved game if it exists, otherwise set up starting inventory
+                    if (!this.loadGame()) {
+                        this.addItem('Old Map', 1, true);
+                        this.addItem('Herbs', 3, true);
+                        this.addItem('Flint and Steel', 1, true);
+                        this.logMessage('You begin your journey in the town of Oakhaven. The vast world of Aralia awaits.');
+                    }
                     this.renderAll();
-                    this.logMessage('You begin your journey in the town of Oakhaven. The vast world of Aralia awaits.');
                     this.generateContextualActions();
                 },
                 
@@ -317,6 +322,32 @@
                     p.className = "text-gray-400";
                     if (message.startsWith('[')) p.className = "text-yellow-400/80 italic text-sm";
                     logEl.insertBefore(p, logEl.firstChild);
+                },
+
+                saveGame() {
+                    try {
+                        localStorage.setItem('araliaGameState', JSON.stringify(gameState));
+                        this.logMessage('[Game saved.]');
+                    } catch (e) {
+                        console.error('Save failed', e);
+                        this.logMessage('[Error: Could not save game.]');
+                    }
+                },
+
+                loadGame() {
+                    try {
+                        const data = localStorage.getItem('araliaGameState');
+                        if (!data) return false;
+                        const saved = JSON.parse(data);
+                        Object.assign(gameState, saved);
+                        this.renderAll();
+                        this.logMessage('[Game loaded.]');
+                        return true;
+                    } catch (e) {
+                        console.error('Load failed', e);
+                        this.logMessage('[Error: Could not load game.]');
+                        return false;
+                    }
                 },
 
                 renderAll() {
