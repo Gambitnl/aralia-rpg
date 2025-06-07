@@ -438,6 +438,8 @@ const game = {
                 },
             };
 
+            window.game = game;
+
             function openInventory() {
                 const overlay = document.getElementById('inventory-overlay');
                 overlay.classList.remove('hidden');
