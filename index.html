@@ -436,6 +436,8 @@ const game = {
                     describeButton.innerHTML = '✨ Describe';
                 },
             };
+            // Expose game globally for inline button handlers
+            window.game = game;
 
             function openInventory() {
                 const overlay = document.getElementById('inventory-overlay');
