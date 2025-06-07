@@ -384,6 +384,9 @@
                 },
             };
 
+            // Expose game globally so buttons can access it
+            window.game = game;
+
             // Start the game
             game.init();
         };
