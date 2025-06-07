@@ -44,6 +44,7 @@
         <header class="border-b-2 border-gray-600 pb-4 mb-4 text-center">
             <h1 class="text-4xl md:text-5xl font-bold text-shadow text-amber-100">Aralia: The Shattered Crown</h1>
             <p class="text-gray-400">An Adventurer's Tale</p>
+            <button id="open-inventory" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Inventory</button>
         </header>
 
         <main class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -59,10 +60,6 @@
                 <div class="flex-grow">
                      <h3 class="text-xl text-amber-100 border-b border-gray-600 pb-2 mb-2">World Map</h3>
                      <div id="map-display" class="bg-gray-900 p-2 rounded-md text-center text-sm font-mono whitespace-pre overflow-hidden"></div>
-                </div>
-                <div>
-                    <h3 class="text-xl text-amber-100 border-b border-gray-600 pb-2 mb-2">Party Inventory</h3>
-                    <ul id="inventory-list" class="space-y-1"></ul>
                 </div>
             </div>
 
@@ -99,6 +96,16 @@
                     </div>
                 </div>
             </div>
+
+        <div id="inventory-overlay"
+             class="hidden fixed inset-0 bg-black/75 flex items-center justify-center z-50">
+          <div class="bg-gray-800 p-6 rounded-lg max-w-sm w-full">
+            <h3 class="text-xl text-amber-100 mb-4">Party Inventory</h3>
+            <ul id="inventory-list" class="space-y-1"></ul>
+            <button id="close-inventory" class="mt-4 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Close</button>
+          </div>
+        </div>
+
         </main>
     </div>
 
@@ -383,6 +390,19 @@
                     describeButton.innerHTML = '✨ Describe';
                 },
             };
+
+            function openInventory() {
+                const overlay = document.getElementById('inventory-overlay');
+                overlay.classList.remove('hidden');
+                game.renderInventory();
+            }
+
+            function closeInventory() {
+                document.getElementById('inventory-overlay').classList.add('hidden');
+            }
+
+            document.getElementById('open-inventory').addEventListener('click', openInventory);
+            document.getElementById('close-inventory').addEventListener('click', closeInventory);
 
             // Start the game
             game.init();
