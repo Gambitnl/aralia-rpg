@@ -45,6 +45,7 @@
             <h1 class="text-4xl md:text-5xl font-bold text-shadow text-amber-100">Aralia: The Shattered Crown</h1>
             <p class="text-gray-400">An Adventurer's Tale</p>
             <button id="open-inventory" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Inventory</button>
+            <button id="save-game" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Save</button>
         </header>
 
         <main class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -114,10 +115,12 @@
         // all external scripts (like SimplexNoise) are loaded before any code runs.
         window.onload = function() {
             // --- WORLD GENERATION ---
+            let worldSeed = localStorage.getItem('aralia-world-seed') || Math.random().toString(36).slice(2);
+            localStorage.setItem('aralia-world-seed', worldSeed);
             const world = {
                 width: 50,
                 height: 50,
-                noise: new SimplexNoise('aralia'), // FIXED: Use version 2.4.0 which exports correctly
+                noise: new SimplexNoise(worldSeed), // FIXED: Use version 2.4.0 which exports correctly
                 terrainData: {
                     deep_ocean: { symbol: '≈', color: 'text-blue-800', names: ['The Abyssal Void', 'The Sunless Sea'] },
                     ocean: { symbol: '≈', color: 'text-blue-500', names: ['The Azure Expanse', 'The Sapphire Sea'] },
@@ -153,6 +156,8 @@
 
             // --- GAME STATE ---
             const gameState = {
+                // NOTE: If you change the structure of gameState,
+                // be sure to update saveGame/loadGame accordingly.
                 player: { x: 25, y: 25, name: 'Lyra' },
                 inventory: [],
                 itemLibrary: { // Pre-populate starting items
@@ -162,18 +167,58 @@
                 },
                 log: [],
                 isApiCallInProgress: false,
+                worldSeed: worldSeed,
             };
 
             // --- GAME LOGIC ---
-            const game = {
+const game = {
                 init() {
                     // No longer need to initialize noise here, it's done at the top level
-                    this.addItem('Old Map', 1, true);
-                    this.addItem('Herbs', 3, true);
-                    this.addItem('Flint and Steel', 1, true);
+                    const loaded = this.loadGame();
+                    if (!loaded) {
+                        this.addItem('Old Map', 1, true);
+                        this.addItem('Herbs', 3, true);
+                        this.addItem('Flint and Steel', 1, true);
+                    }
                     this.renderAll();
                     this.logMessage('You begin your journey in the town of Oakhaven. The vast world of Aralia awaits.');
                     this.generateContextualActions();
+                },
+
+                saveGame() {
+                    const data = {
+                        player: gameState.player,
+                        inventory: gameState.inventory,
+                        worldSeed: gameState.worldSeed,
+                    };
+                    localStorage.setItem('aralia-save', JSON.stringify(data));
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'aralia-save.json';
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                    this.logMessage('[Game saved.]');
+                },
+
+                loadGame() {
+                    const raw = localStorage.getItem('aralia-save');
+                    if (!raw) return false;
+                    try {
+                        const data = JSON.parse(raw);
+                        if (data.player) gameState.player = data.player;
+                        if (Array.isArray(data.inventory)) gameState.inventory = data.inventory;
+                        if (data.worldSeed) {
+                            worldSeed = data.worldSeed;
+                            gameState.worldSeed = data.worldSeed;
+                            world.noise = new SimplexNoise(worldSeed);
+                            localStorage.setItem('aralia-world-seed', worldSeed);
+                        }
+                        return true;
+                    } catch (e) {
+                        console.error('Load failed', e);
+                        return false;
+                    }
                 },
                 
 			// This is the NEW callGemini function for index.html
@@ -315,6 +360,8 @@
                     gameState.player.x = x;
                     gameState.player.y = y;
                     this.logMessage(`You travel ${direction}.`);
+                    this.renderAll();
+                    this.saveGame();
                 },
 
                 logMessage(message) {
@@ -403,6 +450,7 @@
 
             document.getElementById('open-inventory').addEventListener('click', openInventory);
             document.getElementById('close-inventory').addEventListener('click', closeInventory);
+            document.getElementById('save-game').addEventListener('click', () => game.saveGame());
 
             // Start the game
             game.init();
