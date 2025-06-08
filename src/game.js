@@ -337,7 +337,7 @@ const game = {
           gameState.townState.x = x;
           gameState.townState.y = y;
           if (tile && !tile.road && tile.name) {
-            openBuildingOverlay(tile.name);
+            openBuildingOverlay(tile);
           }
           const name = tile ? (tile.road ? 'Road' : tile.name) : 'Empty Lot';
           document.getElementById('building-name').textContent = name;
@@ -427,13 +427,20 @@ function moveTown(dir) {
   game.renderTownMap();
 }
 
-function openBuildingOverlay(name) {
-  document.getElementById('building-overlay-name').textContent = name;
+function openBuildingOverlay(tile) {
+  document.getElementById('building-overlay-name').textContent = tile.name;
+  const img = document.getElementById('building-overlay-image');
+  if (img) {
+    img.src = tile.image || '';
+    img.alt = tile.type || 'building';
+  }
   document.getElementById('building-overlay').classList.remove('hidden');
 }
 
 function closeBuildingOverlay() {
   document.getElementById('building-overlay').classList.add('hidden');
+  const img = document.getElementById('building-overlay-image');
+  if (img) img.src = '';
 }
 
 function openCompanion(index) {
