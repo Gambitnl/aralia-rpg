@@ -1,5 +1,5 @@
 import world, { worldSeed } from './world.js';
-import { town } from './town.js';
+import { getTown } from './town.js';
 
 const gameState = {
   // NOTE: If you change the structure of gameState,
@@ -24,6 +24,8 @@ const gameState = {
   worldSeed,
   townState: { x: 0, y: 0 },
 };
+
+let currentTown = null;
 
 const game = {
   init() {
@@ -250,6 +252,7 @@ const game = {
     this.renderMap();
     this.renderInventory();
     this.renderCompanions();
+    this.updateTownButton(location);
   },
 
   renderMap() {
@@ -306,22 +309,37 @@ const game = {
     }
   },
 
+  updateTownButton(location) {
+    const btn = document.getElementById('open-town');
+    if (!btn) return;
+    btn.disabled = location.terrain !== 'town';
+  },
+
   renderTownMap() {
+    if (!currentTown) return;
     const container = document.getElementById('town-map');
     container.innerHTML = '';
-    for (let y = 0; y < town.height; y++) {
-      for (let x = 0; x < town.width; x++) {
+    for (let y = 0; y < currentTown.height; y++) {
+      for (let x = 0; x < currentTown.width; x++) {
         const cell = document.createElement('div');
         cell.className = 'w-6 h-6 flex items-center justify-center border border-gray-600 text-xs cursor-pointer';
-        const tile = town.grid[y][x];
-        cell.textContent = tile ? tile.name[0] : '.';
+        const tile = currentTown.grid[y][x];
+        if (tile && tile.road) {
+          cell.textContent = '-';
+          cell.classList.add('text-yellow-500');
+        } else {
+          cell.textContent = tile ? tile.name[0] : '.';
+        }
         if (gameState.townState.x === x && gameState.townState.y === y) {
           cell.classList.add('bg-amber-500/50');
         }
         cell.onclick = () => {
           gameState.townState.x = x;
           gameState.townState.y = y;
-          const name = tile ? tile.name : 'Empty Lot';
+          if (tile && !tile.road && tile.name) {
+            openBuildingOverlay(tile.name);
+          }
+          const name = tile ? (tile.road ? 'Road' : tile.name) : 'Empty Lot';
           document.getElementById('building-name').textContent = name;
           game.renderTownMap();
         };
@@ -368,6 +386,13 @@ function closeParty() {
 }
 
 function openTownMap() {
+  const location = world.getTileData(gameState.player.x, gameState.player.y);
+  if (location.terrain !== 'town') {
+    game.logMessage('There is no town here to explore.');
+    return;
+  }
+  currentTown = getTown(location.x, location.y);
+  gameState.townState = { x: 0, y: 0 };
   const overlay = document.getElementById('town-overlay');
   overlay.classList.remove('hidden');
   document.getElementById('building-name').textContent = '';
@@ -388,16 +413,27 @@ function handleTownKey(e) {
 }
 
 function moveTown(dir) {
-  const { width, height } = town;
+  if (!currentTown) return;
+  const { width, height } = currentTown;
   let { x, y } = gameState.townState;
   if (dir === 'north' && y > 0) y--;
   if (dir === 'south' && y < height - 1) y++;
   if (dir === 'west' && x > 0) x--;
   if (dir === 'east' && x < width - 1) x++;
   gameState.townState = { x, y };
-  const tile = town.grid[y][x];
-  document.getElementById('building-name').textContent = tile ? tile.name : 'Empty Lot';
+  const tile = currentTown.grid[y][x];
+  const name = tile ? (tile.road ? 'Road' : tile.name) : 'Empty Lot';
+  document.getElementById('building-name').textContent = name;
   game.renderTownMap();
+}
+
+function openBuildingOverlay(name) {
+  document.getElementById('building-overlay-name').textContent = name;
+  document.getElementById('building-overlay').classList.remove('hidden');
+}
+
+function closeBuildingOverlay() {
+  document.getElementById('building-overlay').classList.add('hidden');
 }
 
 function openCompanion(index) {
@@ -437,4 +473,7 @@ export {
   closeGlossary,
   openTownMap,
   closeTownMap,
+  openBuildingOverlay,
+  closeBuildingOverlay,
+  moveTown,
 };

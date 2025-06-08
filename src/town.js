@@ -28,10 +28,19 @@ function generateTown(seed) {
   const width = 8;
   const height = 8;
   const grid = [];
+  const centerX = Math.floor(width / 2);
+  const centerY = Math.floor(height / 2);
   for (let y = 0; y < height; y++) {
     const row = [];
     for (let x = 0; x < width; x++) {
-      if (rand() > 0.7) {
+      const isRoad = x === centerX || y === centerY;
+      if (isRoad) {
+        row.push({ road: true });
+        continue;
+      }
+      const nearRoad = Math.abs(x - centerX) <= 1 || Math.abs(y - centerY) <= 1;
+      const chance = nearRoad ? 0.6 : 0.3;
+      if (rand() < chance) {
         const name = BUILDINGS[Math.floor(rand() * BUILDINGS.length)];
         row.push({ x, y, name });
       } else {
@@ -51,6 +60,19 @@ function hashCode(str) {
   return h >>> 0;
 }
 
+// Cache of towns keyed by "x,y" coordinates
+const townCache = {};
+
+function getTown(x, y) {
+  const key = `${x},${y}`;
+  if (!townCache[key]) {
+    const seed = `${worldSeed}-${x}-${y}`;
+    townCache[key] = generateTown(seed);
+  }
+  return townCache[key];
+}
+
+// A default town using only the world seed is kept for backward compatibility
 const town = generateTown(worldSeed);
 
-export { generateTown, town };
+export { generateTown, getTown, town };
