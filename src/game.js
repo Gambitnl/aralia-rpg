@@ -42,6 +42,7 @@ const game = {
       inventory: gameState.inventory,
       companions: gameState.companions,
       worldSeed: gameState.worldSeed,
+      log: gameState.log,
     };
     localStorage.setItem('aralia-save', JSON.stringify(data));
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -61,6 +62,7 @@ const game = {
       if (data.player) gameState.player = data.player;
       if (Array.isArray(data.inventory)) gameState.inventory = data.inventory;
       if (Array.isArray(data.companions)) gameState.companions = data.companions;
+      if (Array.isArray(data.log)) gameState.log = data.log;
       if (data.worldSeed) {
         gameState.worldSeed = data.worldSeed;
         world.noise = new SimplexNoise(data.worldSeed);
@@ -182,7 +184,9 @@ const game = {
     contextualActionsContainer.innerHTML = '<div class="col-span-2 flex justify-center items-center"><span class="spinner"></span><p class="ml-2">Thinking...</p></div>';
     const location = world.getTileData(gameState.player.x, gameState.player.y);
     const inventoryList = gameState.inventory.map((item) => item.name).join(', ') || 'nothing';
-    const prompt = `You are a DM for a fantasy RPG. Player is at "${location.name}" (${location.terrain}). Inventory: ${inventoryList}. Provide a comma-separated list of exactly 6 creative, context-appropriate actions (not movement).`;
+    const locDescription = document.getElementById('location-description').textContent;
+    const recentLog = gameState.log.slice(0, 3).join(' | ');
+    const prompt = `You are a DM for a fantasy RPG. Player is at "${location.name}" (${location.terrain}). Description: "${locDescription}". Recent events: ${recentLog}. Inventory: ${inventoryList}. Provide a comma-separated list of exactly 6 creative, context-appropriate actions (not movement).`;
     const actionsString = await this.callGemini(prompt);
     contextualActionsContainer.innerHTML = '';
     if (actionsString) {
@@ -225,6 +229,8 @@ const game = {
   },
 
   logMessage(message) {
+    gameState.log.unshift(message);
+    if (gameState.log.length > 500) gameState.log.pop();
     const logEl = document.getElementById('log');
     const p = document.createElement('p');
     p.textContent = message;
