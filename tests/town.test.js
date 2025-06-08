@@ -1,4 +1,5 @@
 /* eslint-disable jest/require-top-level-describe */
+import { jest } from '@jest/globals';
 
 function setupStorage() {
   global.localStorage = {
@@ -51,6 +52,7 @@ test('town navigation and display', async () => {
   const cells = document.getElementById('town-map').children;
   expect(cells[1].className).toContain('bg-amber-500/50');
   expect(document.getElementById('building-name').textContent).not.toBe('');
+  expect(document.querySelectorAll('#town-map img').length).toBeGreaterThan(0);
 });
 
 test('building counts do not exceed limits', async () => {
@@ -91,12 +93,46 @@ test('building overlay displays image', async () => {
     <div id="building-overlay" class="hidden"></div>
     <img id="building-overlay-image" />
     <h3 id="building-overlay-name"></h3>
+    <p id="building-overlay-desc"></p>
+    <div id="log"></div>
   `);
   global.document = dom.window.document;
   global.window = dom.window;
-  const { openBuildingOverlay } = await import('../src/game.js');
+  const { openBuildingOverlay, handleBuildingAction, game } = await import('../src/game.js');
+  game.callGemini = jest.fn().mockResolvedValue('desc');
   const tile = { name: 'The Golden Griffin', type: 'Inn', image: 'test.png' };
   openBuildingOverlay(tile);
+  await Promise.resolve();
   expect(document.getElementById('building-overlay').classList.contains('hidden')).toBe(false);
   expect(document.getElementById('building-overlay-image').getAttribute('src')).toBe('test.png');
+  expect(game.callGemini).toHaveBeenCalled();
+  await handleBuildingAction('talk');
+  expect(game.callGemini).toHaveBeenCalledTimes(2);
+});
+
+test('escape closes overlays', async () => {
+  setupStorage();
+  const { JSDOM } = await import('jsdom');
+  const dom = new JSDOM(`
+    <div id="town-overlay" class="hidden"></div>
+    <div id="building-overlay" class="hidden"></div>
+    <div id="town-map"></div>
+    <p id="building-name"></p>
+    <button id="open-town"></button>
+    <img id="building-overlay-image" />
+    <p id="building-overlay-desc"></p>
+    <h3 id="building-overlay-name"></h3>
+    <div id="log"></div>
+  `);
+  global.document = dom.window.document;
+  global.window = dom.window;
+  const { openTownMap, openBuildingOverlay } = await import('../src/game.js');
+  openTownMap();
+  const tile = { name: 'Inn', type: 'Inn', image: 'x.png' };
+  openBuildingOverlay(tile);
+  dom.window.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape' }));
+  expect(document.getElementById('building-overlay').classList.contains('hidden')).toBe(true);
+  expect(document.getElementById('town-overlay').classList.contains('hidden')).toBe(false);
+  dom.window.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape' }));
+  expect(document.getElementById('town-overlay').classList.contains('hidden')).toBe(true);
 });

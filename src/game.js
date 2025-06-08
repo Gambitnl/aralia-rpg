@@ -26,6 +26,7 @@ const gameState = {
 };
 
 let currentTown = null;
+let currentBuilding = null;
 
 const game = {
   init() {
@@ -322,13 +323,21 @@ const game = {
     for (let y = 0; y < currentTown.height; y++) {
       for (let x = 0; x < currentTown.width; x++) {
         const cell = document.createElement('div');
-        cell.className = 'w-6 h-6 flex items-center justify-center border border-gray-600 text-xs cursor-pointer';
+        cell.className = 'w-6 h-6 flex items-center justify-center border border-gray-600 text-xs cursor-pointer overflow-hidden';
         const tile = currentTown.grid[y][x];
         if (tile && tile.road) {
           cell.textContent = '-';
           cell.classList.add('text-yellow-500');
         } else {
-          cell.textContent = tile ? tile.name[0] : '.';
+          if (tile) {
+            const img = document.createElement('img');
+            img.src = tile.image;
+            img.alt = tile.type;
+            img.className = 'w-full h-full object-cover';
+            cell.appendChild(img);
+          } else {
+            cell.textContent = '.';
+          }
         }
         if (gameState.townState.x === x && gameState.townState.y === y) {
           cell.classList.add('bg-amber-500/50');
@@ -410,6 +419,13 @@ function handleTownKey(e) {
   if (e.key === 'ArrowDown') moveTown('south');
   if (e.key === 'ArrowLeft') moveTown('west');
   if (e.key === 'ArrowRight') moveTown('east');
+  if (e.key === 'Escape') {
+    if (!document.getElementById('building-overlay').classList.contains('hidden')) {
+      closeBuildingOverlay();
+    } else {
+      closeTownMap();
+    }
+  }
 }
 
 function moveTown(dir) {
@@ -428,19 +444,37 @@ function moveTown(dir) {
 }
 
 function openBuildingOverlay(tile) {
+  currentBuilding = tile;
   document.getElementById('building-overlay-name').textContent = tile.name;
   const img = document.getElementById('building-overlay-image');
   if (img) {
     img.src = tile.image || '';
     img.alt = tile.type || 'building';
   }
+  const descEl = document.getElementById('building-overlay-desc');
+  if (descEl) descEl.textContent = '';
   document.getElementById('building-overlay').classList.remove('hidden');
+  if (descEl) {
+    descEl.textContent = '...';
+    game.callGemini(`You are a DM. Describe ${tile.name}, a ${tile.type} in one sentence.`)
+      .then((text) => { if (text) descEl.textContent = text; else descEl.textContent = ''; });
+  }
 }
 
 function closeBuildingOverlay() {
   document.getElementById('building-overlay').classList.add('hidden');
   const img = document.getElementById('building-overlay-image');
   if (img) img.src = '';
+  const descEl = document.getElementById('building-overlay-desc');
+  if (descEl) descEl.textContent = '';
+  currentBuilding = null;
+}
+
+async function handleBuildingAction(action) {
+  if (!currentBuilding) return;
+  const prompt = `You are a DM. The player chooses to ${action} at ${currentBuilding.name}, a ${currentBuilding.type}. Respond in one short sentence.`;
+  const text = await game.callGemini(prompt);
+  if (text) game.logMessage(text);
 }
 
 function openCompanion(index) {
@@ -482,5 +516,6 @@ export {
   closeTownMap,
   openBuildingOverlay,
   closeBuildingOverlay,
+  handleBuildingAction,
   moveTown,
 };
