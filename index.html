@@ -45,6 +45,7 @@
             <h1 class="text-4xl md:text-5xl font-bold text-shadow text-amber-100">Aralia: The Shattered Crown</h1>
             <p class="text-gray-400">An Adventurer's Tale</p>
             <button id="open-inventory" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Inventory</button>
+            <button id="open-glossary" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Glossary</button>
             <button id="save-game" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Save</button>
         </header>
 
@@ -104,6 +105,24 @@
             <h3 class="text-xl text-amber-100 mb-4">Party Inventory</h3>
             <ul id="inventory-list" class="space-y-1"></ul>
             <button id="close-inventory" class="mt-4 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Close</button>
+          </div>
+        </div>
+
+        <div id="glossary-overlay"
+             class="hidden fixed inset-0 bg-black/75 flex items-center justify-center z-50">
+          <div class="bg-gray-800 p-6 rounded-lg max-w-sm w-full text-gray-300">
+            <h3 class="text-xl text-amber-100 mb-4">Map Icon Glossary</h3>
+            <ul class="space-y-1">
+              <li><span class="text-blue-500 mr-2">≈</span>Ocean and Deep Ocean</li>
+              <li><span class="text-green-700 mr-2">.</span>Plains</li>
+              <li><span class="text-green-500 mr-2">T</span>Forest</li>
+              <li><span class="text-yellow-700 mr-2">^</span>Hills</li>
+              <li><span class="text-gray-400 mr-2">M</span>Mountains</li>
+              <li><span class="text-yellow-400 mr-2">s</span>Desert</li>
+              <li><span class="text-white mr-2">#</span>Town</li>
+              <li><span class="text-amber-300 mr-2">@</span>Your Party</li>
+            </ul>
+            <button id="close-glossary" class="mt-4 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Close</button>
           </div>
         </div>
 
@@ -439,18 +458,28 @@ const game = {
             // Expose game globally for inline button handlers
             window.game = game;
 
-            function openInventory() {
-                const overlay = document.getElementById('inventory-overlay');
-                overlay.classList.remove('hidden');
-                game.renderInventory();
+function openInventory() {
+               const overlay = document.getElementById('inventory-overlay');
+               overlay.classList.remove('hidden');
+               game.renderInventory();
+           }
+
+           function closeInventory() {
+               document.getElementById('inventory-overlay').classList.add('hidden');
+           }
+
+            function openGlossary() {
+                document.getElementById('glossary-overlay').classList.remove('hidden');
             }
 
-            function closeInventory() {
-                document.getElementById('inventory-overlay').classList.add('hidden');
+            function closeGlossary() {
+                document.getElementById('glossary-overlay').classList.add('hidden');
             }
 
-            document.getElementById('open-inventory').addEventListener('click', openInventory);
-            document.getElementById('close-inventory').addEventListener('click', closeInventory);
+           document.getElementById('open-inventory').addEventListener('click', openInventory);
+           document.getElementById('close-inventory').addEventListener('click', closeInventory);
+            document.getElementById('open-glossary').addEventListener('click', openGlossary);
+            document.getElementById('close-glossary').addEventListener('click', closeGlossary);
             document.getElementById('save-game').addEventListener('click', () => game.saveGame());
 
             // Start the game
