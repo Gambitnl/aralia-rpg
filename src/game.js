@@ -1,4 +1,5 @@
 import world, { worldSeed } from './world.js';
+import { town } from './town.js';
 
 const gameState = {
   // NOTE: If you change the structure of gameState,
@@ -21,6 +22,7 @@ const gameState = {
   log: [],
   isApiCallInProgress: false,
   worldSeed,
+  townState: { x: 0, y: 0 },
 };
 
 const game = {
@@ -304,6 +306,30 @@ const game = {
     }
   },
 
+  renderTownMap() {
+    const container = document.getElementById('town-map');
+    container.innerHTML = '';
+    for (let y = 0; y < town.height; y++) {
+      for (let x = 0; x < town.width; x++) {
+        const cell = document.createElement('div');
+        cell.className = 'w-6 h-6 flex items-center justify-center border border-gray-600 text-xs cursor-pointer';
+        const tile = town.grid[y][x];
+        cell.textContent = tile ? tile.name[0] : '.';
+        if (gameState.townState.x === x && gameState.townState.y === y) {
+          cell.classList.add('bg-amber-500/50');
+        }
+        cell.onclick = () => {
+          gameState.townState.x = x;
+          gameState.townState.y = y;
+          const name = tile ? tile.name : 'Empty Lot';
+          document.getElementById('building-name').textContent = name;
+          game.renderTownMap();
+        };
+        container.appendChild(cell);
+      }
+    }
+  },
+
   async generateVividDescription() {
     if (gameState.isApiCallInProgress) return;
     const describeButton = document.getElementById('describe-button');
@@ -341,6 +367,39 @@ function closeParty() {
   document.getElementById('party-overlay').classList.add('hidden');
 }
 
+function openTownMap() {
+  const overlay = document.getElementById('town-overlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('building-name').textContent = '';
+  game.renderTownMap();
+  window.addEventListener('keydown', handleTownKey);
+}
+
+function closeTownMap() {
+  document.getElementById('town-overlay').classList.add('hidden');
+  window.removeEventListener('keydown', handleTownKey);
+}
+
+function handleTownKey(e) {
+  if (e.key === 'ArrowUp') moveTown('north');
+  if (e.key === 'ArrowDown') moveTown('south');
+  if (e.key === 'ArrowLeft') moveTown('west');
+  if (e.key === 'ArrowRight') moveTown('east');
+}
+
+function moveTown(dir) {
+  const { width, height } = town;
+  let { x, y } = gameState.townState;
+  if (dir === 'north' && y > 0) y--;
+  if (dir === 'south' && y < height - 1) y++;
+  if (dir === 'west' && x > 0) x--;
+  if (dir === 'east' && x < width - 1) x++;
+  gameState.townState = { x, y };
+  const tile = town.grid[y][x];
+  document.getElementById('building-name').textContent = tile ? tile.name : 'Empty Lot';
+  game.renderTownMap();
+}
+
 function openCompanion(index) {
   const comp = gameState.companions[index];
   if (!comp) return;
@@ -376,4 +435,6 @@ export {
   closeCompanion,
   openGlossary,
   closeGlossary,
+  openTownMap,
+  closeTownMap,
 };
