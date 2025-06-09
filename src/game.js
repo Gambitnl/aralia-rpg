@@ -449,7 +449,7 @@ function moveTown(dir) {
   game.renderTownMap();
 }
 
-function openBuildingOverlay(tile) {
+async function openBuildingOverlay(tile) {
   currentBuilding = tile;
   currentBuildingKey = `${currentTownCoords?.x ?? 0},${currentTownCoords?.y ?? 0}-${tile.x},${tile.y}`;
   document.getElementById('building-overlay-name').textContent = tile.name;
@@ -463,8 +463,14 @@ function openBuildingOverlay(tile) {
   document.getElementById('building-overlay').classList.remove('hidden');
   if (descEl) {
     descEl.textContent = '...';
-    game.callGemini(`You are a DM. Describe ${tile.name}, a ${tile.type} in one sentence.`)
-      .then((text) => { if (text) descEl.textContent = text; else descEl.textContent = ''; });
+    let prompt;
+    if (tile.descTemplate) {
+      prompt = tile.descTemplate.replace('{name}', tile.name).replace('{type}', tile.type);
+    } else {
+      prompt = `You are a DM. Describe ${tile.name}, a ${tile.type} in one sentence.`;
+    }
+    const text = await game.callGemini(prompt);
+    if (text) descEl.textContent = text; else descEl.textContent = '';
   }
 
   const logContainer = document.getElementById('building-log');
@@ -477,15 +483,15 @@ function openBuildingOverlay(tile) {
       logContainer.appendChild(p);
     });
   }
-  generateBuildingActions();
+  await generateBuildingActions();
 }
 
 async function generateBuildingActions() {
   const actionsContainer = document.getElementById('building-actions');
   if (!actionsContainer || !currentBuilding) return;
-  actionsContainer.innerHTML = '<div class="col-span-2 flex justify-center items-center"><span class="spinner"></span><p class="ml-2">Thinking...</p></div>';
+  actionsContainer.innerHTML = '<div class="sm:col-span-2 flex justify-center items-center"><span class="spinner"></span><p class="ml-2">Thinking...</p></div>';
   const recent = (gameState.buildingLogs[currentBuildingKey] || []).slice(0, 3).join(' | ');
-  const prompt = `You are a DM for a fantasy RPG. The player is in ${currentBuilding.name}, a ${currentBuilding.type}. Recent events: ${recent}. Provide a comma-separated list of exactly 4 actions they can take inside.`;
+  const prompt = `You are a DM for a fantasy RPG. The player is in ${currentBuilding.name}, a ${currentBuilding.type}. Recent events: ${recent}. Provide a comma-separated list of exactly 4 short actions (1-3 words each) they can take inside.`;
   const actionsString = await game.callGemini(prompt);
   actionsContainer.innerHTML = '';
   if (actionsString) {
@@ -493,12 +499,12 @@ async function generateBuildingActions() {
       if (!text) return;
       const btn = document.createElement('button');
       btn.textContent = text;
-      btn.className = 'bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 text-sm';
+      btn.className = 'bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 text-base w-full whitespace-normal';
       btn.onclick = () => handleBuildingAction(text);
       actionsContainer.appendChild(btn);
     });
   } else {
-    actionsContainer.innerHTML = '<p class="text-gray-500 col-span-2">Could not get actions.</p>';
+    actionsContainer.innerHTML = '<p class="text-gray-500 sm:col-span-2">Could not get actions.</p>';
   }
 }
 

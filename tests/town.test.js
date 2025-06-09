@@ -103,13 +103,33 @@ test('building overlay displays image', async () => {
   const { openBuildingOverlay, handleBuildingAction, game } = await import('../src/game.js');
   game.callGemini = jest.fn().mockResolvedValue('desc');
   const tile = { name: 'The Golden Griffin', type: 'Inn', image: 'test.png' };
-  openBuildingOverlay(tile);
-  await Promise.resolve();
+  await openBuildingOverlay(tile);
   expect(document.getElementById('building-overlay').classList.contains('hidden')).toBe(false);
   expect(document.getElementById('building-overlay-image').getAttribute('src')).toBe('test.png');
   expect(game.callGemini).toHaveBeenCalled();
   await handleBuildingAction('talk');
-  expect(game.callGemini).toHaveBeenCalledTimes(2);
+  expect(game.callGemini).toHaveBeenCalledTimes(4);
+});
+
+test('building overlay uses description template when provided', async () => {
+  setupStorage();
+  const { JSDOM } = await import('jsdom');
+  const dom = new JSDOM(`
+    <div id="building-overlay" class="hidden"></div>
+    <img id="building-overlay-image" />
+    <h3 id="building-overlay-name"></h3>
+    <p id="building-overlay-desc"></p>
+    <div id="building-actions"></div>
+    <div id="building-log"></div>
+    <div id="log"></div>
+  `);
+  global.document = dom.window.document;
+  global.window = dom.window;
+  const { openBuildingOverlay, game } = await import('../src/game.js');
+  game.callGemini = jest.fn().mockResolvedValue('desc');
+  const tile = { name: 'The Golden Griffin', type: 'Inn', image: 'test.png', descTemplate: 'Template for {name}' };
+  await openBuildingOverlay(tile);
+  expect(game.callGemini).toHaveBeenCalledWith('Template for The Golden Griffin');
 });
 
 test('escape closes overlays', async () => {
@@ -133,7 +153,7 @@ test('escape closes overlays', async () => {
   const { openTownMap, openBuildingOverlay } = await import('../src/game.js');
   openTownMap();
   const tile = { name: 'Inn', type: 'Inn', image: 'x.png' };
-  openBuildingOverlay(tile);
+  await openBuildingOverlay(tile);
   dom.window.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape' }));
   expect(document.getElementById('building-overlay').classList.contains('hidden')).toBe(true);
   expect(document.getElementById('town-overlay').classList.contains('hidden')).toBe(false);
