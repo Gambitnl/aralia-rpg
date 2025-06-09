@@ -449,7 +449,7 @@ function moveTown(dir) {
   game.renderTownMap();
 }
 
-function openBuildingOverlay(tile) {
+async function openBuildingOverlay(tile) {
   currentBuilding = tile;
   currentBuildingKey = `${currentTownCoords?.x ?? 0},${currentTownCoords?.y ?? 0}-${tile.x},${tile.y}`;
   document.getElementById('building-overlay-name').textContent = tile.name;
@@ -463,8 +463,8 @@ function openBuildingOverlay(tile) {
   document.getElementById('building-overlay').classList.remove('hidden');
   if (descEl) {
     descEl.textContent = '...';
-    game.callGemini(`You are a DM. Describe ${tile.name}, a ${tile.type} in one sentence.`)
-      .then((text) => { if (text) descEl.textContent = text; else descEl.textContent = ''; });
+    const text = await game.callGemini(`You are a DM. Describe ${tile.name}, a ${tile.type} in one sentence.`);
+    if (text) descEl.textContent = text; else descEl.textContent = '';
   }
 
   const logContainer = document.getElementById('building-log');
@@ -477,7 +477,7 @@ function openBuildingOverlay(tile) {
       logContainer.appendChild(p);
     });
   }
-  generateBuildingActions();
+  await generateBuildingActions();
 }
 
 async function generateBuildingActions() {

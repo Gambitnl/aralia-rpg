@@ -103,13 +103,12 @@ test('building overlay displays image', async () => {
   const { openBuildingOverlay, handleBuildingAction, game } = await import('../src/game.js');
   game.callGemini = jest.fn().mockResolvedValue('desc');
   const tile = { name: 'The Golden Griffin', type: 'Inn', image: 'test.png' };
-  openBuildingOverlay(tile);
-  await Promise.resolve();
+  await openBuildingOverlay(tile);
   expect(document.getElementById('building-overlay').classList.contains('hidden')).toBe(false);
   expect(document.getElementById('building-overlay-image').getAttribute('src')).toBe('test.png');
   expect(game.callGemini).toHaveBeenCalled();
   await handleBuildingAction('talk');
-  expect(game.callGemini).toHaveBeenCalledTimes(2);
+  expect(game.callGemini).toHaveBeenCalledTimes(4);
 });
 
 test('escape closes overlays', async () => {
@@ -133,7 +132,7 @@ test('escape closes overlays', async () => {
   const { openTownMap, openBuildingOverlay } = await import('../src/game.js');
   openTownMap();
   const tile = { name: 'Inn', type: 'Inn', image: 'x.png' };
-  openBuildingOverlay(tile);
+  await openBuildingOverlay(tile);
   dom.window.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape' }));
   expect(document.getElementById('building-overlay').classList.contains('hidden')).toBe(true);
   expect(document.getElementById('town-overlay').classList.contains('hidden')).toBe(false);
