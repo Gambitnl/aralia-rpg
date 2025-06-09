@@ -111,6 +111,27 @@ test('building overlay displays image', async () => {
   expect(game.callGemini).toHaveBeenCalledTimes(4);
 });
 
+test('building overlay uses description template when provided', async () => {
+  setupStorage();
+  const { JSDOM } = await import('jsdom');
+  const dom = new JSDOM(`
+    <div id="building-overlay" class="hidden"></div>
+    <img id="building-overlay-image" />
+    <h3 id="building-overlay-name"></h3>
+    <p id="building-overlay-desc"></p>
+    <div id="building-actions"></div>
+    <div id="building-log"></div>
+    <div id="log"></div>
+  `);
+  global.document = dom.window.document;
+  global.window = dom.window;
+  const { openBuildingOverlay, game } = await import('../src/game.js');
+  game.callGemini = jest.fn().mockResolvedValue('desc');
+  const tile = { name: 'The Golden Griffin', type: 'Inn', image: 'test.png', descTemplate: 'Template for {name}' };
+  await openBuildingOverlay(tile);
+  expect(game.callGemini).toHaveBeenCalledWith('Template for The Golden Griffin');
+});
+
 test('escape closes overlays', async () => {
   setupStorage();
   const { JSDOM } = await import('jsdom');
