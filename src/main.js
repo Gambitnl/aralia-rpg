@@ -8,6 +8,10 @@ import {
   closeCompanion,
   openGlossary,
   closeGlossary,
+  openTownMap,
+  closeTownMap,
+  closeBuildingOverlay,
+  handleBuildingAction,
 } from './game.js';
 
 window.addEventListener('load', () => {
@@ -16,6 +20,9 @@ window.addEventListener('load', () => {
   document.getElementById('open-party').addEventListener('click', openParty);
   document.getElementById('close-party').addEventListener('click', closeParty);
   document.getElementById('close-companion').addEventListener('click', closeCompanion);
+  document.getElementById('open-town').addEventListener('click', openTownMap);
+  document.getElementById('close-town').addEventListener('click', closeTownMap);
+  document.getElementById('close-building').addEventListener('click', closeBuildingOverlay);
   document.getElementById('open-glossary').addEventListener('click', openGlossary);
   document.getElementById('close-glossary').addEventListener('click', closeGlossary);
   document.getElementById('save-game').addEventListener('click', () => game.saveGame());

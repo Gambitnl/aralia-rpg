@@ -46,6 +46,7 @@
             <p class="text-gray-400">An Adventurer's Tale</p>
             <button id="open-inventory" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Inventory</button>
             <button id="open-party" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Party</button>
+            <button id="open-town" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Town</button>
             <button id="open-glossary" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Glossary</button>
             <button id="save-game" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Save</button>
         </header>
@@ -115,6 +116,32 @@
             <h3 class="text-xl text-amber-100 mb-4">Party Companions</h3>
             <ul id="party-list" class="space-y-1"></ul>
             <button id="close-party" class="mt-4 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Close</button>
+          </div>
+        </div>
+
+        <div id="town-overlay"
+             class="hidden fixed inset-0 bg-black/75 flex items-center justify-center z-50">
+          <div class="bg-gray-800 p-6 rounded-lg max-w-sm w-full text-gray-300">
+            <h3 class="text-xl text-amber-100 mb-2">Town Map</h3>
+            <div id="town-map" class="grid grid-cols-8 gap-1 text-center font-mono mb-2"></div>
+            <p id="building-name" class="text-amber-200 h-6"></p>
+            <button id="close-town" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Close</button>
+          </div>
+        </div>
+
+        <div id="building-overlay"
+             class="hidden fixed inset-0 bg-black/75 flex items-center justify-center z-50">
+          <div class="bg-gray-800 p-6 rounded-lg max-w-2xl w-full text-gray-300 md:grid md:grid-cols-2 md:gap-4">
+            <h3 id="building-overlay-name" class="text-2xl text-amber-100 mb-2 md:col-span-2"></h3>
+            <div class="flex flex-col items-center mb-4 md:mb-0">
+              <img id="building-overlay-image" class="mx-auto mb-4 w-32 h-32 object-cover rounded" src="" alt="">
+              <p id="building-overlay-desc" class="text-sm text-gray-400"></p>
+            </div>
+            <div class="flex flex-col">
+              <div id="building-actions" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4"></div>
+              <div id="building-log" class="bg-black/20 p-2 rounded-md text-xs h-32 overflow-y-auto mb-4"></div>
+              <button id="close-building" class="bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 w-full">Close</button>
+            </div>
           </div>
         </div>
 

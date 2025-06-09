@@ -1,4 +1,5 @@
 import world, { worldSeed } from './world.js';
+import { getTown } from './town.js';
 
 const gameState = {
   // NOTE: If you change the structure of gameState,
@@ -21,7 +22,14 @@ const gameState = {
   log: [],
   isApiCallInProgress: false,
   worldSeed,
+  townState: { x: 0, y: 0 },
+  buildingLogs: {},
 };
+
+let currentTown = null;
+let currentBuilding = null;
+let currentTownCoords = null;
+let currentBuildingKey = null;
 
 const game = {
   init() {
@@ -43,6 +51,7 @@ const game = {
       companions: gameState.companions,
       worldSeed: gameState.worldSeed,
       log: gameState.log,
+      buildingLogs: gameState.buildingLogs,
     };
     localStorage.setItem('aralia-save', JSON.stringify(data));
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -63,6 +72,7 @@ const game = {
       if (Array.isArray(data.inventory)) gameState.inventory = data.inventory;
       if (Array.isArray(data.companions)) gameState.companions = data.companions;
       if (Array.isArray(data.log)) gameState.log = data.log;
+      if (data.buildingLogs && typeof data.buildingLogs === 'object') gameState.buildingLogs = data.buildingLogs;
       if (data.worldSeed) {
         gameState.worldSeed = data.worldSeed;
         world.noise = new SimplexNoise(data.worldSeed);
@@ -248,6 +258,7 @@ const game = {
     this.renderMap();
     this.renderInventory();
     this.renderCompanions();
+    this.updateTownButton(location);
   },
 
   renderMap() {
@@ -304,6 +315,53 @@ const game = {
     }
   },
 
+  updateTownButton(location) {
+    const btn = document.getElementById('open-town');
+    if (!btn) return;
+    btn.disabled = location.terrain !== 'town';
+  },
+
+  renderTownMap() {
+    if (!currentTown) return;
+    const container = document.getElementById('town-map');
+    container.innerHTML = '';
+    for (let y = 0; y < currentTown.height; y++) {
+      for (let x = 0; x < currentTown.width; x++) {
+        const cell = document.createElement('div');
+        cell.className = 'w-6 h-6 flex items-center justify-center border border-gray-600 text-xs cursor-pointer overflow-hidden';
+        const tile = currentTown.grid[y][x];
+        if (tile && tile.road) {
+          cell.textContent = '-';
+          cell.classList.add('text-yellow-500');
+        } else {
+          if (tile) {
+            const img = document.createElement('img');
+            img.src = tile.image;
+            img.alt = tile.type;
+            img.className = 'w-full h-full object-cover';
+            cell.appendChild(img);
+          } else {
+            cell.textContent = '.';
+          }
+        }
+        if (gameState.townState.x === x && gameState.townState.y === y) {
+          cell.classList.add('bg-amber-500/50');
+        }
+        cell.onclick = () => {
+          gameState.townState.x = x;
+          gameState.townState.y = y;
+          if (tile && !tile.road && tile.name) {
+            openBuildingOverlay(tile);
+          }
+          const name = tile ? (tile.road ? 'Road' : tile.name) : 'Empty Lot';
+          document.getElementById('building-name').textContent = name;
+          game.renderTownMap();
+        };
+        container.appendChild(cell);
+      }
+    }
+  },
+
   async generateVividDescription() {
     if (gameState.isApiCallInProgress) return;
     const describeButton = document.getElementById('describe-button');
@@ -341,6 +399,144 @@ function closeParty() {
   document.getElementById('party-overlay').classList.add('hidden');
 }
 
+function openTownMap() {
+  const location = world.getTileData(gameState.player.x, gameState.player.y);
+  if (location.terrain !== 'town') {
+    game.logMessage('There is no town here to explore.');
+    return;
+  }
+  currentTown = getTown(location.x, location.y);
+  currentTownCoords = { x: location.x, y: location.y };
+  gameState.townState = { x: 0, y: 0 };
+  const overlay = document.getElementById('town-overlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('building-name').textContent = '';
+  game.renderTownMap();
+  window.addEventListener('keydown', handleTownKey);
+}
+
+function closeTownMap() {
+  document.getElementById('town-overlay').classList.add('hidden');
+  window.removeEventListener('keydown', handleTownKey);
+}
+
+function handleTownKey(e) {
+  if (e.key === 'ArrowUp') moveTown('north');
+  if (e.key === 'ArrowDown') moveTown('south');
+  if (e.key === 'ArrowLeft') moveTown('west');
+  if (e.key === 'ArrowRight') moveTown('east');
+  if (e.key === 'Escape') {
+    if (!document.getElementById('building-overlay').classList.contains('hidden')) {
+      closeBuildingOverlay();
+    } else {
+      closeTownMap();
+    }
+  }
+}
+
+function moveTown(dir) {
+  if (!currentTown) return;
+  const { width, height } = currentTown;
+  let { x, y } = gameState.townState;
+  if (dir === 'north' && y > 0) y--;
+  if (dir === 'south' && y < height - 1) y++;
+  if (dir === 'west' && x > 0) x--;
+  if (dir === 'east' && x < width - 1) x++;
+  gameState.townState = { x, y };
+  const tile = currentTown.grid[y][x];
+  const name = tile ? (tile.road ? 'Road' : tile.name) : 'Empty Lot';
+  document.getElementById('building-name').textContent = name;
+  game.renderTownMap();
+}
+
+async function openBuildingOverlay(tile) {
+  currentBuilding = tile;
+  currentBuildingKey = `${currentTownCoords?.x ?? 0},${currentTownCoords?.y ?? 0}-${tile.x},${tile.y}`;
+  document.getElementById('building-overlay-name').textContent = tile.name;
+  const img = document.getElementById('building-overlay-image');
+  if (img) {
+    img.src = tile.image || '';
+    img.alt = tile.type || 'building';
+  }
+  const descEl = document.getElementById('building-overlay-desc');
+  if (descEl) descEl.textContent = '';
+  document.getElementById('building-overlay').classList.remove('hidden');
+  if (descEl) {
+    descEl.textContent = '...';
+    let prompt;
+    if (tile.descTemplate) {
+      prompt = tile.descTemplate.replace('{name}', tile.name).replace('{type}', tile.type);
+    } else {
+      prompt = `You are a DM. Describe ${tile.name}, a ${tile.type} in one sentence.`;
+    }
+    const text = await game.callGemini(prompt);
+    if (text) descEl.textContent = text; else descEl.textContent = '';
+  }
+
+  const logContainer = document.getElementById('building-log');
+  if (logContainer) {
+    logContainer.innerHTML = '';
+    (gameState.buildingLogs[currentBuildingKey] || []).slice().reverse().forEach((msg) => {
+      const p = document.createElement('p');
+      p.textContent = msg;
+      p.className = 'text-gray-400';
+      logContainer.appendChild(p);
+    });
+  }
+  await generateBuildingActions();
+}
+
+async function generateBuildingActions() {
+  const actionsContainer = document.getElementById('building-actions');
+  if (!actionsContainer || !currentBuilding) return;
+  actionsContainer.innerHTML = '<div class="sm:col-span-2 flex justify-center items-center"><span class="spinner"></span><p class="ml-2">Thinking...</p></div>';
+  const recent = (gameState.buildingLogs[currentBuildingKey] || []).slice(0, 3).join(' | ');
+  const prompt = `You are a DM for a fantasy RPG. The player is in ${currentBuilding.name}, a ${currentBuilding.type}. Recent events: ${recent}. Provide a comma-separated list of exactly 4 short actions (1-3 words each) they can take inside.`;
+  const actionsString = await game.callGemini(prompt);
+  actionsContainer.innerHTML = '';
+  if (actionsString) {
+    actionsString.split(',').map(a => a.trim()).slice(0,4).forEach((text) => {
+      if (!text) return;
+      const btn = document.createElement('button');
+      btn.textContent = text;
+      btn.className = 'bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 text-base w-full whitespace-normal';
+      btn.onclick = () => handleBuildingAction(text);
+      actionsContainer.appendChild(btn);
+    });
+  } else {
+    actionsContainer.innerHTML = '<p class="text-gray-500 sm:col-span-2">Could not get actions.</p>';
+  }
+}
+
+function closeBuildingOverlay() {
+  document.getElementById('building-overlay').classList.add('hidden');
+  const img = document.getElementById('building-overlay-image');
+  if (img) img.src = '';
+  const descEl = document.getElementById('building-overlay-desc');
+  if (descEl) descEl.textContent = '';
+  currentBuilding = null;
+  currentBuildingKey = null;
+}
+
+async function handleBuildingAction(action) {
+  if (!currentBuilding) return;
+  const prompt = `You are a DM. The player chooses to ${action} at ${currentBuilding.name}, a ${currentBuilding.type}. Respond in one short sentence.`;
+  const text = await game.callGemini(prompt);
+  if (text) {
+    if (!gameState.buildingLogs[currentBuildingKey]) gameState.buildingLogs[currentBuildingKey] = [];
+    gameState.buildingLogs[currentBuildingKey].unshift(text);
+    if (gameState.buildingLogs[currentBuildingKey].length > 50) gameState.buildingLogs[currentBuildingKey].pop();
+    const logContainer = document.getElementById('building-log');
+    if (logContainer) {
+      const p = document.createElement('p');
+      p.textContent = text;
+      p.className = 'text-gray-400';
+      logContainer.prepend(p);
+    }
+  }
+  generateBuildingActions();
+}
+
 function openCompanion(index) {
   const comp = gameState.companions[index];
   if (!comp) return;
@@ -376,4 +572,10 @@ export {
   closeCompanion,
   openGlossary,
   closeGlossary,
+  openTownMap,
+  closeTownMap,
+  openBuildingOverlay,
+  closeBuildingOverlay,
+  handleBuildingAction,
+  moveTown,
 };
