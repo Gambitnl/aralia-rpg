@@ -11,16 +11,72 @@ function mulberry32(a) {
   };
 }
 
+// Each building type defines its display names, a maximum count per town
+// and a simple placeholder image to use in the building overlay.
 const BUILDINGS = [
-  'Inn',
-  'Blacksmith',
-  'Market',
-  'Temple',
-  'Town Hall',
-  'Tavern',
-  'Stable',
-  'Library',
-  'Alchemist',
+  {
+    type: 'Inn',
+    max: 2,
+    names: ['The Golden Griffin', "Traveler's Rest", 'Silver Stag'],
+    image: 'https://placehold.co/64x64?text=Inn',
+    descTemplate: 'You are a DM. Describe {name}, a welcoming inn for weary travellers, in one sentence.',
+  },
+  {
+    type: 'Blacksmith',
+    max: 1,
+    names: ['Ironforge Smithy', 'Molten Hammer'],
+    image: 'https://placehold.co/64x64?text=Smith',
+    descTemplate: 'You are a DM. Describe {name}, a blacksmith\'s shop filled with sparks and anvils, in one sentence.',
+  },
+  {
+    type: 'Market',
+    max: 1,
+    names: ['Grand Bazaar', 'Trader Square'],
+    image: 'https://placehold.co/64x64?text=Market',
+    descTemplate: 'You are a DM. Describe {name}, the bustling market square, in one sentence.',
+  },
+  {
+    type: 'Temple',
+    max: 1,
+    names: ['Temple of Light', 'Shrine of Dawn'],
+    image: 'https://placehold.co/64x64?text=Temple',
+    descTemplate: 'You are a DM. Describe {name}, a quiet place of worship, in one sentence.',
+  },
+  {
+    type: 'Town Hall',
+    max: 1,
+    names: ['Town Hall'],
+    image: 'https://placehold.co/64x64?text=Hall',
+    descTemplate: 'You are a DM. Describe {name}, the administrative heart of the town, in one sentence.',
+  },
+  {
+    type: 'Tavern',
+    max: 2,
+    names: ['The Rusty Flagon', 'The Merry Goose'],
+    image: 'https://placehold.co/64x64?text=Tavern',
+    descTemplate: 'You are a DM. Describe {name}, a lively tavern full of locals, in one sentence.',
+  },
+  {
+    type: 'Stable',
+    max: 1,
+    names: ['Wayfarer Stables'],
+    image: 'https://placehold.co/64x64?text=Stable',
+    descTemplate: 'You are a DM. Describe {name}, the town\'s horse stable, in one sentence.',
+  },
+  {
+    type: 'Library',
+    max: 1,
+    names: ['Hall of Tomes'],
+    image: 'https://placehold.co/64x64?text=Library',
+    descTemplate: 'You are a DM. Describe {name}, a quiet library lined with books, in one sentence.',
+  },
+  {
+    type: 'Alchemist',
+    max: 1,
+    names: ['The Crystal Cauldron'],
+    image: 'https://placehold.co/64x64?text=Alch',
+    descTemplate: 'You are a DM. Describe {name}, an alchemist\'s shop of strange smells, in one sentence.',
+  },
 ];
 
 function generateTown(seed) {
@@ -30,6 +86,10 @@ function generateTown(seed) {
   const grid = [];
   const centerX = Math.floor(width / 2);
   const centerY = Math.floor(height / 2);
+
+  const counts = {};
+  for (const b of BUILDINGS) counts[b.type] = 0;
+
   for (let y = 0; y < height; y++) {
     const row = [];
     for (let x = 0; x < width; x++) {
@@ -40,12 +100,18 @@ function generateTown(seed) {
       }
       const nearRoad = Math.abs(x - centerX) <= 1 || Math.abs(y - centerY) <= 1;
       const chance = nearRoad ? 0.6 : 0.3;
+
       if (rand() < chance) {
-        const name = BUILDINGS[Math.floor(rand() * BUILDINGS.length)];
-        row.push({ x, y, name });
-      } else {
-        row.push(null);
+        const available = BUILDINGS.filter((b) => counts[b.type] < b.max);
+        if (available.length > 0) {
+          const b = available[Math.floor(rand() * available.length)];
+          counts[b.type] += 1;
+          const name = b.names[Math.floor(rand() * b.names.length)];
+          row.push({ x, y, type: b.type, name, image: b.image, descTemplate: b.descTemplate });
+          continue;
+        }
       }
+      row.push(null);
     }
     grid.push(row);
   }
@@ -75,4 +141,4 @@ function getTown(x, y) {
 // A default town using only the world seed is kept for backward compatibility
 const town = generateTown(worldSeed);
 
-export { generateTown, getTown, town };
+export { generateTown, getTown, town, BUILDINGS };
