@@ -23,10 +23,13 @@ const gameState = {
   isApiCallInProgress: false,
   worldSeed,
   townState: { x: 0, y: 0 },
+  buildingLogs: {},
 };
 
 let currentTown = null;
 let currentBuilding = null;
+let currentTownCoords = null;
+let currentBuildingKey = null;
 
 const game = {
   init() {
@@ -48,6 +51,7 @@ const game = {
       companions: gameState.companions,
       worldSeed: gameState.worldSeed,
       log: gameState.log,
+      buildingLogs: gameState.buildingLogs,
     };
     localStorage.setItem('aralia-save', JSON.stringify(data));
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -68,6 +72,7 @@ const game = {
       if (Array.isArray(data.inventory)) gameState.inventory = data.inventory;
       if (Array.isArray(data.companions)) gameState.companions = data.companions;
       if (Array.isArray(data.log)) gameState.log = data.log;
+      if (data.buildingLogs && typeof data.buildingLogs === 'object') gameState.buildingLogs = data.buildingLogs;
       if (data.worldSeed) {
         gameState.worldSeed = data.worldSeed;
         world.noise = new SimplexNoise(data.worldSeed);
@@ -401,6 +406,7 @@ function openTownMap() {
     return;
   }
   currentTown = getTown(location.x, location.y);
+  currentTownCoords = { x: location.x, y: location.y };
   gameState.townState = { x: 0, y: 0 };
   const overlay = document.getElementById('town-overlay');
   overlay.classList.remove('hidden');
@@ -445,6 +451,7 @@ function moveTown(dir) {
 
 function openBuildingOverlay(tile) {
   currentBuilding = tile;
+  currentBuildingKey = `${currentTownCoords?.x ?? 0},${currentTownCoords?.y ?? 0}-${tile.x},${tile.y}`;
   document.getElementById('building-overlay-name').textContent = tile.name;
   const img = document.getElementById('building-overlay-image');
   if (img) {
@@ -459,6 +466,40 @@ function openBuildingOverlay(tile) {
     game.callGemini(`You are a DM. Describe ${tile.name}, a ${tile.type} in one sentence.`)
       .then((text) => { if (text) descEl.textContent = text; else descEl.textContent = ''; });
   }
+
+  const logContainer = document.getElementById('building-log');
+  if (logContainer) {
+    logContainer.innerHTML = '';
+    (gameState.buildingLogs[currentBuildingKey] || []).slice().reverse().forEach((msg) => {
+      const p = document.createElement('p');
+      p.textContent = msg;
+      p.className = 'text-gray-400';
+      logContainer.appendChild(p);
+    });
+  }
+  generateBuildingActions();
+}
+
+async function generateBuildingActions() {
+  const actionsContainer = document.getElementById('building-actions');
+  if (!actionsContainer || !currentBuilding) return;
+  actionsContainer.innerHTML = '<div class="col-span-2 flex justify-center items-center"><span class="spinner"></span><p class="ml-2">Thinking...</p></div>';
+  const recent = (gameState.buildingLogs[currentBuildingKey] || []).slice(0, 3).join(' | ');
+  const prompt = `You are a DM for a fantasy RPG. The player is in ${currentBuilding.name}, a ${currentBuilding.type}. Recent events: ${recent}. Provide a comma-separated list of exactly 4 actions they can take inside.`;
+  const actionsString = await game.callGemini(prompt);
+  actionsContainer.innerHTML = '';
+  if (actionsString) {
+    actionsString.split(',').map(a => a.trim()).slice(0,4).forEach((text) => {
+      if (!text) return;
+      const btn = document.createElement('button');
+      btn.textContent = text;
+      btn.className = 'bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 text-sm';
+      btn.onclick = () => handleBuildingAction(text);
+      actionsContainer.appendChild(btn);
+    });
+  } else {
+    actionsContainer.innerHTML = '<p class="text-gray-500 col-span-2">Could not get actions.</p>';
+  }
 }
 
 function closeBuildingOverlay() {
@@ -468,13 +509,26 @@ function closeBuildingOverlay() {
   const descEl = document.getElementById('building-overlay-desc');
   if (descEl) descEl.textContent = '';
   currentBuilding = null;
+  currentBuildingKey = null;
 }
 
 async function handleBuildingAction(action) {
   if (!currentBuilding) return;
   const prompt = `You are a DM. The player chooses to ${action} at ${currentBuilding.name}, a ${currentBuilding.type}. Respond in one short sentence.`;
   const text = await game.callGemini(prompt);
-  if (text) game.logMessage(text);
+  if (text) {
+    if (!gameState.buildingLogs[currentBuildingKey]) gameState.buildingLogs[currentBuildingKey] = [];
+    gameState.buildingLogs[currentBuildingKey].unshift(text);
+    if (gameState.buildingLogs[currentBuildingKey].length > 50) gameState.buildingLogs[currentBuildingKey].pop();
+    const logContainer = document.getElementById('building-log');
+    if (logContainer) {
+      const p = document.createElement('p');
+      p.textContent = text;
+      p.className = 'text-gray-400';
+      logContainer.prepend(p);
+    }
+  }
+  generateBuildingActions();
 }
 
 function openCompanion(index) {

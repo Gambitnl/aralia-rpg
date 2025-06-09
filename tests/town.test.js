@@ -94,6 +94,8 @@ test('building overlay displays image', async () => {
     <img id="building-overlay-image" />
     <h3 id="building-overlay-name"></h3>
     <p id="building-overlay-desc"></p>
+    <div id="building-actions"></div>
+    <div id="building-log"></div>
     <div id="log"></div>
   `);
   global.document = dom.window.document;
@@ -122,6 +124,8 @@ test('escape closes overlays', async () => {
     <img id="building-overlay-image" />
     <p id="building-overlay-desc"></p>
     <h3 id="building-overlay-name"></h3>
+    <div id="building-actions"></div>
+    <div id="building-log"></div>
     <div id="log"></div>
   `);
   global.document = dom.window.document;
