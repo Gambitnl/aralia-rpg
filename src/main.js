@@ -11,6 +11,7 @@ import {
   openTownMap,
   closeTownMap,
   closeBuildingOverlay,
+  handleBuildingAction,
 } from './game.js';
 
 window.addEventListener('load', () => {
