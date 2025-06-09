@@ -45,6 +45,9 @@
             <h1 class="text-4xl md:text-5xl font-bold text-shadow text-amber-100">Aralia: The Shattered Crown</h1>
             <p class="text-gray-400">An Adventurer's Tale</p>
             <button id="open-inventory" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Inventory</button>
+            <button id="open-party" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Party</button>
+            <button id="open-glossary" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Glossary</button>
+            <button id="save-game" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Save</button>
         </header>
 
         <main class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -106,6 +109,44 @@
           </div>
         </div>
 
+        <div id="party-overlay"
+             class="hidden fixed inset-0 bg-black/75 flex items-center justify-center z-50">
+          <div class="bg-gray-800 p-6 rounded-lg max-w-sm w-full">
+            <h3 class="text-xl text-amber-100 mb-4">Party Companions</h3>
+            <ul id="party-list" class="space-y-1"></ul>
+            <button id="close-party" class="mt-4 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Close</button>
+          </div>
+        </div>
+
+        <div id="companion-overlay"
+             class="hidden fixed inset-0 bg-black/75 flex items-center justify-center z-50">
+          <div class="bg-gray-800 p-6 rounded-lg max-w-sm w-full text-gray-300">
+            <h3 id="companion-name" class="text-xl text-amber-100 mb-2"></h3>
+            <p id="companion-stats" class="mb-2"></p>
+            <p id="companion-gear" class="mb-2"></p>
+            <p id="companion-effects" class="mb-4"></p>
+            <button id="close-companion" class="bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Close</button>
+          </div>
+        </div>
+
+        <div id="glossary-overlay"
+             class="hidden fixed inset-0 bg-black/75 flex items-center justify-center z-50">
+          <div class="bg-gray-800 p-6 rounded-lg max-w-sm w-full text-gray-300">
+            <h3 class="text-xl text-amber-100 mb-4">Map Icon Glossary</h3>
+            <ul class="space-y-1">
+              <li><span class="text-blue-500 mr-2">≈</span>Ocean and Deep Ocean</li>
+              <li><span class="text-green-700 mr-2">.</span>Plains</li>
+              <li><span class="text-green-500 mr-2">T</span>Forest</li>
+              <li><span class="text-yellow-700 mr-2">^</span>Hills</li>
+              <li><span class="text-gray-400 mr-2">M</span>Mountains</li>
+              <li><span class="text-yellow-400 mr-2">s</span>Desert</li>
+              <li><span class="text-white mr-2">#</span>Town</li>
+              <li><span class="text-amber-300 mr-2">@</span>Your Party</li>
+            </ul>
+            <button id="close-glossary" class="mt-4 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Close</button>
+          </div>
+        </div>
+
         </main>
     </div>
 
@@ -114,10 +155,12 @@
         // all external scripts (like SimplexNoise) are loaded before any code runs.
         window.onload = function() {
             // --- WORLD GENERATION ---
+            let worldSeed = localStorage.getItem('aralia-world-seed') || Math.random().toString(36).slice(2);
+            localStorage.setItem('aralia-world-seed', worldSeed);
             const world = {
                 width: 50,
                 height: 50,
-                noise: new SimplexNoise('aralia'), // FIXED: Use version 2.4.0 which exports correctly
+                noise: new SimplexNoise(worldSeed), // FIXED: Use version 2.4.0 which exports correctly
                 terrainData: {
                     deep_ocean: { symbol: '≈', color: 'text-blue-800', names: ['The Abyssal Void', 'The Sunless Sea'] },
                     ocean: { symbol: '≈', color: 'text-blue-500', names: ['The Azure Expanse', 'The Sapphire Sea'] },
@@ -153,8 +196,18 @@
 
             // --- GAME STATE ---
             const gameState = {
+                // NOTE: If you change the structure of gameState,
+                // be sure to update saveGame/loadGame accordingly.
                 player: { x: 25, y: 25, name: 'Lyra' },
                 inventory: [],
+                companions: [
+                    {
+                        name: 'Young Phoenix Hatchling',
+                        stats: { HP: 10, Attack: 2, Defense: 1 },
+                        gear: [],
+                        effects: ['Rebirth once per day']
+                    }
+                ],
                 itemLibrary: { // Pre-populate starting items
                     'Old Map': { icon: '🗺️', description: 'A tattered, well-worn map of a land you barely recognize.' },
                     'Herbs': { icon: '🌿', description: 'A bundle of common herbs, useful for simple poultices.' },
@@ -162,18 +215,60 @@
                 },
                 log: [],
                 isApiCallInProgress: false,
+                worldSeed: worldSeed,
             };
 
             // --- GAME LOGIC ---
-            const game = {
+const game = {
                 init() {
                     // No longer need to initialize noise here, it's done at the top level
-                    this.addItem('Old Map', 1, true);
-                    this.addItem('Herbs', 3, true);
-                    this.addItem('Flint and Steel', 1, true);
+                    const loaded = this.loadGame();
+                    if (!loaded) {
+                        this.addItem('Old Map', 1, true);
+                        this.addItem('Herbs', 3, true);
+                        this.addItem('Flint and Steel', 1, true);
+                    }
                     this.renderAll();
                     this.logMessage('You begin your journey in the town of Oakhaven. The vast world of Aralia awaits.');
                     this.generateContextualActions();
+                },
+
+                saveGame() {
+                    const data = {
+                        player: gameState.player,
+                        inventory: gameState.inventory,
+                        companions: gameState.companions,
+                        worldSeed: gameState.worldSeed,
+                    };
+                    localStorage.setItem('aralia-save', JSON.stringify(data));
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'aralia-save.json';
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                    this.logMessage('[Game saved.]');
+                },
+
+                loadGame() {
+                    const raw = localStorage.getItem('aralia-save');
+                    if (!raw) return false;
+                    try {
+                        const data = JSON.parse(raw);
+                        if (data.player) gameState.player = data.player;
+                        if (Array.isArray(data.inventory)) gameState.inventory = data.inventory;
+                        if (Array.isArray(data.companions)) gameState.companions = data.companions;
+                        if (data.worldSeed) {
+                            worldSeed = data.worldSeed;
+                            gameState.worldSeed = data.worldSeed;
+                            world.noise = new SimplexNoise(worldSeed);
+                            localStorage.setItem('aralia-world-seed', worldSeed);
+                        }
+                        return true;
+                    } catch (e) {
+                        console.error('Load failed', e);
+                        return false;
+                    }
                 },
                 
 			// This is the NEW callGemini function for index.html
@@ -315,6 +410,7 @@
                     gameState.player.x = x;
                     gameState.player.y = y;
                     this.logMessage(`You travel ${direction}.`);
+                    this.renderAll();
                 },
 
                 logMessage(message) {
@@ -334,6 +430,7 @@
                     document.getElementById('player-location').textContent = `(${location.x}, ${location.y})`;
                     this.renderMap();
                     this.renderInventory();
+                    this.renderCompanions();
                 },
                 
                 renderMap() {
@@ -373,6 +470,22 @@
                         });
                     }
                 },
+
+                renderCompanions() {
+                    const partyList = document.getElementById('party-list');
+                    partyList.innerHTML = '';
+                    if (gameState.companions.length === 0) {
+                        partyList.innerHTML = '<li class="italic text-gray-500">You travel alone.</li>';
+                    } else {
+                        gameState.companions.forEach((comp, idx) => {
+                            const li = document.createElement('li');
+                            li.className = 'text-gray-300 cursor-pointer';
+                            li.textContent = comp.name;
+                            li.onclick = () => openCompanion(idx);
+                            partyList.appendChild(li);
+                        });
+                    }
+                },
                 
                 async generateVividDescription() {
                      if (gameState.isApiCallInProgress) return;
@@ -390,19 +503,59 @@
                     describeButton.innerHTML = '✨ Describe';
                 },
             };
+            // Expose game globally for inline button handlers
+            window.game = game;
 
-            function openInventory() {
-                const overlay = document.getElementById('inventory-overlay');
-                overlay.classList.remove('hidden');
-                game.renderInventory();
+function openInventory() {
+               const overlay = document.getElementById('inventory-overlay');
+               overlay.classList.remove('hidden');
+               game.renderInventory();
+           }
+
+           function closeInventory() {
+               document.getElementById('inventory-overlay').classList.add('hidden');
+           }
+
+           function openParty() {
+               const overlay = document.getElementById('party-overlay');
+               overlay.classList.remove('hidden');
+               game.renderCompanions();
+           }
+
+           function closeParty() {
+               document.getElementById('party-overlay').classList.add('hidden');
+           }
+
+           function openCompanion(index) {
+               const comp = gameState.companions[index];
+               if (!comp) return;
+               document.getElementById('companion-name').textContent = comp.name;
+               document.getElementById('companion-stats').textContent = Object.entries(comp.stats || {}).map(([k,v]) => `${k}: ${v}`).join(', ');
+               document.getElementById('companion-gear').textContent = 'Gear: ' + (comp.gear && comp.gear.length ? comp.gear.join(', ') : 'None');
+               document.getElementById('companion-effects').textContent = 'Effects: ' + (comp.effects && comp.effects.length ? comp.effects.join(', ') : 'None');
+               document.getElementById('companion-overlay').classList.remove('hidden');
+           }
+
+           function closeCompanion() {
+               document.getElementById('companion-overlay').classList.add('hidden');
+           }
+
+            function openGlossary() {
+                document.getElementById('glossary-overlay').classList.remove('hidden');
             }
 
-            function closeInventory() {
-                document.getElementById('inventory-overlay').classList.add('hidden');
+            function closeGlossary() {
+                document.getElementById('glossary-overlay').classList.add('hidden');
             }
 
-            document.getElementById('open-inventory').addEventListener('click', openInventory);
-            document.getElementById('close-inventory').addEventListener('click', closeInventory);
+           document.getElementById('open-inventory').addEventListener('click', openInventory);
+           document.getElementById('close-inventory').addEventListener('click', closeInventory);
+           document.getElementById('open-party').addEventListener('click', openParty);
+           document.getElementById('close-party').addEventListener('click', closeParty);
+           document.getElementById('close-companion').addEventListener('click', closeCompanion);
+           document.getElementById('open-glossary').addEventListener('click', openGlossary);
+           document.getElementById('close-glossary').addEventListener('click', closeGlossary);
+           document.getElementById('save-game').addEventListener('click', () => game.saveGame());
 
             // Start the game
             game.init();
