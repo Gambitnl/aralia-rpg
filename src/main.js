@@ -23,9 +23,6 @@ window.addEventListener('load', () => {
   document.getElementById('open-town').addEventListener('click', openTownMap);
   document.getElementById('close-town').addEventListener('click', closeTownMap);
   document.getElementById('close-building').addEventListener('click', closeBuildingOverlay);
-  document.getElementById('building-talk').addEventListener('click', () => handleBuildingAction('talk'));
-  document.getElementById('building-shop').addEventListener('click', () => handleBuildingAction('shop'));
-  document.getElementById('building-rest').addEventListener('click', () => handleBuildingAction('rest'));
   document.getElementById('open-glossary').addEventListener('click', openGlossary);
   document.getElementById('close-glossary').addEventListener('click', closeGlossary);
   document.getElementById('save-game').addEventListener('click', () => game.saveGame());
