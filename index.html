@@ -47,8 +47,7 @@
             <button id="open-inventory" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Inventory</button>
             <button id="open-party" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Party</button>
             <button id="open-glossary" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Glossary</button>
-            <button id="save-game" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Save</button>
-            <button id="main-menu" onclick="location.reload()" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Main Menu</button>
+            <button id="main-menu-btn" onclick="showMainMenu()" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Main Menu</button>
         </header>
 
         <main class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -74,7 +73,6 @@
                         <h3 id="location-name" class="text-2xl font-bold text-amber-100 mb-2"></h3>
                         <div class="space-x-2">
                             <button id="describe-button" onclick="game.generateVividDescription()" class="bg-yellow-600/50 hover:bg-yellow-500/50 text-white text-xs font-bold py-1 px-2 rounded-lg">✨ Describe</button>
-                            <button id="save-button" onclick="game.saveGame()" class="bg-gray-600 hover:bg-gray-500 text-white text-xs font-bold py-1 px-2 rounded-lg">💾 Save</button>
                         </div>
                     </div>
                     <p id="location-description" class="text-gray-300"></p>
@@ -149,6 +147,16 @@
             </ul>
             <button id="close-glossary" class="mt-4 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1">Close</button>
           </div>
+        </div>
+
+        <div id="main-menu-overlay" class="hidden fixed inset-0 bg-gray-900/95 flex items-center justify-center z-40">
+            <div class="text-center">
+                <h2 class="text-3xl text-amber-100 mb-8">Main Menu</h2>
+                <button id="menu-new-game" onclick="startNewGamePlaceholder()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 px-6 rounded-lg text-lg mb-4 w-64">New Game</button><br>
+                <button id="menu-load-game" onclick="game.loadGame(); hideMainMenu();" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg mb-4 w-64">Load Game</button><br>
+                <button id="menu-save-game" onclick="game.saveGame();" class.disabled="!game || !game.gameState" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg mb-4 w-64">Save Game</button><br>
+                <button id="menu-continue" onclick="hideMainMenu()" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg w-64">Continue Adventure</button>
+            </div>
         </div>
 
         </main>
@@ -498,6 +506,78 @@ const game = {
             // Expose game globally for inline button handlers
             window.game = game;
 
+            function startNewGamePlaceholder() {
+                // Reset core game state parts to defaults
+                gameState.player = { x: 25, y: 25, name: 'Adventurer' }; // Default starting location and name
+                gameState.inventory = []; // Start with an empty inventory
+                // Add a few basic items like in the original game.init if no load
+                if (game && typeof game.addItem === 'function') {
+                     // We need to ensure itemLibrary has these items or addItem handles their creation.
+                     // Assuming addItem will call generateItemDetails if item is unknown.
+                    game.addItem('Old Map', 1, true); // true for silent add
+                    game.addItem('Herbs', 3, true);
+                    game.addItem('Flint and Steel', 1, true);
+                }
+                gameState.companions = []; // Start with no companions for a new game
+                gameState.log = []; // Clear the log
+
+                game.logMessage('New game started with a default character: Adventurer.');
+
+                // Ensure worldSeed is reset or handled if new game should have a new world
+                // For now, we'll assume the current worldSeed is fine for a placeholder,
+                // or that a full new game implementation would handle this more robustly.
+                // localStorage.removeItem('aralia-world-seed'); // Optionally uncomment to force new world on next full load
+                // worldSeed = Math.random().toString(36).slice(2);
+                // localStorage.setItem('aralia-world-seed', worldSeed);
+                // world.noise = new SimplexNoise(worldSeed); // Re-initialize noise with new seed
+
+                hideMainMenu(); // Hide the main menu
+
+                if (game && typeof game.renderAll === 'function') {
+                    game.renderAll(); // Re-render the game UI with the new state
+                }
+                if (game && typeof game.generateContextualActions === 'function') {
+                    game.generateContextualActions(); // Generate actions for the starting location
+                }
+            }
+
+            function showMainMenu() {
+                // Hide game interface elements
+                document.querySelector('main > .grid').style.display = 'none'; // Hides the main two-column layout
+                // Potentially hide other specific game UI parts if not covered by the above
+                document.querySelector('header').style.filter = 'blur(4px)'; // Optional: blur background
+
+                // Show main menu overlay
+                document.getElementById('main-menu-overlay').classList.remove('hidden');
+
+                // Disable save button if game state is not available (e.g. before new game)
+                const saveButton = document.getElementById('menu-save-game');
+                if (typeof game === 'undefined' || !game || typeof game.saveGame !== 'function') {
+                     // if game object or saveGame is not available, disable and show message
+                    saveButton.disabled = true;
+                    saveButton.title = "Save game functionality is not available.";
+                } else {
+                    // check if there is character data to save
+                    // This is a simplified check. Actual check might involve more game state details.
+                    const characterExists = gameState && gameState.player && gameState.player.name !== 'Lyra'; // Assuming 'Lyra' is default before proper save.
+                    saveButton.disabled = !characterExists;
+                    if (!characterExists) {
+                        saveButton.title = "No character data to save. Start a new game or load a game.";
+                    } else {
+                        saveButton.title = "";
+                    }
+                }
+            }
+
+            function hideMainMenu() {
+                // Show game interface elements
+                document.querySelector('main > .grid').style.display = ''; // Restore display
+                document.querySelector('header').style.filter = ''; // Optional: remove blur
+
+                // Hide main menu overlay
+                document.getElementById('main-menu-overlay').classList.add('hidden');
+            }
+
 function openInventory() {
                const overlay = document.getElementById('inventory-overlay');
                overlay.classList.remove('hidden');
@@ -547,9 +627,7 @@ function openInventory() {
            document.getElementById('close-companion').addEventListener('click', closeCompanion);
            document.getElementById('open-glossary').addEventListener('click', openGlossary);
            document.getElementById('close-glossary').addEventListener('click', closeGlossary);
-           document.getElementById('save-game').addEventListener('click', () => game.saveGame());
-
-            // Expose game globally so buttons can access it
+           // Expose game globally so buttons can access it
             window.game = game;
 
             // Start the game
