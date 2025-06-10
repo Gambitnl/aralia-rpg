@@ -38,8 +38,9 @@ function hideMainMenu() {
     document.getElementById('main-menu-overlay').classList.add('hidden');
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    loadMainMenu();
+window.addEventListener('DOMContentLoaded', async () => {
+    await loadMainMenu();
     const btn = document.getElementById('main-menu-btn');
     if (btn) btn.addEventListener('click', showMainMenu);
+    showMainMenu();
 });
