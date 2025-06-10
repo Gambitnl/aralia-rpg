@@ -216,7 +216,8 @@ def select_subclass(character_state: CharacterState, data_manager: DataManagemen
         character_state.subclass_name = None
 
 
-def main():
+def create_character(print_summary: bool = True) -> CharacterState:
+    """Interactively build and return a CharacterState."""
     print("Welcome to the D&D Character Creator!")
 
     data_manager = DataManagementModule()
@@ -224,52 +225,59 @@ def main():
     rules_engine = RulesEngine(data_manager)
 
     available_species = data_manager.get_all_species()
-    if not available_species: # Check if list is empty or None
+    if not available_species:  # Check if list is empty or None
         print("No species data found. Exiting.")
-        return # Exit if no species to choose from
+        return character_state
     display_options(available_species, "Species")
     chosen_species_data = get_user_choice(available_species, "species")
-    if chosen_species_data: # Check if a choice was made
+    if chosen_species_data:
         character_state.species_name = chosen_species_data.name
         print(f"You chose: {character_state.species_name}")
     else:
         print("No species selected. Exiting.")
-        return # Exit if no species chosen
+        return character_state
 
     available_classes = data_manager.get_all_classes()
-    if not available_classes: # Check if list is empty or None
+    if not available_classes:
         print("No class data found. Exiting.")
-        return
+        return character_state
     display_options(available_classes, "Class")
     chosen_class_data = get_user_choice(available_classes, "class")
-    if chosen_class_data: # Check if a choice was made
+    if chosen_class_data:
         character_state.class_name = chosen_class_data.name
         print(f"You chose: {character_state.class_name}")
     else:
         print("No class selected. Exiting.")
-        return # Exit if no class chosen
+        return character_state
 
     assign_stats_point_buy(character_state, rules_engine)
 
-    # Subclass Selection: only proceed if a class was actually selected.
     if character_state.class_name:
         select_subclass(character_state, data_manager)
 
-    print("\n--- Character Summary ---")
-    print(f"Species: {character_state.species_name}")
-    print(f"Class: {character_state.class_name}")
-    if character_state.subclass_name: # Only print subclass if one was selected
-        print(f"Subclass: {character_state.subclass_name}")
-    else:
-        print("Subclass: None (or chosen at a later level)") # Clarify if no subclass
+    if print_summary:
+        print("\n--- Character Summary ---")
+        print(f"Species: {character_state.species_name}")
+        print(f"Class: {character_state.class_name}")
+        if character_state.subclass_name:
+            print(f"Subclass: {character_state.subclass_name}")
+        else:
+            print("Subclass: None (or chosen at a later level)")
 
-    final_scores_with_modifiers = rules_engine.get_final_ability_scores_and_modifiers(character_state)
-    print("\nFinal Ability Scores (Base):")
-    for ability, data_val in final_scores_with_modifiers.items():
-        print(f"  {ability+':':<15} {data_val['score']:<3} (Mod: {data_val['modifier']:+})")
+        final_scores_with_modifiers = rules_engine.get_final_ability_scores_and_modifiers(character_state)
+        print("\nFinal Ability Scores (Base):")
+        for ability, data_val in final_scores_with_modifiers.items():
+            print(f"  {ability+':':<15} {data_val['score']:<3} (Mod: {data_val['modifier']:+})")
 
-    print("\nNote: Background selection and its impact on ability scores will be implemented next.")
-    print("\nFurther steps: Feats, Equipment, Spells...")
+        print("\nNote: Background selection and its impact on ability scores will be implemented next.")
+        print("\nFurther steps: Feats, Equipment, Spells...")
+
+    return character_state
+
+
+def main() -> CharacterState:
+    """Entry point when run as a script."""
+    return create_character()
 
 if __name__ == "__main__":
     main()
