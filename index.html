@@ -234,45 +234,7 @@ const game = {
     this.renderAll();
     this.generateContextualActions();
 },
-                },
 
-                saveGame() {
-                    const data = {
-                        player: gameState.player,
-                        inventory: gameState.inventory,
-                        companions: gameState.companions,
-                        worldSeed: gameState.worldSeed,
-                    };
-                    localStorage.setItem('aralia-save', JSON.stringify(data));
-                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                    const a = document.createElement('a');
-                    a.href = URL.createObjectURL(blob);
-                    a.download = 'aralia-save.json';
-                    a.click();
-                    URL.revokeObjectURL(a.href);
-                    this.logMessage('[Game saved.]');
-                },
-
-                loadGame() {
-                    const raw = localStorage.getItem('aralia-save');
-                    if (!raw) return false;
-                    try {
-                        const data = JSON.parse(raw);
-                        if (data.player) gameState.player = data.player;
-                        if (Array.isArray(data.inventory)) gameState.inventory = data.inventory;
-                        if (Array.isArray(data.companions)) gameState.companions = data.companions;
-                        if (data.worldSeed) {
-                            worldSeed = data.worldSeed;
-                            gameState.worldSeed = data.worldSeed;
-                            world.noise = new SimplexNoise(worldSeed);
-                            localStorage.setItem('aralia-world-seed', worldSeed);
-                        }
-                        return true;
-                    } catch (e) {
-                        console.error('Load failed', e);
-                        return false;
-                    }
-                },
                 
 			// This is the NEW callGemini function for index.html
 			async callGemini(prompt) {
