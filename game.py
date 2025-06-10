@@ -1,4 +1,6 @@
 from typing import Any, Dict, Optional
+import json
+from dataclasses import asdict, is_dataclass
 
 
 def _get_attr(obj: Any, attr: str, default: Any = None) -> Any:
@@ -6,6 +8,61 @@ def _get_attr(obj: Any, attr: str, default: Any = None) -> Any:
     if isinstance(obj, dict):
         return obj.get(attr, default)
     return getattr(obj, attr, default)
+
+
+def save_game(character: Any, filename: str = "saved_game.json") -> None:
+    """Serialize the current character to a JSON file."""
+    if character is None:
+        print("No character to save.")
+        return
+    try:
+        if is_dataclass(character):
+            data = asdict(character)
+        elif isinstance(character, dict):
+            data = character
+        else:
+            data = character.__dict__  # type: ignore[attr-defined]
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        print(f"Game saved to {filename}.")
+    except Exception as e:  # broad catch to avoid crashing game menu
+        print(f"Failed to save game: {e}")
+
+
+def load_game(filename: str = "saved_game.json") -> Optional[Any]:
+    """Load character data from a JSON file."""
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        try:
+            from dnd_character_logic import CharacterState
+
+            if isinstance(data, dict):
+                character = CharacterState(**data)
+            else:
+                character = data
+        except Exception:
+            character = data
+        print(f"Game loaded from {filename}.")
+        return character
+    except FileNotFoundError:
+        print(f"Save file {filename} not found.")
+    except Exception as e:
+        print(f"Failed to load game: {e}")
+    return None
+
+
+def display_character(character: Any) -> None:
+    """Print a summary of the current character."""
+    if character is None:
+        print("No character loaded.")
+        return
+    if isinstance(character, dict):
+        for key, value in character.items():
+            print(f"{key}: {value}")
+    else:
+        for field in getattr(character, "__dataclass_fields__", {}):
+            print(f"{field}: {_get_attr(character, field)}")
 
 def run_character_creator() -> Optional[Any]:
     """Launch the character creator and return the resulting character object."""
@@ -46,11 +103,11 @@ def main_menu():
     while True:
         print("\n--- Main Game Menu ---")
         print("1. New Game (Create Character)")
-        print("2. Load Game (Not Implemented)")
-        if character:
-            char_name = _get_attr(character, 'name', 'Current Character')
-            print(f"3. Continue Adventure as {char_name}")
-        print("4. Quit")
+        print("2. Load Game")
+        print("3. Save Game")
+        print("4. View Current Character")
+        print("5. Continue Adventure")
+        print("6. Quit")
 
         choice = input("Enter your choice: ")
 
@@ -66,10 +123,22 @@ def main_menu():
             else:
                 print("Character creation was not completed or was cancelled.")
         elif choice == '2':
-            print("Load Game feature is not implemented yet.")
-        elif choice == '3' and character:
-            game_loop(character)
+            loaded = load_game()
+            if loaded is not None:
+                character = loaded
+        elif choice == '3':
+            if character:
+                save_game(character)
+            else:
+                print("No character loaded to save.")
         elif choice == '4':
+            display_character(character)
+        elif choice == '5':
+            if character:
+                game_loop(character)
+            else:
+                print("No character loaded.")
+        elif choice == '6':
             print("Exiting game. Goodbye!")
             break
         else:
