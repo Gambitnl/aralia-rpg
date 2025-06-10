@@ -13,9 +13,13 @@ export default async function handler(request, response) {
       return response.status(400).json({ message: 'Prompt is required' });
     }
 
-    // 3. Use the secret API key from Vercel's environment variables
-    const apiKey = process.env.GEMINI_API_KEY;
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  // 3. Use the secret API key from Vercel's environment variables
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn('GEMINI_API_KEY not set');
+    return response.status(500).json({ message: 'API key not configured' });
+  }
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     const payload = {
       contents: [{ role: "user", parts: [{ text: prompt }] }],
