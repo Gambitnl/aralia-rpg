@@ -149,15 +149,7 @@
           </div>
         </div>
 
-        <div id="main-menu-overlay" class="hidden fixed inset-0 bg-gray-900/95 flex items-center justify-center z-40">
-            <div class="text-center">
-                <h2 class="text-3xl text-amber-100 mb-8">Main Menu</h2>
-                <button id="menu-new-game" onclick="startNewGamePlaceholder()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 px-6 rounded-lg text-lg mb-4 w-64">New Game</button><br>
-                <button id="menu-load-game" onclick="game.loadGame(); hideMainMenu();" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg mb-4 w-64">Load Game</button><br>
-                <button id="menu-save-game" onclick="game.saveGame();" class.disabled="!game || !game.gameState" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg mb-4 w-64">Save Game</button><br>
-                <button id="menu-continue" onclick="hideMainMenu()" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg w-64">Continue Adventure</button>
-            </div>
-        </div>
+        <div id="main-menu-container"></div>
 
         </main>
     </div>
@@ -505,6 +497,7 @@ const game = {
             };
             // Expose game globally for inline button handlers
             window.game = game;
+            window.gameState = gameState;
 
             function startNewGamePlaceholder() {
                 // Reset core game state parts to defaults
@@ -541,44 +534,7 @@ const game = {
                 }
             }
 
-            function showMainMenu() {
-                // Hide game interface elements
-                const mainEl = document.querySelector('main');
-                if (mainEl) mainEl.style.display = 'none'; // Hides the main two-column layout
-                // Potentially hide other specific game UI parts if not covered by the above
-                document.querySelector('header').style.filter = 'blur(4px)'; // Optional: blur background
-
-                // Show main menu overlay
-                document.getElementById('main-menu-overlay').classList.remove('hidden');
-
-                // Disable save button if game state is not available (e.g. before new game)
-                const saveButton = document.getElementById('menu-save-game');
-                if (typeof game === 'undefined' || !game || typeof game.saveGame !== 'function') {
-                     // if game object or saveGame is not available, disable and show message
-                    saveButton.disabled = true;
-                    saveButton.title = "Save game functionality is not available.";
-                } else {
-                    // check if there is character data to save
-                    // This is a simplified check. Actual check might involve more game state details.
-                    const characterExists = gameState && gameState.player && gameState.player.name !== 'Lyra'; // Assuming 'Lyra' is default before proper save.
-                    saveButton.disabled = !characterExists;
-                    if (!characterExists) {
-                        saveButton.title = "No character data to save. Start a new game or load a game.";
-                    } else {
-                        saveButton.title = "";
-                    }
-                }
-            }
-
-            function hideMainMenu() {
-                // Show game interface elements
-                const mainEl = document.querySelector('main');
-                if (mainEl) mainEl.style.display = ''; // Restore display
-                document.querySelector('header').style.filter = ''; // Optional: remove blur
-
-                // Hide main menu overlay
-                document.getElementById('main-menu-overlay').classList.add('hidden');
-            }
+            // Main menu logic moved to main-menu.js
 
 function openInventory() {
                const overlay = document.getElementById('inventory-overlay');
@@ -631,11 +587,12 @@ function openInventory() {
            document.getElementById('close-glossary').addEventListener('click', closeGlossary);
            // Expose game globally so buttons can access it
             window.game = game;
+            window.gameState = gameState;
 
             // Start the game
             game.init();
-            document.getElementById('main-menu-btn').addEventListener('click', showMainMenu);
         };
     </script>
+    <script src="main-menu.js"></script>
 </body>
 </html>
