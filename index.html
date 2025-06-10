@@ -48,6 +48,7 @@
             <button id="open-party" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Party</button>
             <button id="open-glossary" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Glossary</button>
             <button id="save-game" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Save</button>
+            <button id="load-game" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Load</button>
         </header>
 
         <main class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -547,6 +548,7 @@ function openInventory() {
            document.getElementById('open-glossary').addEventListener('click', openGlossary);
            document.getElementById('close-glossary').addEventListener('click', closeGlossary);
            document.getElementById('save-game').addEventListener('click', () => game.saveGame());
+           document.getElementById('load-game').addEventListener('click', () => game.loadGame());
 
             // Expose game globally so buttons can access it
             window.game = game;
