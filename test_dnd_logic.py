@@ -1,4 +1,5 @@
 import unittest
+from unittest import mock
 
 # Assuming dnd_data_structures.py and dnd_character_logic.py are in the same directory
 # or accessible via PYTHONPATH for the testing environment.
@@ -279,6 +280,22 @@ class TestDummyImplementations(unittest.TestCase):
         self.assertTrue(len(self.dummy_data_manager.get_all_classes()) > 0)
 
 
+class TestRunCharacterCreator(unittest.TestCase):
+    """Ensure run_character_creator calls the create_character function directly."""
+
+    def test_run_character_creator_returns_character(self):
+        dummy_character = {"name": "Tester"}
+        with mock.patch('main_character_creator.create_character', return_value=dummy_character) as mock_create, \
+             mock.patch('subprocess.run') as mock_subproc:
+            from game import run_character_creator
+
+            result = run_character_creator()
+
+            self.assertEqual(result, dummy_character)
+            mock_create.assert_called_once()
+            mock_subproc.assert_not_called()
+
+
 if __name__ == "__main__":
     if MODULES_LOADED:
         print("Running tests with actual data structures and logic modules.")
@@ -298,6 +315,8 @@ if __name__ == "__main__":
         # Add dummy versions of the main tests if desired, but they might be redundant
         # if they rely on the same dummy classes as TestDummyImplementations.
         # For now, TestDummyImplementations covers the "modules failed to load" scenario.
+
+    suite.addTest(unittest.makeSuite(TestRunCharacterCreator))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)
