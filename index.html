@@ -543,7 +543,8 @@ const game = {
 
             function showMainMenu() {
                 // Hide game interface elements
-                document.querySelector('main > .grid').style.display = 'none'; // Hides the main two-column layout
+                const mainEl = document.querySelector('main');
+                if (mainEl) mainEl.style.display = 'none'; // Hides the main two-column layout
                 // Potentially hide other specific game UI parts if not covered by the above
                 document.querySelector('header').style.filter = 'blur(4px)'; // Optional: blur background
 
@@ -571,7 +572,8 @@ const game = {
 
             function hideMainMenu() {
                 // Show game interface elements
-                document.querySelector('main > .grid').style.display = ''; // Restore display
+                const mainEl = document.querySelector('main');
+                if (mainEl) mainEl.style.display = ''; // Restore display
                 document.querySelector('header').style.filter = ''; // Optional: remove blur
 
                 // Hide main menu overlay
