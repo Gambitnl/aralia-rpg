@@ -14,7 +14,8 @@ function showMainMenu() {
     const mainEl = document.querySelector('main');
     if (mainEl) mainEl.style.display = 'none';
     document.querySelector('header').style.filter = 'blur(4px)';
-    document.getElementById('main-menu-overlay').classList.remove('hidden');
+    const overlay = document.getElementById('main-menu-overlay');
+    if (overlay) overlay.classList.remove('hidden');
 
     const saveButton = document.getElementById('menu-save-game');
     if (typeof game === 'undefined' || !game || typeof game.saveGame !== 'function') {
@@ -35,7 +36,8 @@ function hideMainMenu() {
     const mainEl = document.querySelector('main');
     if (mainEl) mainEl.style.display = '';
     document.querySelector('header').style.filter = '';
-    document.getElementById('main-menu-overlay').classList.add('hidden');
+    const overlay = document.getElementById('main-menu-overlay');
+    if (overlay) overlay.classList.add('hidden');
 }
 
 window.addEventListener('DOMContentLoaded', () => {
