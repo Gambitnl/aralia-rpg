@@ -1,0 +1,229 @@
+{
+  "name": "Aasimar",
+  "variants": [
+    {
+      "version_name": "Mordenkainen's Multiverse",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "source_url": "http://dnd5e.wikidot.com/aasimar",
+      "ability_score_increase": [
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 1,
+              "increase": 2
+            },
+            {
+              "choose": 1,
+              "increase": 1
+            }
+          ],
+          "description": "Increase one score by 2 and increase a different score by 1."
+        },
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 3,
+              "increase": 1
+            }
+          ],
+          "description": "Or increase three different scores by 1."
+        }
+      ],
+      "size": "Medium or Small (player choice)",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "You can see in dim light within 60 feet of you as if it were bright light and in darkness as if it were dim light. You discern colors in that darkness only as shades of gray."
+        },
+        {
+          "name": "Celestial Resistance",
+          "description": "You have resistance to necrotic damage and radiant damage."
+        },
+        {
+          "name": "Healing Hands",
+          "description": "As an action, you can touch a creature and roll a number of d4s equal to your proficiency bonus. The creature regains a number of hit points equal to the total rolled. Once you use this trait, you can’t use it again until you finish a long rest."
+        },
+        {
+          "name": "Light Bearer",
+          "description": "You know the Light cantrip. Charisma is your spellcasting ability for it."
+        },
+        {
+          "name": "Celestial Revelation",
+          "description": "When you reach 3rd level, choose one of the revelation options below. Thereafter, you can use a bonus action to unleash the celestial energy within yourself, gaining the benefits of that revelation. Your transformation lasts for 1 minute or until you end it as a bonus action. Once you transform using your revelation below, you can’t use it again until you finish a long rest:",
+          "options_description": "// TODO: Parse the following options into a structured list if possible, for now it's a single string.\nNecrotic Shroud. Your eyes briefly become pools of darkness, and ghostly, flightless wings sprout from your back temporarily. Creatures other than your allies within 10 feet of you that can see you must succeed on a Charisma saving throw (DC 8 + your proficiency bonus + your Charisma modifier) or become frightened of you until the end of your next turn. Until the transformation ends, once on each of your turns, you can deal extra necrotic damage to one target when you deal damage to it with an attack or a spell. The extra damage equals your proficiency bonus.\nRadiant Consumption. Searing light temporarily radiates from your eyes and mouth. For the duration, you shed bright light in a 10-foot radius and dim light for an additional 10 feet, and at the end of each of your turns, each creature within 10 feet of you takes radiant damage equal to your proficiency bonus. Until the transformation ends, once on each of your turns, you can deal extra radiant damage to one target when you deal damage to it with an attack or a spell. The extra damage equals your proficiency bonus.\nRadiant Soul. Two luminous, spectral wings sprout from your back temporarily. Until the transformation ends, you have a flying speed equal to your walking speed, and once on each of your turns, you can deal extra radiant damage to one target when you deal damage to it with an attack or a spell. The extra damage equals your proficiency bonus.",
+          "options": [
+            {
+              "name": "Necrotic Shroud",
+              "description": "Your eyes briefly become pools of darkness, and ghostly, flightless wings sprout from your back temporarily. Creatures other than your allies within 10 feet of you that can see you must succeed on a Charisma saving throw (DC 8 + your proficiency bonus + your Charisma modifier) or become frightened of you until the end of your next turn. Until the transformation ends, once on each of your turns, you can deal extra necrotic damage to one target when you deal damage to it with an attack or a spell. The extra damage equals your proficiency bonus."
+            },
+            {
+              "name": "Radiant Consumption",
+              "description": "Searing light temporarily radiates from your eyes and mouth. For the duration, you shed bright light in a 10-foot radius and dim light for an additional 10 feet, and at the end of each of your turns, each creature within 10 feet of you takes radiant damage equal to your proficiency bonus. Until the transformation ends, once on each of your turns, you can deal extra radiant damage to one target when you deal damage to it with an attack or a spell. The extra damage equals your proficiency bonus."
+            },
+            {
+              "name": "Radiant Soul",
+              "description": "Two luminous, spectral wings sprout from your back temporarily. Until the transformation ends, you have a flying speed equal to your walking speed, and once on each of your turns, you can deal extra radiant damage to one target when you deal damage to it with an attack or a spell. The extra damage equals your proficiency bonus."
+            }
+          ]
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ],
+        "choose": 1,
+        "options_description": "one other language that you and your DM agree is appropriate for the character."
+      }
+    },
+    {
+      "version_name": "Volo's Guide - Protector",
+      "source": "Volo's Guide to Monsters",
+      "source_url": "http://dnd5e.wikidot.com/aasimar",
+      "ability_score_increase": [
+        {
+          "ability": "Charisma",
+          "increase": 2
+        },
+        {
+          "ability": "Wisdom",
+          "increase": 1
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "Blessed with a radiant soul, your vision can easily cut through darkness. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+        },
+        {
+          "name": "Celestial Resistance",
+          "description": "You have resistance to necrotic damage and radiant damage."
+        },
+        {
+          "name": "Healing Hands",
+          "description": "As an action, you can touch a creature and cause it to regain a number of hit points equal to your level. Once you use this trait, you can't use it again until you finish a long rest."
+        },
+        {
+          "name": "Light Bearer",
+          "description": "You know the Light cantrip. Charisma is your spellcasting ability for it."
+        },
+        {
+          "name": "Radiant Soul (Protector)",
+          "description": "Starting at 3rd level, you can use your action to unleash the divine energy within yourself, causing your eyes to glimmer and two luminous, incorporeal wings to sprout from your back.\nYour transformation lasts for 1 minute or until you end it as a bonus action. During it, you have a flying speed of 30 feet, and once on each of your turns, you can deal extra radiant damage to one target when you deal damage to it with an attack or a spell. The extra radiant damage equals your level.\nOnce you use this trait, you can't use it again until you finish a long rest."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common",
+          "Celestial"
+        ]
+      }
+    },
+    {
+      "version_name": "Volo's Guide - Scourge",
+      "source": "Volo's Guide to Monsters",
+      "source_url": "http://dnd5e.wikidot.com/aasimar",
+      "ability_score_increase": [
+        {
+          "ability": "Charisma",
+          "increase": 2
+        },
+        {
+          "ability": "Constitution",
+          "increase": 1
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "Blessed with a radiant soul, your vision can easily cut through darkness. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+        },
+        {
+          "name": "Celestial Resistance",
+          "description": "You have resistance to necrotic damage and radiant damage."
+        },
+        {
+          "name": "Healing Hands",
+          "description": "As an action, you can touch a creature and cause it to regain a number of hit points equal to your level. Once you use this trait, you can't use it again until you finish a long rest."
+        },
+        {
+          "name": "Light Bearer",
+          "description": "You know the Light cantrip. Charisma is your spellcasting ability for it."
+        },
+        {
+          "name": "Radiant Consumption (Scourge)",
+          "description": "Starting at 3rd level, you can use your action to unleash the divine energy within yourself, causing a searing light to radiate from you, pour out of your eyes and mouth, and threaten to char you.\nYour transformation lasts for 1 minute or until you end it as a bonus action. During it, you shed bright light in a 10-foot radius and dim light for an additional 10 feet, and at the end of each of your turns, you and each creature within 10 feet of you take radiant damage equal to half your level (rounded up). In addition, once on each of your turns, you can deal extra radiant damage to one target when you deal damage to it with an attack or a spell. The extra radiant damage equals your level.\nOnce you use this trait, you can't use it again until you finish a long rest."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common",
+          "Celestial"
+        ]
+      }
+    },
+    {
+      "version_name": "Volo's Guide - Fallen",
+      "source": "Volo's Guide to Monsters",
+      "source_url": "http://dnd5e.wikidot.com/aasimar",
+      "ability_score_increase": [
+        {
+          "ability": "Charisma",
+          "increase": 2
+        },
+        {
+          "ability": "Strength",
+          "increase": 1
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "Blessed with a radiant soul, your vision can easily cut through darkness. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+        },
+        {
+          "name": "Celestial Resistance",
+          "description": "You have resistance to necrotic damage and radiant damage."
+        },
+        {
+          "name": "Healing Hands",
+          "description": "As an action, you can touch a creature and cause it to regain a number of hit points equal to your level. Once you use this trait, you can't use it again until you finish a long rest."
+        },
+        {
+          "name": "Light Bearer",
+          "description": "You know the Light cantrip. Charisma is your spellcasting ability for it."
+        },
+        {
+          "name": "Necrotic Shroud (Fallen)",
+          "description": "Starting at 3rd level, you can use your action to unleash the divine energy within yourself, causing your eyes to turn into pools of darkness and two skeletal, ghostly, flightless wings to sprout from your back. The instant you transform, other creatures within 10 feet of you that can see you must each succeed on a Charisma saving throw (DC 8 + your proficiency bonus + your Charisma modifier) or become frightened of you until the end of your next turn.\nYour transformation lasts for 1 minute or until you end it as a bonus action. During it, once on each of your turns, you can deal extra necrotic damage to one target when you deal damage to it with an attack or a spell. The extra necrotic damage equals your level.\nOnce you use this trait, you can't use it again until you finish a long rest."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common",
+          "Celestial"
+        ]
+      }
+    }
+  ]
+}

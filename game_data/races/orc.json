@@ -1,0 +1,154 @@
+{
+  "name": "Orc",
+  "variants": [
+    {
+      "version_name": "Mordenkainen's Multiverse",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "source_url": "http://dnd5e.wikidot.com/orc",
+      "ability_score_increase": [
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 1,
+              "increase": 2
+            },
+            {
+              "choose": 1,
+              "increase": 1
+            }
+          ],
+          "description": "Increase one score by 2 and increase a different score by 1."
+        },
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 3,
+              "increase": 1
+            }
+          ],
+          "description": "Or increase three different scores by 1."
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Adrenaline Rush",
+          "description": "You can take the Dash action as a bonus action. You can use this trait a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a long rest.\nWhenever you use this trait, you gain a number of temporary hit points equal to your proficiency bonus."
+        },
+        {
+          "name": "Darkvision",
+          "description": "You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You discern colors in that darkness only as shades of gray."
+        },
+        {
+          "name": "Powerful Build",
+          "description": "You count as one size larger when determining your carrying capacity and the weight you can push, drag, or lift."
+        },
+        {
+          "name": "Relentless Endurance",
+          "description": "When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. Once you use this trait, you can’t do so again until you finish a long rest."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ],
+        "choose": 1,
+        "options_description": "one other language that you and your DM agree is appropriate for the character."
+      }
+    },
+    {
+      "version_name": "Eberron - Rising from the Last War",
+      "source": "Eberron - Rising from the Last War",
+      "source_url": "http://dnd5e.wikidot.com/orc",
+      "ability_score_increase": [
+        {
+          "ability": "Strength",
+          "increase": 2
+        },
+        {
+          "ability": "Constitution",
+          "increase": 1
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+        },
+        {
+          "name": "Aggressive",
+          "description": "As a bonus action, you can move up to your speed toward an enemy of your choice that you can see or hear. You must end this move closer to the enemy than you started."
+        },
+        {
+          "name": "Powerful Build",
+          "description": "You count as one size larger when determining your carrying capacity and the weight you can push, drag, or lift."
+        },
+        {
+          "name": "Primal Intuition",
+          "description": "You have proficiency in two of the following skills of your choice: Animal Handling, Insight, Intimidation, Medicine, Nature, Perception, and Survival."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common",
+          "Orc"
+        ]
+      }
+    },
+    {
+      "version_name": "Volo's Guide",
+      "source": "Volo's Guide to Monsters",
+      "source_url": "http://dnd5e.wikidot.com/orc",
+      "ability_score_increase": [
+        {
+          "ability": "Strength",
+          "increase": 2
+        },
+        {
+          "ability": "Constitution",
+          "increase": 1
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+        },
+        {
+          "name": "Aggressive",
+          "description": "As a bonus action, you can move up to your speed toward an enemy of your choice that you can see or hear. You must end this move closer to the enemy than you started."
+        },
+        {
+          "name": "Primal Intuition",
+          "description": "You have proficiency in two of the following skills of your choice: Animal Handling, Insight, Intimidation, Medicine, Nature, Perception, and Survival."
+        },
+        {
+          "name": "Powerful Build",
+          "description": "You count as one size larger when determining your carrying capacity and the weight you can push, drag, or lift."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common",
+          "Orc"
+        ]
+      }
+    }
+  ]
+}

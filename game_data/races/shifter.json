@@ -1,0 +1,269 @@
+{
+  "name": "Shifter",
+  "variants": [
+    {
+      "version_name": "Mordenkainen's Multiverse",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "source_url": "http://dnd5e.wikidot.com/shifter",
+      "ability_score_increase": [
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 1,
+              "increase": 2
+            },
+            {
+              "choose": 1,
+              "increase": 1
+            }
+          ],
+          "description": "Increase one score by 2 and increase a different score by 1."
+        },
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 3,
+              "increase": 1
+            }
+          ],
+          "description": "Or increase three different scores by 1."
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Bestial Instincts",
+          "description": "Channeling the beast within, you have proficiency in one of the following skills of your choice: Acrobatics, Athletics, Intimidation, or Survival."
+        },
+        {
+          "name": "Darkvision",
+          "description": "You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You discern colors in that darkness only as shades of gray."
+        },
+        {
+          "name": "Shifting",
+          "description": "As a bonus action, you can assume a more bestial appearance. This transformation lasts for 1 minute, until you die, or until you revert to your normal appearance as a bonus action. When you shift, you gain temporary hit points equal to 2 x your proficiency bonus. You can shift a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a long rest.\nWhenever you shift, you gain an additional benefit based on one of the following options (choose when you select this race):",
+          "options_description": "// TODO: Parse the following options into a structured list if possible, for now it's a single string.\nBeasthide. You gain 1d6 additional temporary hit points. While shifted, you have a +1 bonus to your Armor Class.\nLongtooth. When you shift and as a bonus action on your other turns while shifted, you can use your elongated fangs to make an unarmed strike. If you hit with your fangs, you can deal piercing damage equal to 1d6 + your Strength modifier, instead of the bludgeoning damage normal for an unarmed strike.\nSwiftstride. While shifted, your walking speed increases by 10 feet. Additionally, you can move up to 10 feet as a reaction when a creature ends its turn within 5 feet of you. This reactive movement doesn’t provoke opportunity attacks.\nWildhunt. While shifted, you have advantage on Wisdom checks, and no creature within 30 feet of you can make an attack roll with advantage against you unless you’re incapacitated.",
+          "options": [
+            {
+              "name": "Beasthide",
+              "description": "You gain 1d6 additional temporary hit points. While shifted, you have a +1 bonus to your Armor Class."
+            },
+            {
+              "name": "Longtooth",
+              "description": "When you shift and as a bonus action on your other turns while shifted, you can use your elongated fangs to make an unarmed strike. If you hit with your fangs, you can deal piercing damage equal to 1d6 + your Strength modifier, instead of the bludgeoning damage normal for an unarmed strike."
+            },
+            {
+              "name": "Swiftstride",
+              "description": "While shifted, your walking speed increases by 10 feet. Additionally, you can move up to 10 feet as a reaction when a creature ends its turn within 5 feet of you. This reactive movement doesn’t provoke opportunity attacks."
+            },
+            {
+              "name": "Wildhunt",
+              "description": "While shifted, you have advantage on Wisdom checks, and no creature within 30 feet of you can make an attack roll with advantage against you unless you’re incapacitated."
+            }
+          ]
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ],
+        "choose": 1,
+        "options_description": "one other language that you and your DM agree is appropriate for the character."
+      }
+    },
+    {
+      "version_name": "Eberron - Beasthide",
+      "source": "Eberron - Rising from the Last War",
+      "source_url": "http://dnd5e.wikidot.com/shifter",
+      "ability_score_increase": [
+        {
+          "ability": "Constitution",
+          "increase": 2
+        },
+        {
+          "ability": "Strength",
+          "increase": 1
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "You have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can’t discern color in darkness, only shades of gray."
+        },
+        {
+          "name": "Keen Senses",
+          "description": "You have proficiency in the Perception skill."
+        },
+        {
+          "name": "Shifting (Base ERLW)",
+          "description": "As a bonus action, you can assume a more bestial appearance. This transformation lasts for 1 minute, until you die, or until you revert to your normal appearance as a bonus action. When you shift, you gain temporary hit points equal to your level + your Constitution modifier (minimum of 1 temporary hit point). You also gain benefits that depend on your shifter subrace, described below. Once you shift, you can’t do so again until you finish a short or long rest."
+        },
+        {
+          "name": "Natural Athlete",
+          "description": "You have proficiency in the Athletics skill."
+        },
+        {
+          "name": "Shifting Feature (Beasthide)",
+          "description": "Whenever you shift, you gain 1d6 additional temporary hit points, and while shifted, you have a +1 bonus to your Armor Class."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ]
+      }
+    },
+    {
+      "version_name": "Eberron - Longtooth",
+      "source": "Eberron - Rising from the Last War",
+      "source_url": "http://dnd5e.wikidot.com/shifter",
+      "ability_score_increase": [
+        {
+          "ability": "Strength",
+          "increase": 2
+        },
+        {
+          "ability": "Dexterity",
+          "increase": 1
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "You have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can’t discern color in darkness, only shades of gray."
+        },
+        {
+          "name": "Keen Senses",
+          "description": "You have proficiency in the Perception skill."
+        },
+        {
+          "name": "Shifting (Base ERLW)",
+          "description": "As a bonus action, you can assume a more bestial appearance. This transformation lasts for 1 minute, until you die, or until you revert to your normal appearance as a bonus action. When you shift, you gain temporary hit points equal to your level + your Constitution modifier (minimum of 1 temporary hit point). You also gain benefits that depend on your shifter subrace, described below. Once you shift, you can’t do so again until you finish a short or long rest."
+        },
+        {
+          "name": "Fierce",
+          "description": "You have proficiency in the Intimidation skill."
+        },
+        {
+          "name": "Shifting Feature (Longtooth)",
+          "description": "While shifted, you can use your elongated fangs to make an unarmed strike as a bonus action. If you hit with your fangs, you can deal piercing damage equal to 1d6 + your Strength modifier, instead of the bludgeoning damage normal for an unarmed strike."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ]
+      }
+    },
+    {
+      "version_name": "Eberron - Swiftstride",
+      "source": "Eberron - Rising from the Last War",
+      "source_url": "http://dnd5e.wikidot.com/shifter",
+      "ability_score_increase": [
+        {
+          "ability": "Dexterity",
+          "increase": 2
+        },
+        {
+          "ability": "Charisma",
+          "increase": 1
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "You have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can’t discern color in darkness, only shades of gray."
+        },
+        {
+          "name": "Keen Senses",
+          "description": "You have proficiency in the Perception skill."
+        },
+        {
+          "name": "Shifting (Base ERLW)",
+          "description": "As a bonus action, you can assume a more bestial appearance. This transformation lasts for 1 minute, until you die, or until you revert to your normal appearance as a bonus action. When you shift, you gain temporary hit points equal to your level + your Constitution modifier (minimum of 1 temporary hit point). You also gain benefits that depend on your shifter subrace, described below. Once you shift, you can’t do so again until you finish a short or long rest."
+        },
+        {
+          "name": "Graceful",
+          "description": "You have proficiency in the Acrobatics skill."
+        },
+        {
+          "name": "Shifting Feature (Swiftstride)",
+          "description": "While shifted, your walking speed increases by 10 feet. Additionally, you can move up to 10 feet as a reaction when an enemy ends its turn within 5 feet of you. This reactive movement doesn’t provoke opportunity attacks."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ]
+      }
+    },
+    {
+      "version_name": "Eberron - Wildhunt",
+      "source": "Eberron - Rising from the Last War",
+      "source_url": "http://dnd5e.wikidot.com/shifter",
+      "ability_score_increase": [
+        {
+          "ability": "Wisdom",
+          "increase": 2
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "You have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can’t discern color in darkness, only shades of gray."
+        },
+        {
+          "name": "Keen Senses",
+          "description": "You have proficiency in the Perception skill."
+        },
+        {
+          "name": "Shifting (Base ERLW)",
+          "description": "As a bonus action, you can assume a more bestial appearance. This transformation lasts for 1 minute, until you die, or until you revert to your normal appearance as a bonus action. When you shift, you gain temporary hit points equal to your level + your Constitution modifier (minimum of 1 temporary hit point). You also gain benefits that depend on your shifter subrace, described below. Once you shift, you can’t do so again until you finish a short or long rest."
+        },
+        {
+          "name": "Natural Tracker",
+          "description": "You have proficiency in the Survival skill."
+        },
+        {
+          "name": "Mark the Scent",
+          "description": "As a bonus action, you can mark one creature you can see within 10 feet of you. Until the end of your next long rest, your proficiency bonus is doubled for any ability check you make to find the marked creature, and you always know the location of that creature if it is within 60 feet of you. You can’t use this trait again until you finish a short or long rest."
+        },
+        {
+          "name": "Shifting Feature (Wildhunt)",
+          "description": "While shifted, you have advantage on Wisdom checks."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ]
+      }
+    }
+  ]
+}

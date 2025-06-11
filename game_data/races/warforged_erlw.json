@@ -1,0 +1,56 @@
+{
+  "name": "Warforged",
+  "variants": [
+    {
+      "version_name": "Eberron - Rising from the Last War",
+      "source": "Eberron - Rising from the Last War",
+      "source_url": "http://dnd5e.wikidot.com/warforged",
+      "ability_score_increase": [
+        {
+          "ability": "Constitution",
+          "increase": 2
+        },
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 1,
+              "increase": 1
+            }
+          ],
+          "description": "one other ability score of your choice increases by 1."
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Constructed Resilience",
+          "description": "You were created to have remarkable fortitude, represented by the following benefits:\n- You have advantage on saving throws against being poisoned, and you have resistance to poison damage.\n- You don’t need to eat, drink, or breathe.\n- You are immune to disease.\n- You don't need to sleep, and magic can't put you to sleep."
+        },
+        {
+          "name": "Sentry's Rest",
+          "description": "When you take a long rest, you must spend at least six hours in an inactive, motionless state, rather than sleeping. In this state, you appear inert, but it doesn’t render you unconscious, and you can see and hear as normal."
+        },
+        {
+          "name": "Integrated Protection",
+          "description": "Your body has built-in defensive layers, which can be enhanced with armor.\n- You gain a +1 bonus to Armor Class.\n- You can don only armor with which you have proficiency. To don armor, you must incorporate it into your body over the course of 1 hour, during which you must remain in contact with the armor. To doff armor, you must spend 1 hour removing it. You can rest while donning or doffing armor in this way.\n- While you live, your armor can't be removed from your body against your will."
+        },
+        {
+          "name": "Specialized Design",
+          "description": "You gain one skill proficiency and one tool proficiency of your choice."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ],
+        "choose": 1,
+        "options_description": "one other language of your choice."
+      }
+    }
+  ]
+}

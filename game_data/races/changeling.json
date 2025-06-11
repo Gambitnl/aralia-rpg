@@ -1,0 +1,101 @@
+{
+  "name": "Changeling",
+  "variants": [
+    {
+      "version_name": "Mordenkainen's Multiverse",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "source_url": "http://dnd5e.wikidot.com/changeling",
+      "ability_score_increase": [
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 1,
+              "increase": 2
+            },
+            {
+              "choose": 1,
+              "increase": 1
+            }
+          ],
+          "description": "Increase one score by 2 and increase a different score by 1."
+        },
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 3,
+              "increase": 1
+            }
+          ],
+          "description": "Or increase three different scores by 1."
+        }
+      ],
+      "size": "Medium or Small (player choice)",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Fey",
+      "traits": [
+        {
+          "name": "Changeling Instincts",
+          "description": "Thanks to your connection to the fey realm, you gain proficiency with two of the following skills of your choice: Deception, Insight, Intimidation, Performance, or Persuasion."
+        },
+        {
+          "name": "Shapechanger",
+          "description": "As an action, you can change your appearance and your voice. You determine the specifics of the changes, including your coloration, hair length, and sex. You can also adjust your height and weight and can change your size between Medium and Small. You can make yourself appear as a member of another race, though none of your game statistics change. You can’t duplicate the appearance of an individual you’ve never seen, and you must adopt a form that has the same basic arrangement of limbs that you have. Your clothing and equipment aren’t changed by this trait.\nYou stay in the new form until you use an action to revert to your true form or until you die."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ],
+        "choose": 1,
+        "options_description": "one other language that you and your DM agree is appropriate for the character."
+      }
+    },
+    {
+      "version_name": "Eberron - Rising from the Last War",
+      "source": "Eberron - Rising from the Last War",
+      "source_url": "http://dnd5e.wikidot.com/changeling",
+      "ability_score_increase": [
+        {
+          "ability": "Charisma",
+          "increase": 2
+        },
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 1,
+              "increase": 1
+            }
+          ],
+          "description": "one other ability score of your choice increases by 1."
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Shapechanger",
+          "description": "As an action, you can change your appearance and your voice. You determine the specifics of the changes, including your coloration, hair length, and sex. You can also adjust your height and weight, but not so much that your size changes. You can make yourself appear as a member of another race, though none of your game statistics change. You can't duplicate the appearance of a creature you've never seen, and you must adopt a form that has the same basic arrangement of limbs that you have. Your clothing and equipment aren't changed by this trait.\nYou stay in the new form until you use an action to revert to your true form or until you die."
+        },
+        {
+          "name": "Changeling Instincts",
+          "description": "You gain proficiency with two of the following skills of your choice: Deception, Insight, Intimidation, and Persuasion."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ],
+        "choose": 2,
+        "options_description": "two other languages of your choice."
+      }
+    }
+  ]
+}
