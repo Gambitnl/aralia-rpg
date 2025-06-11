@@ -101,8 +101,11 @@ function selectSpecies(speciesData, selectedElement, container) {
         if (speciesData.description) {
             detailsHtml += `<p>${speciesData.description}</p>`;
         }
-        if (speciesData.ability_score_increase) {
-            detailsHtml += `<p><strong>Ability Score Increase:</strong> ${speciesData.ability_score_increase}</p>`;
+        if (speciesData.fixed_ability_bonuses && Object.keys(speciesData.fixed_ability_bonuses).length > 0) {
+            const bonuses = Object.entries(speciesData.fixed_ability_bonuses)
+                .map(([ability, bonus]) => `${ability} +${bonus}`)
+                .join(', ');
+            detailsHtml += `<p><strong>Ability Score Increase:</strong> ${bonuses}</p>`;
         }
         if (speciesData.size) {
             detailsHtml += `<p><strong>Size:</strong> ${speciesData.size}</p>`;
@@ -110,10 +113,10 @@ function selectSpecies(speciesData, selectedElement, container) {
         if (speciesData.speed) {
             detailsHtml += `<p><strong>Speed:</strong> ${speciesData.speed} ft.</p>`;
         }
-        if (speciesData.traits && speciesData.traits.length > 0) {
+        if (speciesData.racial_traits && speciesData.racial_traits.length > 0) {
             detailsHtml += `<h4>Traits:</h4><ul>`;
-            speciesData.traits.forEach(trait => {
-                detailsHtml += `<li><strong>${trait.name}:</strong> ${trait.description}</li>`;
+            speciesData.racial_traits.forEach(trait => {
+                detailsHtml += `<li>${trait}</li>`;
             });
             detailsHtml += `</ul>`;
         }
@@ -363,13 +366,14 @@ function selectClass(classData, selectedElement, container) {
         }
         detailsHtml += `<p><strong>Hit Die:</strong> d${classData.hit_die}</p>`;
 
-        if (classData.proficiencies && classData.proficiencies.length > 0) {
-            detailsHtml += `<h4>Proficiencies:</h4><ul>`;
-            classData.proficiencies.forEach(prof => {
-                // Assuming prof is a string. If it's an object, adjust (e.g., prof.name)
-                detailsHtml += `<li>${prof}</li>`;
-            });
-            detailsHtml += `</ul>`;
+        if (classData.saving_throw_proficiencies && classData.saving_throw_proficiencies.length > 0) {
+            detailsHtml += `<p><strong>Saving Throws:</strong> ${classData.saving_throw_proficiencies.join(', ')}</p>`;
+        }
+        if (classData.armor_proficiencies && classData.armor_proficiencies.length > 0) {
+            detailsHtml += `<p><strong>Armor Proficiencies:</strong> ${classData.armor_proficiencies.join(', ')}</p>`;
+        }
+        if (classData.weapon_proficiencies && classData.weapon_proficiencies.length > 0) {
+            detailsHtml += `<p><strong>Weapon Proficiencies:</strong> ${classData.weapon_proficiencies.join(', ')}</p>`;
         }
 
         // Assuming level_1_features is a field. This might need to be more dynamic
@@ -392,13 +396,7 @@ function selectClass(classData, selectedElement, container) {
         // This part is highly dependent on how `ClassData` is structured in your Python backend.
         // For example, if you have a `get_features_at_level(1)` method or similar.
         // For now, we'll just list some common attributes.
-        if (classData.saving_throws && classData.saving_throws.length > 0) {
-            detailsHtml += `<p><strong>Saving Throws:</strong> ${classData.saving_throws.join(', ')}</p>`;
-        }
-        if (classData.skill_proficiencies_options && classData.skill_proficiencies_options.choose) {
-             // This line might be removed if we're building the interactive list below
-             // detailsHtml += `<p><strong>Skill Choices:</strong> Choose ${classData.skill_proficiencies_options.choose} from ${classData.skill_proficiencies_options.options.join(', ')}</p>`;
-        }
+        // Additional feature details could be shown here
         // The main details like description, hit die, etc., are set first.
         if (classDetailsContainer) classDetailsContainer.innerHTML = detailsHtml; // This line is correct and should be kept.
 
@@ -803,8 +801,12 @@ function selectBackground(backgroundData, selectedElement, container) {
     if (backgroundData.tool_proficiencies && backgroundData.tool_proficiencies.length > 0) {
         detailsHtml += `<p><strong>Tool Proficiencies:</strong> ${backgroundData.tool_proficiencies.join(', ')}</p>`;
     }
-    if (backgroundData.languages && backgroundData.languages.length > 0) {
-        detailsHtml += `<p><strong>Languages:</strong> ${backgroundData.languages.join(', ')}</p>`;
+    if (backgroundData.language_count && backgroundData.language_count > 0) {
+        if (backgroundData.languages_options && backgroundData.languages_options.length > 0) {
+            detailsHtml += `<p><strong>Languages:</strong> Choose ${backgroundData.language_count} from ${backgroundData.languages_options.join(', ')}</p>`;
+        } else {
+            detailsHtml += `<p><strong>Languages:</strong> Choose ${backgroundData.language_count}</p>`;
+        }
     }
 
     if (backgroundData.starting_feat_name) {
@@ -1058,6 +1060,26 @@ window.getCharacterData = function() {
     // For now, just returns the current state.
     // It's important that characterInProgress is accurately updated by all selection functions.
     return characterInProgress;
+};
+
+// --- Finish & Cancel Handlers for Standalone Creator ---
+window.finishCharacterCreation = function() {
+    handleFinalizeCharacter();
+    const overlay = document.getElementById('character-creator-overlay');
+    const host = overlay ? overlay.querySelector('div') : null;
+    if (overlay) overlay.classList.add('hidden');
+    if (host) host.innerHTML = '';
+};
+
+window.cancelCharacterCreation = function() {
+    const overlay = document.getElementById('character-creator-overlay');
+    const host = overlay ? overlay.querySelector('div') : null;
+    if (overlay) overlay.classList.add('hidden');
+    if (host) host.innerHTML = '';
+    if (!overlay) {
+        // Standalone page fallback
+        window.location.reload();
+    }
 };
 
 window.addEventListener('DOMContentLoaded', initializeCreator);
