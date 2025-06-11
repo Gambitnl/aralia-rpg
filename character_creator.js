@@ -2,6 +2,7 @@
 console.log("Character Creator JS loaded");
 
 let characterInProgress = {
+    name: "", // Added for character name
     species: null,
     class: null,
     subclass: null,
@@ -10,8 +11,26 @@ let characterInProgress = {
     chosen_equipment_set: null,
     base_ability_scores: {},
     final_ability_scores: {},
+    chosen_class_skills: [], // Added for class skill proficiencies
+    chosen_cantrips: [],       // Added for cantrips
+    chosen_level_1_spells: [], // Added for level 1 spells
+    is_finalized: false,       // Added for finalize state
     // other character attributes
 };
+
+// --- Placeholder Spell Data & Limits ---
+const PLACEHOLDER_CANTRIPS = [
+    { name: "Placeholder Cantrip 1", description: "A generic cantrip." },
+    { name: "Placeholder Cantrip 2", description: "Another generic cantrip." },
+    { name: "Placeholder Cantrip 3", description: "Yet another." }
+];
+const PLACEHOLDER_LEVEL_1_SPELLS = [
+    { name: "Placeholder L1 Spell A", description: "A generic L1 spell." },
+    { name: "Placeholder L1 Spell B", description: "Another generic L1 spell." },
+    { name: "Placeholder L1 Spell C", description: "Yet another L1 spell." }
+];
+const DEFAULT_CANTRIPS_TO_CHOOSE = 2;
+const DEFAULT_LEVEL_1_SPELLS_TO_CHOOSE = 2;
 
 const API_BASE_URL = "http://localhost:5001/api";
 let allFeatsData = []; // To store all feats fetched once
@@ -70,7 +89,8 @@ async function fetchAndDisplaySpecies() {
 function selectSpecies(speciesData, selectedElement, container) {
     characterInProgress.species = speciesData;
     console.log("Selected Species:", characterInProgress.species);
-    updateCharacterSummary();
+    // updateCharacterSummary(); // Will be called by applyRacialASIs
+    applyRacialASIs();
 
     // Update details display
     const speciesDetailsContainer = document.getElementById('species-details');
@@ -125,6 +145,145 @@ function selectSpecies(speciesData, selectedElement, container) {
     fetchAndDisplayClasses(); // Fetch classes once a species is selected
 }
 
+// --- Class Skill Choice Visuals Update ---
+function updateSkillChoiceVisuals() {
+    const classData = characterInProgress.class;
+    if (!classData || !classData.skill_proficiency_options || !classData.skill_proficiency_count) {
+        // No skill choices for this class or data missing, so nothing to update visually in terms of limits.
+        // Ensure all checkboxes are enabled if they exist from a previous selection for a different class.
+        const skillCheckboxes = document.querySelectorAll('#class-skill-choices-container input[type="checkbox"]');
+        skillCheckboxes.forEach(checkbox => checkbox.disabled = false);
+        return;
+    }
+
+    const chosenCount = characterInProgress.chosen_class_skills.length;
+    const limit = classData.skill_proficiency_count;
+    const skillCheckboxes = document.querySelectorAll('#class-skill-choices-container input[type="checkbox"]');
+
+    skillCheckboxes.forEach(checkbox => {
+        if (chosenCount >= limit && !checkbox.checked) {
+            checkbox.disabled = true;
+        } else {
+            checkbox.disabled = false;
+        }
+    });
+}
+
+// --- Spell Choice Visuals Update ---
+function updateSpellChoiceVisuals(spellType, limit) {
+    const listId = spellType === 'cantrips' ? 'cantrips-list' : 'level-1-spells-list';
+    const chosenSpells = spellType === 'cantrips' ? characterInProgress.chosen_cantrips : characterInProgress.chosen_level_1_spells;
+
+    const spellCheckboxes = document.querySelectorAll(`#${listId} input[type="checkbox"]`);
+    const chosenCount = chosenSpells.length;
+
+    spellCheckboxes.forEach(checkbox => {
+        if (chosenCount >= limit && !checkbox.checked) {
+            checkbox.disabled = true;
+        } else {
+            checkbox.disabled = false;
+        }
+    });
+}
+
+// --- Display Spell Options ---
+function displaySpellOptions(classData) {
+    const cantripsListContainer = document.getElementById('cantrips-list');
+    const level1SpellsListContainer = document.getElementById('level-1-spells-list');
+
+    if (!cantripsListContainer || !level1SpellsListContainer) {
+        console.error("Spell list containers not found.");
+        return;
+    }
+
+    cantripsListContainer.innerHTML = ''; // Clear previous cantrips
+    level1SpellsListContainer.innerHTML = ''; // Clear previous L1 spells
+
+    // TODO: Replace placeholder data with API call: GET /api/spells?class=${classData.name}&level=0 (for cantrips)
+    // TODO: Replace hardcoded DEFAULT_CANTRIPS_TO_CHOOSE with actual data from classData (e.g., classData.cantrips_known)
+    PLACEHOLDER_CANTRIPS.forEach(spell => {
+        const checkboxId = `spell-cantrip-${spell.name.toLowerCase().replace(/\s+/g, '-')}`;
+        const checkboxDiv = document.createElement('div');
+        checkboxDiv.classList.add('spell-choice');
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = checkboxId;
+        checkbox.value = spell.name; // Store name, could store stringified object if needed
+        checkbox.name = 'cantrip_choice';
+
+        checkbox.addEventListener('change', (event) => {
+            const currentSpellName = event.target.value;
+            // Find the spell object from placeholder data (or future API data)
+            const spellObject = PLACEHOLDER_CANTRIPS.find(s => s.name === currentSpellName);
+
+            if (event.target.checked) {
+                if (characterInProgress.chosen_cantrips.length < DEFAULT_CANTRIPS_TO_CHOOSE) {
+                    characterInProgress.chosen_cantrips.push(spellObject);
+                } else {
+                    event.target.checked = false;
+                    console.warn(`Cannot select more than ${DEFAULT_CANTRIPS_TO_CHOOSE} cantrips.`);
+                }
+            } else {
+                characterInProgress.chosen_cantrips = characterInProgress.chosen_cantrips.filter(s => s.name !== currentSpellName);
+            }
+            updateSpellChoiceVisuals('cantrips', DEFAULT_CANTRIPS_TO_CHOOSE);
+            updateCharacterSummary();
+        });
+
+        const label = document.createElement('label');
+        label.htmlFor = checkboxId;
+        label.textContent = `${spell.name} (${spell.description})`; // Show description too
+
+        checkboxDiv.appendChild(checkbox);
+        checkboxDiv.appendChild(label);
+        cantripsListContainer.appendChild(checkboxDiv);
+    });
+
+    // TODO: Replace placeholder data with API call: GET /api/spells?class=${classData.name}&level=1 (for L1 spells)
+    // TODO: Replace hardcoded DEFAULT_LEVEL_1_SPELLS_TO_CHOOSE with actual data from classData (e.g., classData.spells_known)
+    PLACEHOLDER_LEVEL_1_SPELLS.forEach(spell => {
+        const checkboxId = `spell-l1-${spell.name.toLowerCase().replace(/\s+/g, '-')}`;
+        const checkboxDiv = document.createElement('div');
+        checkboxDiv.classList.add('spell-choice');
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = checkboxId;
+        checkbox.value = spell.name;
+        checkbox.name = 'level_1_spell_choice';
+
+        checkbox.addEventListener('change', (event) => {
+            const currentSpellName = event.target.value;
+            const spellObject = PLACEHOLDER_LEVEL_1_SPELLS.find(s => s.name === currentSpellName);
+
+            if (event.target.checked) {
+                if (characterInProgress.chosen_level_1_spells.length < DEFAULT_LEVEL_1_SPELLS_TO_CHOOSE) {
+                    characterInProgress.chosen_level_1_spells.push(spellObject);
+                } else {
+                    event.target.checked = false;
+                    console.warn(`Cannot select more than ${DEFAULT_LEVEL_1_SPELLS_TO_CHOOSE} level 1 spells.`);
+                }
+            } else {
+                characterInProgress.chosen_level_1_spells = characterInProgress.chosen_level_1_spells.filter(s => s.name !== currentSpellName);
+            }
+            updateSpellChoiceVisuals('level-1-spells', DEFAULT_LEVEL_1_SPELLS_TO_CHOOSE);
+            updateCharacterSummary();
+        });
+
+        const label = document.createElement('label');
+        label.htmlFor = checkboxId;
+        label.textContent = `${spell.name} (${spell.description})`;
+
+        checkboxDiv.appendChild(checkbox);
+        checkboxDiv.appendChild(label);
+        level1SpellsListContainer.appendChild(checkboxDiv);
+    });
+
+    updateSpellChoiceVisuals('cantrips', DEFAULT_CANTRIPS_TO_CHOOSE);
+    updateSpellChoiceVisuals('level-1-spells', DEFAULT_LEVEL_1_SPELLS_TO_CHOOSE);
+}
+
 // --- Class Selection ---
 async function fetchAndDisplayClasses() {
     const classListContainer = document.getElementById('class-list-container');
@@ -166,8 +325,35 @@ async function fetchAndDisplayClasses() {
 function selectClass(classData, selectedElement, container) {
     characterInProgress.class = classData;
     characterInProgress.subclass = null; // Reset subclass when class changes
+    characterInProgress.chosen_class_skills = []; // Reset chosen class skills
+    characterInProgress.chosen_cantrips = []; // Reset cantrips
+    characterInProgress.chosen_level_1_spells = []; // Reset L1 spells
     console.log("Selected Class:", characterInProgress.class);
-    updateCharacterSummary();
+
+    const spellSelectionArea = document.getElementById('spell-selection-area');
+    const cantripsListContainer = document.getElementById('cantrips-list');
+    const level1SpellsListContainer = document.getElementById('level-1-spells-list');
+
+    // Basic spellcaster check (e.g., by name or a flag in classData if available)
+    // For now, let's assume Wizard and Sorcerer are spellcasters.
+    // TODO: Replace with a more robust check, e.g., classData.spellcasting_ability or similar.
+    const isSpellcaster = classData.name === "Wizard" || classData.name === "Sorcerer";
+
+    if (isSpellcaster) {
+        if (spellSelectionArea) spellSelectionArea.style.display = 'block';
+        document.getElementById('cantrips-to-choose-count').textContent = DEFAULT_CANTRIPS_TO_CHOOSE;
+        document.getElementById('level-1-spells-to-choose-count').textContent = DEFAULT_LEVEL_1_SPELLS_TO_CHOOSE;
+        displaySpellOptions(classData);
+    } else {
+        if (spellSelectionArea) spellSelectionArea.style.display = 'none';
+        if (cantripsListContainer) cantripsListContainer.innerHTML = ''; // Clear spell options
+        if (level1SpellsListContainer) level1SpellsListContainer.innerHTML = '';
+    }
+
+    const classSkillChoicesContainer = document.getElementById('class-skill-choices-container');
+    if (classSkillChoicesContainer) {
+        classSkillChoicesContainer.innerHTML = ''; // Clear previous skill choices
+    }
 
     const classDetailsContainer = document.getElementById('class-details');
     if (classDetailsContainer) {
@@ -210,12 +396,60 @@ function selectClass(classData, selectedElement, container) {
             detailsHtml += `<p><strong>Saving Throws:</strong> ${classData.saving_throws.join(', ')}</p>`;
         }
         if (classData.skill_proficiencies_options && classData.skill_proficiencies_options.choose) {
-             detailsHtml += `<p><strong>Skill Choices:</strong> Choose ${classData.skill_proficiencies_options.choose} from ${classData.skill_proficiencies_options.options.join(', ')}</p>`;
+             // This line might be removed if we're building the interactive list below
+             // detailsHtml += `<p><strong>Skill Choices:</strong> Choose ${classData.skill_proficiencies_options.choose} from ${classData.skill_proficiencies_options.options.join(', ')}</p>`;
         }
+        // The main details like description, hit die, etc., are set first.
+        if (classDetailsContainer) classDetailsContainer.innerHTML = detailsHtml; // This line is correct and should be kept.
 
 
-        classDetailsContainer.innerHTML = detailsHtml;
+        // Now, specifically handle skill proficiency choices UI
+        if (classData.skill_proficiency_options && classData.skill_proficiency_count > 0 && classSkillChoicesContainer) {
+            const title = document.createElement('h4');
+            title.textContent = `Choose ${classData.skill_proficiency_count} Skill Proficiencies:`;
+            classSkillChoicesContainer.appendChild(title);
+
+            classData.skill_proficiency_options.forEach(skillName => {
+                const checkboxId = `skill-${skillName.toLowerCase().replace(/\s+/g, '-')}`;
+                const checkboxDiv = document.createElement('div'); // Corrected variable name
+                checkboxDiv.classList.add('skill-choice');
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = checkboxId;
+                checkbox.value = skillName;
+                checkbox.name = 'class_skill_choice';
+
+                checkbox.addEventListener('change', (event) => {
+                    const currentSkill = event.target.value;
+                    if (event.target.checked) {
+                        if (characterInProgress.chosen_class_skills.length < classData.skill_proficiency_count) {
+                            characterInProgress.chosen_class_skills.push(currentSkill);
+                        } else {
+                            // Limit reached, uncheck the box or prevent checking
+                            event.target.checked = false;
+                            // Optionally, provide user feedback (e.g., alert or message)
+                            console.warn(`Cannot select more than ${classData.skill_proficiency_count} skills.`);
+                        }
+                    } else {
+                        characterInProgress.chosen_class_skills = characterInProgress.chosen_class_skills.filter(s => s !== currentSkill);
+                    }
+                    updateSkillChoiceVisuals();
+                    updateCharacterSummary();
+                });
+
+                const label = document.createElement('label');
+                label.htmlFor = checkboxId;
+                label.textContent = skillName;
+
+                checkboxDiv.appendChild(checkbox);
+                checkboxDiv.appendChild(label);
+                classSkillChoicesContainer.appendChild(checkboxDiv);
+            });
+            updateSkillChoiceVisuals(); // Initial call to set checkbox states
+        }
     }
+    // The redundant classDetailsContainer.innerHTML = detailsHtml was here and is now removed.
 
     const allItems = container.querySelectorAll('.selectable-item');
     allItems.forEach(item => item.classList.remove('selected'));
@@ -231,54 +465,44 @@ function selectClass(classData, selectedElement, container) {
     if (subclassContainer) subclassContainer.innerHTML = '';
     if (subclassDetailsContainer) subclassDetailsContainer.innerHTML = '<p>Select a subclass to see its details, if applicable for your class at level 1.</p>';
 
+    let level1Subclasses = [];
+    if (classData.subclasses && classData.subclasses.length > 0) {
+        classData.subclasses.forEach(subclass => {
+            // Check if features exist and there's an entry for level '1' or 1
+            if (subclass.features && (subclass.features['1'] || subclass.features[1])) {
+                level1Subclasses.push(subclass);
+            }
+        });
+    }
 
-    if ( (classData.name === "Sorcerer" || classData.name === "Warlock") &&
-         classData.subclasses && classData.subclasses.length > 0) {
+    const abilityScoreArea = document.getElementById('ability-score-area');
+
+    if (level1Subclasses.length > 0) {
         if (subclassSelectionArea) subclassSelectionArea.style.display = 'block';
-        displaySubclassOptions(classData.subclasses);
+        displaySubclassOptions(level1Subclasses);
+        if (abilityScoreArea) abilityScoreArea.style.display = 'none'; // Hide ability scores until subclass is chosen
     } else {
         if (subclassSelectionArea) subclassSelectionArea.style.display = 'none';
-        // If no subclass at level 1, or for other classes, proceed to ability scores
-        // (or hide subclass area if it was previously shown for another class)
-        const abilityScoreArea = document.getElementById('ability-score-area');
         if (abilityScoreArea) {
             abilityScoreArea.style.display = 'block';
         }
         initializeAbilityScores();
         displayAbilityScores();
-        validateScoresOnBackend();
+        validateScoresOnBackend(); // This chain should eventually call updateCharacterSummary
     }
 
-    // If a class that *doesn't* get a subclass at level 1 is selected,
-    // ensure the ability score section is shown immediately.
-    // This logic is now partially handled above.
-    if (classData.name !== "Sorcerer" && classData.name !== "Warlock") {
-        const abilityScoreArea = document.getElementById('ability-score-area');
-        if (abilityScoreArea) {
-            abilityScoreArea.style.display = 'block';
-        }
-        initializeAbilityScores();
-        displayAbilityScores();
-        validateScoresOnBackend();
+    // Make sure updateCharacterSummary is called after everything is processed for the class.
+    // If not proceeding to ability scores immediately (because subclass is shown),
+    // then updateCharacterSummary needs to be called here. Otherwise, it's called by ability score functions.
+    if (level1Subclasses.length === 0) {
+      // updateCharacterSummary is called within the ability score initialization path
     } else {
-        // For Sorcerer/Warlock, hide ability scores until subclass is (potentially) chosen
-        // Or, let it be visible and subclass is an optional/additional step.
-        // For this flow, let's assume subclass selection *then* ability scores for these specific classes.
-        // So, if it's a Sorcerer/Warlock, the ability score section is shown *after* subclass logic.
-        // The current structure shows ability scores if not Sorc/Warlock, or if Sorc/Warlock and they have no subclasses.
-        // We need to ensure that if it *is* Sorc/Warlock and subclasses *are* displayed, ability scores wait.
-        // The code above already does this: if Sorc/Warlock and subclasses exist, it calls displaySubclassOptions.
-        // The progression to ability scores for these classes will happen in selectSubclass.
-        if ( (classData.name === "Sorcerer" || classData.name === "Warlock") &&
-             classData.subclasses && classData.subclasses.length > 0) {
-            const abilityScoreArea = document.getElementById('ability-score-area');
-            if (abilityScoreArea) {
-                abilityScoreArea.style.display = 'none'; // Hide it until subclass is selected
-            }
-        }
+        updateCharacterSummary(); // Call if ability scores are deferred
     }
 
-    // Old logic for showing ability scores - now more conditional
+    // The old logic for specifically Sorcerer/Warlock hiding ability scores is now covered by the general level1Subclasses check.
+    // The old logic for showing ability scores if NOT Sorc/Warlock is also covered.
+
     // const abilityScoreArea = document.getElementById('ability-score-area');
     // if (abilityScoreArea) {
     //     abilityScoreArea.style.display = 'block';
@@ -397,6 +621,8 @@ function initializeAbilityScores() {
 
         container.appendChild(entryDiv);
     });
+    // Apply racial ASIs after base scores are first initialized and displayed
+    applyRacialASIs();
 }
 
 function handleAbilityInputChange(event) {
@@ -412,8 +638,40 @@ function handleAbilityInputChange(event) {
     event.target.value = value; // Update input field if value was clamped
 
     characterInProgress.base_ability_scores[abilityName] = value;
-    displayAbilityScores(); // Update all UI elements for scores
+    displayAbilityScores(); // Update all UI elements for base scores
+    applyRacialASIs();      // Re-calculate final scores and update summary
     validateScoresOnBackend();
+}
+
+// --- Apply Racial ASIs ---
+function applyRacialASIs() {
+    // Initialize final_ability_scores as a deep copy of base_ability_scores or defaults
+    if (Object.keys(characterInProgress.base_ability_scores).length > 0) {
+        // Deep copy base scores to final scores
+        characterInProgress.final_ability_scores = JSON.parse(JSON.stringify(characterInProgress.base_ability_scores));
+    } else {
+        // If base scores aren't set (e.g. species selected before point buy visited),
+        // initialize final_ability_scores with default scores for each ability.
+        characterInProgress.final_ability_scores = {};
+        abilities.forEach(ability => {
+            characterInProgress.final_ability_scores[ability] = defaultScore;
+        });
+    }
+
+    if (characterInProgress.species && characterInProgress.species.fixed_ability_bonuses) {
+        for (const abilityKey in characterInProgress.species.fixed_ability_bonuses) {
+            // Ensure the abilityKey from bonuses matches the case used in final_ability_scores (e.g., "Strength")
+            const bonusValue = characterInProgress.species.fixed_ability_bonuses[abilityKey];
+            if (characterInProgress.final_ability_scores.hasOwnProperty(abilityKey)) {
+                characterInProgress.final_ability_scores[abilityKey] += bonusValue;
+            } else {
+                // This might happen if ability names in fixed_ability_bonuses don't match "Strength", "Dexterity", etc.
+                console.warn(`Ability "${abilityKey}" from racial bonus not found in character's final scores. Check data consistency.`);
+            }
+        }
+    }
+    console.log("Final ability scores after racial ASI:", characterInProgress.final_ability_scores);
+    updateCharacterSummary(); // Update summary after ASIs are applied
 }
 
 function displayAbilityScores() {
@@ -651,6 +909,11 @@ function selectEquipmentSet(optionIndex) {
     updateCharacterSummary();
     // Potentially show next section or a "Finish" button
     console.log("Equipment selected. Character creation nearing completion!");
+
+    const finalizeSection = document.getElementById('finalize-section');
+    if (finalizeSection) {
+        finalizeSection.style.display = 'block';
+    }
 }
 
 
@@ -676,31 +939,109 @@ async function initializeCreator() {
     // fetchAndDisplayClasses(); // Called after species selection
     // initializeAbilityScores(); // Called after class/subclass selection
     // fetchAndDisplayBackgrounds(); // Called after ability scores are validated
-
+    initializeNameInput(); // Added for character name
     updateCharacterSummary(); // Initial summary display
+
+    const finalizeButton = document.getElementById('finalize-character-button');
+    if (finalizeButton) {
+        finalizeButton.addEventListener('click', handleFinalizeCharacter);
+    } else {
+        console.error("Finalize character button not found.");
+    }
+}
+
+// --- Handle Finalize Character ---
+function handleFinalizeCharacter() {
+    const messageElement = document.getElementById('finalize-message');
+    messageElement.textContent = ''; // Clear previous messages
+
+    // Validation checks
+    if (!characterInProgress.name) {
+        messageElement.textContent = "Please enter a character name.";
+        return;
+    }
+    if (!characterInProgress.species) {
+        messageElement.textContent = "Please select a species.";
+        return;
+    }
+    if (!characterInProgress.class) {
+        messageElement.textContent = "Please select a class.";
+        return;
+    }
+
+    const pointBuySummaryEl = document.getElementById('point-buy-summary');
+    if (pointBuySummaryEl && pointBuySummaryEl.classList.contains('invalid')) {
+        messageElement.textContent = "Please ensure ability scores are valid (Point Buy rules).";
+        return;
+    }
+    // Add more validation as needed (e.g., skills, spells if limits are known)
+
+    // If all checks pass
+    characterInProgress.is_finalized = true;
+    console.log("Character Finalized Data:", JSON.stringify(characterInProgress, null, 2));
+    // TODO: Send characterInProgress object to a backend save endpoint,
+    // e.g., fetch('/api/characters', { method: 'POST', body: JSON.stringify(characterInProgress) });
+
+    messageElement.textContent = "Character Finalized! Data logged to console. You can start a new character or refresh the page.";
+    messageElement.style.color = 'lightgreen'; // Or a success color from your CSS
+
+    const finalizeButton = document.getElementById('finalize-character-button');
+    if (finalizeButton) {
+        finalizeButton.disabled = true;
+    }
+    // Consider disabling other inputs or hiding sections to prevent further edits.
+}
+
+// --- Name Input ---
+function initializeNameInput() {
+    const nameInput = document.getElementById('character-name-input');
+    if (nameInput) {
+        nameInput.addEventListener('input', () => {
+            characterInProgress.name = nameInput.value;
+            updateCharacterSummary();
+        });
+    } else {
+        console.error("Character name input element not found.");
+    }
 }
 
 // --- Character Summary Panel ---
 function updateCharacterSummary() {
+    document.getElementById('summary-name').textContent = characterInProgress.name || '-'; // Added for character name
     document.getElementById('summary-species').textContent = characterInProgress.species ? characterInProgress.species.name : '-';
     document.getElementById('summary-class').textContent = characterInProgress.class ? characterInProgress.class.name : '-';
     document.getElementById('summary-subclass').textContent = characterInProgress.subclass ? characterInProgress.subclass.name : '-';
     document.getElementById('summary-background').textContent = characterInProgress.background ? characterInProgress.background.name : '-';
     document.getElementById('summary-background-feat').textContent = characterInProgress.background_feat ? characterInProgress.background_feat.name : '-';
+    document.getElementById('summary-class-skills').textContent = characterInProgress.chosen_class_skills.length > 0 ? characterInProgress.chosen_class_skills.join(', ') : '-'; // Added for class skills
     document.getElementById('summary-equipment').textContent = characterInProgress.chosen_equipment_set ? characterInProgress.chosen_equipment_set.join(', ') : '-';
+    document.getElementById('summary-cantrips').textContent = characterInProgress.chosen_cantrips.length > 0 ? characterInProgress.chosen_cantrips.map(s => s.name).join(', ') : '-';
+    document.getElementById('summary-level-1-spells').textContent = characterInProgress.chosen_level_1_spells.length > 0 ? characterInProgress.chosen_level_1_spells.map(s => s.name).join(', ') : '-';
 
-    if (Object.keys(characterInProgress.base_ability_scores).length > 0) {
+    // Display final ability scores in summary
+    if (Object.keys(characterInProgress.final_ability_scores).length > 0) {
         abilities.forEach(ability => {
-            const score = characterInProgress.base_ability_scores[ability] || defaultScore; // Use defaultScore if somehow not set
+            const score = characterInProgress.final_ability_scores[ability]; // Already includes racial bonus
             const modifier = Math.floor((score - 10) / 2);
-            const abilityAbbreviation = ability.substring(0, 3).toUpperCase();
+            const abilityAbbreviation = ability.substring(0, 3).toUpperCase(); // e.g., "STR"
             const summarySpan = document.getElementById(`summary-${abilityAbbreviation}`);
             if (summarySpan) {
                 summarySpan.textContent = `${score} (${modifier >= 0 ? '+' : ''}${modifier})`;
             }
         });
+    } else if (Object.keys(characterInProgress.base_ability_scores).length > 0) {
+        // Fallback: if final_ability_scores is empty for some reason (e.g. before species selected), show base_ability_scores
+        abilities.forEach(ability => {
+            const score = characterInProgress.base_ability_scores[ability] || defaultScore;
+            const modifier = Math.floor((score - 10) / 2);
+            const abilityAbbreviation = ability.substring(0, 3).toUpperCase();
+            const summarySpan = document.getElementById(`summary-${abilityAbbreviation}`);
+            if (summarySpan) {
+                summarySpan.textContent = `${score} (${modifier >= 0 ? '+' : ''}${modifier}) (base)`;
+            }
+        });
     } else {
-        // If base_ability_scores is empty, display '-' for all
+        // If no scores are set at all yet
         abilities.forEach(ability => {
             const abilityAbbreviation = ability.substring(0, 3).toUpperCase();
             const summarySpan = document.getElementById(`summary-${abilityAbbreviation}`);

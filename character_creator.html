@@ -11,11 +11,13 @@
 
     <div id="character-summary-area">
         <h2>Character Summary</h2>
+        <p><strong>Name:</strong> <span id="summary-name">-</span></p>
         <p><strong>Species:</strong> <span id="summary-species">-</span></p>
         <p><strong>Class:</strong> <span id="summary-class">-</span></p>
         <p><strong>Subclass:</strong> <span id="summary-subclass">-</span></p>
         <p><strong>Background:</strong> <span id="summary-background">-</span></p>
         <p><strong>Background Feat:</strong> <span id="summary-background-feat">-</span></p>
+        <p><strong>Class Skills:</strong> <span id="summary-class-skills">-</span></p>
         <h3>Ability Scores:</h3>
         <ul id="summary-ability-scores">
             <li><strong>STR:</strong> <span id="summary-STR">-</span></li>
@@ -26,9 +28,15 @@
             <li><strong>CHA:</strong> <span id="summary-CHA">-</span></li>
         </ul>
         <p><strong>Equipment:</strong> <span id="summary-equipment">-</span></p>
+        <p><strong>Cantrips:</strong> <span id="summary-cantrips">-</span></p>
+        <p><strong>Level 1 Spells:</strong> <span id="summary-level-1-spells">-</span></p>
     </div>
 
     <div id="creator-sections-container">
+        <div id="name-section" class="selection-area">
+            <h2>Character Name</h2>
+            <input type="text" id="character-name-input" placeholder="Enter character name" class="p-2 border rounded w-full">
+        </div>
         <div id="species-selection-area" class="selection-area">
             <h2>Choose Your Species</h2>
             <div id="species-list-container" class="list-container">
@@ -49,6 +57,9 @@
             <div id="class-details" class="details-container">
                 <!-- Details of selected class will be shown here -->
                 <p>Select a class to see its details.</p>
+                <div id="class-skill-choices-container">
+                    <!-- Skill choices will be dynamically inserted here by JS -->
+                </div>
             </div>
         </div>
 
@@ -88,6 +99,28 @@
             <div id="equipment-options-container">
                 <!-- Equipment options will be dynamically inserted here -->
             </div>
+        </div>
+
+        <div id="spell-selection-area" class="selection-area" style="display:none;">
+            <h2>Spell Selection</h2>
+            <div id="cantrips-selection-container">
+                <h3>Cantrips (Choose <span id="cantrips-to-choose-count">X</span>)</h3>
+                <div id="cantrips-list" class="list-container">
+                    <!-- Cantrip options will be dynamically inserted here -->
+                </div>
+            </div>
+            <div id="level-1-spells-selection-container">
+                <h3>Level 1 Spells (Choose <span id="level-1-spells-to-choose-count">Y</span>)</h3>
+                <div id="level-1-spells-list" class="list-container">
+                    <!-- Level 1 spell options will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="finalize-section" class="selection-area" style="display:none;">
+            <h2>Finalize Character</h2>
+            <button id="finalize-character-button" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg text-lg w-64">Finalize Character</button>
+            <p id="finalize-message" class="mt-4 text-green-300"></p>
         </div>
         <!-- More sections (final review, etc.) will be added here -->
     </div>
