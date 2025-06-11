@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D&D Character Creator</title>
-    <link rel="stylesheet" href="character_creator.css">
-</head>
-<body>
-    <h1>Character Creator</h1>
-
+<div id="character-creator-content-wrapper">
+    <button id="cancel-character-creation-btn" onclick="cancelCharacterCreation()" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded mt-4">Cancel</button>
     <div id="character-summary-area">
         <h2>Character Summary</h2>
         <p><strong>Species:</strong> <span id="summary-species">-</span></p>
@@ -91,7 +82,5 @@
         </div>
         <!-- More sections (final review, etc.) will be added here -->
     </div>
-
-    <script src="character_creator.js"></script>
-</body>
-</html>
+    <button id="finalize-character-btn" onclick="finishCharacterCreation()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded mt-4">Begin Adventure</button>
+</div>
