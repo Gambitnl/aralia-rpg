@@ -1052,5 +1052,12 @@ function updateCharacterSummary() {
     }
 }
 
+window.getCharacterData = function() {
+    // Potentially add more logic here to finalize or validate characterInProgress before returning
+    // For example, calculating final ability scores including racial bonuses, etc.
+    // For now, just returns the current state.
+    // It's important that characterInProgress is accurately updated by all selection functions.
+    return characterInProgress;
+};
 
 window.addEventListener('DOMContentLoaded', initializeCreator);

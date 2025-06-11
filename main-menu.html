@@ -1,7 +1,7 @@
 <div id="main-menu-overlay" class="hidden fixed inset-0 bg-gray-900/95 flex items-center justify-center z-40">
     <div class="text-center">
         <h2 class="text-3xl text-amber-100 mb-8">Main Menu</h2>
-        <button id="menu-new-game" onclick="window.location.href='character_creator.html';" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 px-6 rounded-lg text-lg mb-4 w-64">New Game</button><br>
+        <button id="menu-new-game" onclick="startCharacterCreator();" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 px-6 rounded-lg text-lg mb-4 w-64">New Game</button><br>
         <button id="menu-load-game" onclick="game.loadGame(); hideMainMenu();" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg mb-4 w-64">Load Game</button><br>
         <button id="menu-save-game" onclick="game.saveGame();" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg mb-4 w-64">Save Game</button><br>
         <button id="menu-continue" onclick="hideMainMenu()" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg w-64">Continue Adventure</button>

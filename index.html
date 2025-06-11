@@ -6,6 +6,7 @@
     <title>Aralia: The Shattered Crown</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="character_creator.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
     <style>
         body {
@@ -151,7 +152,7 @@
 
         <div id="character-creator-overlay"
              class="hidden fixed inset-0 bg-black/75 flex items-center justify-center z-50">
-          <div class="bg-gray-800 p-6 rounded-lg max-w-sm w-full text-gray-300">
+          <div class="bg-gray-800 p-6 rounded-lg w-full md:w-3/4 lg:w-2/3 max-w-4xl overflow-y-auto h-full md:h-auto md:max-h-[90vh] text-gray-300">
             <h3 class="text-xl text-amber-100 mb-4">Create Character</h3>
             <label class="block mb-2 text-left text-gray-200">
               Name
@@ -510,28 +511,102 @@ const game = {
             window.game = game;
             window.gameState = gameState;
 
-            function startCharacterCreator() {
-                hideMainMenu();
+            async function startCharacterCreator() {
+                hideMainMenu(); // Assuming this function exists and hides the main menu
                 const overlay = document.getElementById('character-creator-overlay');
+                const characterCreatorContentHost = overlay.querySelector('div'); // Get the inner div
+
+                if (!characterCreatorContentHost) {
+                    console.error("Character creator content host not found!");
+                    return;
+                }
+
+                characterCreatorContentHost.innerHTML = '<p class="text-center text-lg">Loading Creator...</p>'; // Clear previous content / show loading
                 overlay.classList.remove('hidden');
-                document.getElementById('start-game-btn').onclick = finishCharacterCreation;
+
+                try {
+                    const response = await fetch('character_creator.html');
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch character_creator.html: ${response.status}`);
+                    }
+                    const htmlContent = await response.text();
+                    characterCreatorContentHost.innerHTML = htmlContent;
+
+                    // Ensure the buttons inside the loaded content are correctly assigned if they also call finishCharacterCreation or cancelCharacterCreation
+                    // This might be handled by initializeCreator or by re-assigning here if needed.
+                    // Example: document.getElementById('finalize-character-btn').onclick = finishCharacterCreation;
+                    // document.getElementById('cancel-character-creation-btn').onclick = cancelCharacterCreation;
+
+
+                    if (typeof initializeCreator === 'function') {
+                        initializeCreator();
+                    } else {
+                        console.warn('initializeCreator function not found. Ensure character_creator.js is loaded and defines it.');
+                    }
+                } catch (error) {
+                    console.error("Error loading character creator:", error);
+                    characterCreatorContentHost.innerHTML = '<p class="text-center text-red-500">Error loading character creator. Please try again.</p>';
+                }
             }
             window.startCharacterCreator = startCharacterCreator;
 
             function finishCharacterCreation() {
-                const name = document.getElementById('character-name-input').value.trim() || 'Adventurer';
-                gameState.player = { x: 25, y: 25, name };
-                gameState.inventory = [];
-                if (game && typeof game.addItem === 'function') {
-                    game.addItem('Old Map', 1, true);
-                    game.addItem('Herbs', 3, true);
-                    game.addItem('Flint and Steel', 1, true);
-                }
-                gameState.companions = [];
-                gameState.log = [];
+                const overlay = document.getElementById('character-creator-overlay');
+                const characterCreatorContentHost = overlay.querySelector('div');
 
-                document.getElementById('character-creator-overlay').classList.add('hidden');
-                game.logMessage(`New game started for ${name}.`);
+                // Retrieve character data - assuming getCharacterData() is exposed from character_creator.js
+                const characterData = typeof window.getCharacterData === 'function' ? window.getCharacterData() : null;
+
+                if (characterData) {
+                    gameState.player = {
+                        x: 25, // Default starting X
+                        y: 25, // Default starting Y
+                        name: characterData.name || 'Adventurer',
+                        species: characterData.species,
+                        class: characterData.class,
+                        subclass: characterData.subclass,
+                        background: characterData.background,
+                        abilityScores: characterData.abilityScores,
+                        // Potentially more attributes like HP, skills, equipment if managed by character_creator.js
+                    };
+                    // Reset inventory and add starting items based on new character
+                    gameState.inventory = [];
+                    if (game && typeof game.addItem === 'function') {
+                        // Add items based on class/background or default
+                        game.addItem('Old Map', 1, true);
+                        game.addItem('Herbs', 3, true);
+                        game.addItem('Flint and Steel', 1, true);
+                        // Potentially add equipment from characterData.equipment
+                        if(characterData.equipment && characterData.equipment.length > 0) {
+                            characterData.equipment.forEach(item => game.addItem(item.name || item, 1, true));
+                        }
+                    }
+                    gameState.companions = []; // Reset companions
+                    gameState.log = []; // Clear log for new game
+
+                    game.logMessage(`New game started for ${gameState.player.name}, the ${gameState.player.species} ${gameState.player.class}.`);
+                } else {
+                    // Fallback if character data isn't available (e.g., creator not fully implemented)
+                    // This part matches the old simple character creation
+                    const nameInput = document.getElementById('character-name-input'); // Assuming this ID might still be in the loaded HTML temporarily
+                    const name = nameInput ? nameInput.value.trim() : 'Adventurer';
+                    gameState.player = { x: 25, y: 25, name };
+                    gameState.inventory = [];
+                    if (game && typeof game.addItem === 'function') {
+                        game.addItem('Old Map', 1, true);
+                        game.addItem('Herbs', 3, true);
+                        game.addItem('Flint and Steel', 1, true);
+                    }
+                    gameState.companions = [];
+                    gameState.log = [];
+                    game.logMessage(`New game started for ${name}. (Fallback creation)`);
+                }
+
+                overlay.classList.add('hidden');
+                if (characterCreatorContentHost) {
+                    characterCreatorContentHost.innerHTML = ''; // Clear content
+                }
+
                 if (game && typeof game.renderAll === 'function') {
                     game.renderAll();
                 }
@@ -540,6 +615,18 @@ const game = {
                 }
             }
             window.finishCharacterCreation = finishCharacterCreation;
+
+            function cancelCharacterCreation() {
+                const overlay = document.getElementById('character-creator-overlay');
+                const characterCreatorContentHost = overlay.querySelector('div');
+                overlay.classList.add('hidden');
+                if (characterCreatorContentHost) {
+                    characterCreatorContentHost.innerHTML = ''; // Clear content
+                }
+                // Optionally, show main menu again if it was hidden
+                // if (typeof showMainMenu === 'function') showMainMenu();
+            }
+            window.cancelCharacterCreation = cancelCharacterCreation;
 
             // Main menu logic moved to main-menu.js
 
@@ -601,5 +688,6 @@ function openInventory() {
         };
     </script>
     <script src="main-menu.js"></script>
+    <script src="character_creator.js" defer></script>
 </body>
 </html>
