@@ -1,0 +1,117 @@
+{
+  "name": "Warlock",
+  "source": "Player's Handbook",
+  "description": "A wielder of magic that is derived from a bargain with an extraplanar entity.",
+  "hit_points": {
+    "hit_dice": "1d8 per warlock level",
+    "hp_at_1st_level": "8 + your Constitution modifier",
+    "hp_at_higher_levels": "1d8 (or 5) + your Constitution modifier per warlock level after 1st"
+  },
+  "proficiencies": {
+    "armor": ["light armor"],
+    "weapons": ["simple weapons"],
+    "tools": ["None"],
+    "saving_throws": ["Wisdom", "Charisma"],
+    "skills": {
+      "choose_from": ["Arcana", "Deception", "History", "Intimidation", "Investigation", "Nature", "Religion"],
+      "count": 2
+    }
+  },
+  "equipment": [
+    "(a) a light crossbow and 20 bolts or (b) any simple weapon",
+    "(a) a component pouch or (b) an arcane focus",
+    "(a) a scholar's pack or (b) a dungeoneer's pack",
+    "Leather Armor, any simple weapon, and two daggers"
+  ],
+  "class_table": {
+    "1": {"proficiency_bonus": 2, "features": "Otherworldly Patron, Pact Magic", "cantrips_known": 2, "spells_known": 2, "spell_slots": 1, "slot_level": "1st", "invocations_known": 0},
+    "2": {"proficiency_bonus": 2, "features": "Eldritch Invocations", "cantrips_known": 2, "spells_known": 3, "spell_slots": 2, "slot_level": "1st", "invocations_known": 2},
+    "3": {"proficiency_bonus": 2, "features": "Pact Boon", "cantrips_known": 2, "spells_known": 4, "spell_slots": 2, "slot_level": "2nd", "invocations_known": 2},
+    "4": {"proficiency_bonus": 2, "features": "Ability Score Improvement", "cantrips_known": 3, "spells_known": 5, "spell_slots": 2, "slot_level": "2nd", "invocations_known": 2},
+    "5": {"proficiency_bonus": 3, "features": "-", "cantrips_known": 3, "spells_known": 6, "spell_slots": 2, "slot_level": "3rd", "invocations_known": 3},
+    "6": {"proficiency_bonus": 3, "features": "Otherworldly Patron feature", "cantrips_known": 3, "spells_known": 7, "spell_slots": 2, "slot_level": "3rd", "invocations_known": 3},
+    "7": {"proficiency_bonus": 3, "features": "-", "cantrips_known": 3, "spells_known": 8, "spell_slots": 2, "slot_level": "4th", "invocations_known": 4},
+    "8": {"proficiency_bonus": 3, "features": "Ability Score Improvement", "cantrips_known": 3, "spells_known": 9, "spell_slots": 2, "slot_level": "4th", "invocations_known": 4},
+    "9": {"proficiency_bonus": 4, "features": "-", "cantrips_known": 3, "spells_known": 10, "spell_slots": 2, "slot_level": "5th", "invocations_known": 5},
+    "10": {"proficiency_bonus": 4, "features": "Otherworldly Patron feature", "cantrips_known": 4, "spells_known": 10, "spell_slots": 2, "slot_level": "5th", "invocations_known": 5},
+    "11": {"proficiency_bonus": 4, "features": "Mystic Arcanum (6th level)", "cantrips_known": 4, "spells_known": 11, "spell_slots": 3, "slot_level": "5th", "invocations_known": 5},
+    "12": {"proficiency_bonus": 4, "features": "Ability Score Improvement", "cantrips_known": 4, "spells_known": 11, "spell_slots": 3, "slot_level": "5th", "invocations_known": 6},
+    "13": {"proficiency_bonus": 5, "features": "Mystic Arcanum (7th level)", "cantrips_known": 4, "spells_known": 12, "spell_slots": 3, "slot_level": "5th", "invocations_known": 6},
+    "14": {"proficiency_bonus": 5, "features": "Otherworldly Patron feature", "cantrips_known": 4, "spells_known": 12, "spell_slots": 3, "slot_level": "5th", "invocations_known": 6},
+    "15": {"proficiency_bonus": 5, "features": "Mystic Arcanum (8th level)", "cantrips_known": 4, "spells_known": 13, "spell_slots": 3, "slot_level": "5th", "invocations_known": 7},
+    "16": {"proficiency_bonus": 5, "features": "Ability Score Improvement", "cantrips_known": 4, "spells_known": 13, "spell_slots": 3, "slot_level": "5th", "invocations_known": 7},
+    "17": {"proficiency_bonus": 6, "features": "Mystic Arcanum (9th level)", "cantrips_known": 4, "spells_known": 14, "spell_slots": 4, "slot_level": "5th", "invocations_known": 7},
+    "18": {"proficiency_bonus": 6, "features": "-", "cantrips_known": 4, "spells_known": 14, "spell_slots": 4, "slot_level": "5th", "invocations_known": 8},
+    "19": {"proficiency_bonus": 6, "features": "Ability Score Improvement", "cantrips_known": 4, "spells_known": 15, "spell_slots": 4, "slot_level": "5th", "invocations_known": 8},
+    "20": {"proficiency_bonus": 6, "features": "Eldritch Master", "cantrips_known": 4, "spells_known": 15, "spell_slots": 4, "slot_level": "5th", "invocations_known": 8}
+  },
+  "pact_boon_options": [
+    {
+      "name": "Pact of the Chain",
+      "description": "You learn the find familiar spell and can cast it as a ritual. The spell doesn’t count against your number of spells known. When you cast the spell, you can choose one of the normal forms for your familiar or one of the following special forms: imp, pseudodragon, quasit, or sprite. Additionally, when you take the Attack action, you can forgo one of your own attacks to allow your familiar to make one attack of its own with its reaction."
+    },
+    {
+      "name": "Pact of the Blade",
+      "description": "You can use your action to create a pact weapon in your empty hand. You can choose the form that this melee weapon takes each time you create it. You are proficient with it while you wield it. This weapon counts as magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage. Your pact weapon disappears if it is more than 5 feet away from you for 1 minute or more. It also disappears if you use this feature again, if you dismiss the weapon (no action required), or if you die. You can transform one Magic Weapon into your pact weapon by performing a special ritual while you hold the weapon. You perform the ritual over the course of 1 hour, which can be done during a short rest. You can then dismiss the weapon, shunting it into an extradimensional space, and it appears whenever you create your pact weapon thereafter. You can’t affect an artifact or a sentient weapon in this way. The weapon ceases being your pact weapon if you die, if you perform the 1-hour ritual on a different weapon, or if you use a 1-hour ritual to break your bond to it. The weapon appears at your feet if it is in the extradimensional space when the bond breaks."
+    },
+    {
+      "name": "Pact of the Tome",
+      "description": "Your patron gives you a grimoire called a Book of Shadows. When you gain this feature, choose three cantrips from any class’s spell list (the three needn’t be from the same list). While the book is on your person, you can cast those cantrips at will. They don’t count against your number of cantrips known. If they don’t appear on the warlock spell list, they are nonetheless warlock spells for you. If you lose your Book of Shadows, you can perform a 1-hour ceremony to receive a replacement from your patron. This ceremony can be performed during a short or long rest, and it destroys the previous book. The book turns to ash when you die."
+    }
+  ],
+  "eldritch_invocations": [
+    {"name": "Agonizing Blast", "prerequisite": "eldritch blast cantrip", "description": "When you cast eldritch blast, add your Charisma modifier to the damage it deals on a hit."},
+    {"name": "Armor of Shadows", "prerequisite": "None", "description": "You can cast mage armor on yourself at will, without expending a spell slot or material components."},
+    {"name": "Ascendant Step", "prerequisite": "9th level", "description": "You can cast levitate on yourself at will, without expending a spell slot or material components."},
+    {"name": "Beast Speech", "prerequisite": "None", "description": "You can cast speak with animals at will, without expending a spell slot."},
+    {"name": "Beguiling Influence", "prerequisite": "None", "description": "You gain proficiency in the Deception and Persuasion skills."},
+    {"name": "Bewitching Whispers", "prerequisite": "7th level", "description": "You can cast compulsion once using a warlock spell slot. You can’t do so again until you finish a long rest."},
+    {"name": "Book of Ancient Secrets", "prerequisite": "Pact of the Tome feature", "description": "You can now inscribe magical rituals in your Book of Shadows. Choose two 1st-level spells that have the ritual tag from any class’s spell list. The spells appear in the book and don’t count against the number of spells you know. With your Book of Shadows in hand, you can cast the chosen spells as rituals. You can’t cast the spells except as rituals, unless you’ve learned them by some other means. You can also cast a warlock spell you know as a ritual if it has the ritual tag. On your adventures, you can add other ritual spells to your Book of Shadows. When you find such a spell, you can add it to the book if the spell’s level is equal to or less than half your warlock level (rounded up) and if you can spare the time to transcribe the spell. For each level of the spell, the transcription process takes 2 hours and costs 50 gp for the rare inks needed to inscribe it."},
+    {"name": "Chains of Carceri", "prerequisite": "15th level, Pact of the Chain feature", "description": "You can cast hold monster at will—targeting a celestial, fiend, or elemental—without expending a spell slot or material components. You must finish a long rest before you can use this invocation on the same creature again."},
+    {"name": "Devil’s Sight", "prerequisite": "None", "description": "You can see normally in darkness, both magical and nonmagical, to a distance of 120 feet."},
+    {"name": "Dreadful Word", "prerequisite": "7th level", "description": "You can cast confusion once using a warlock spell slot. You can’t do so again until you finish a long rest."},
+    {"name": "Eldritch Sight", "prerequisite": "None", "description": "You can cast detect magic at will, without expending a spell slot."},
+    {"name": "Eldritch Spear", "prerequisite": "eldritch blast cantrip", "description": "When you cast eldritch blast, its range is 300 feet."},
+    {"name": "Eyes of the Rune Keeper", "prerequisite": "None", "description": "You can read all writing."},
+    {"name": "Fiendish Vigor", "prerequisite": "None", "description": "You can cast false life on yourself at will as a 1st-level spell, without expending a spell slot or material components."},
+    {"name": "Gaze of Two Minds", "prerequisite": "None", "description": "You can use your action to touch a willing humanoid and perceive through its senses until the end of your next turn. As long as the creature is on the same plane of existence as you, you can use your action on subsequent turns to maintain this connection, extending the duration until the end of your next turn. While perceiving through the other creature’s senses, you benefit from any special senses possessed by that creature, and you are blinded and deafened to your own surroundings."},
+    {"name": "Lifedrinker", "prerequisite": "12th level, Pact of the Blade feature", "description": "When you hit a creature with your pact weapon, the creature takes extra necrotic damage equal to your Charisma modifier (minimum 1)."},
+    {"name": "Mask of Many Faces", "prerequisite": "None", "description": "You can cast disguise self at will, without expending a spell slot."},
+    {"name": "Master of Myriad Forms", "prerequisite": "15th level", "description": "You can cast alter self at will, without expending a spell slot."},
+    {"name": "Minions of Chaos", "prerequisite": "9th level", "description": "You can cast conjure elemental once using a warlock spell slot. You can’t do so again until you finish a long rest."},
+    {"name": "Mire the Mind", "prerequisite": "5th level", "description": "You can cast slow once using a warlock spell slot. You can’t do so again until you finish a long rest."},
+    {"name": "Misty Visions", "prerequisite": "None", "description": "You can cast silent image at will, without expending a spell slot or material components."},
+    {"name": "One with Shadows", "prerequisite": "5th level", "description": "When you are in an area of dim light or darkness, you can use your action to become invisible until you move or take an action or a reaction."},
+    {"name": "Otherworldly Leap", "prerequisite": "9th level", "description": "You can cast jump on yourself at will, without expending a spell slot or material components."},
+    {"name": "Repelling Blast", "prerequisite": "eldritch blast cantrip", "description": "When you hit a creature with eldritch blast, you can push the creature up to 10 feet away from you in a straight line."},
+    {"name": "Sculptor of Flesh", "prerequisite": "7th level", "description": "You can cast polymorph once using a warlock spell slot. You can’t do so again until you finish a long rest."},
+    {"name": "Sign of Ill Omen", "prerequisite": "5th level", "description": "You can cast bestow curse once using a warlock spell slot. You can’t do so again until you finish a long rest."},
+    {"name": "Thief of Five Fates", "prerequisite": "None", "description": "You can cast bane once using a warlock spell slot. You can’t do so again until you finish a long rest."},
+    {"name": "Thirsting Blade", "prerequisite": "5th level, Pact of the Blade feature", "description": "You can attack with your pact weapon twice, instead of once, whenever you take the Attack action on your turn."},
+    {"name": "Visions of Distant Realms", "prerequisite": "15th level", "description": "You can cast arcane eye at will, without expending a spell slot."},
+    {"name": "Voice of the Chain Master", "prerequisite": "Pact of the Chain feature", "description": "You can communicate telepathically with your familiar and perceive through your familiar’s senses as long as you are on the same plane of existence. Additionally, while perceiving through your familiar’s senses, you can also speak through your familiar in your own voice, even if your familiar is normally incapable of speech."},
+    {"name": "Whispers of the Grave", "prerequisite": "9th level", "description": "You can cast speak with dead at will, without expending a spell slot."},
+    {"name": "Witch Sight", "prerequisite": "15th level", "description": "You can see the true form of any shapechanger or creature concealed by illusion or transmutation magic while the creature is within 30 feet of you and within line of sight."}
+  ],
+  "subclasses_title": "Otherworldly Patron",
+  "subclasses": [
+    {
+      "name": "The Fiend",
+      "source": "Player's Handbook",
+      "description": "You have made a pact with a fiend from the lower planes of existence, a being whose aims are evil, even if you strive against those aims. Such beings desire the corruption or destruction of all things, ultimately including you.",
+      "expanded_spell_list": {
+        "1": ["Burning Hands", "Command"],
+        "2": ["Blindness/Deafness", "Scorching Ray"],
+        "3": ["Fireball", "Stinking Cloud"],
+        "4": ["Fire Shield", "Wall of Fire"],
+        "5": ["Flame Strike", "Hallow"]
+      },
+      "features_by_level": {
+        "1": ["Dark One’s Blessing"],
+        "6": ["Dark One’s Own Luck"],
+        "10": ["Fiendish Resilience"],
+        "14": ["Hurl Through Hell"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "name": "Ranger",
+  "source": "Player's Handbook",
+  "description": "A warrior who uses martial prowess and nature magic to combat threats on the edges of civilization.",
+  "hit_points": {
+    "hit_dice": "1d10 per ranger level",
+    "hp_at_1st_level": "10 + your Constitution modifier",
+    "hp_at_higher_levels": "1d10 (or 6) + your Constitution modifier per ranger level after 1st"
+  },
+  "proficiencies": {
+    "armor": ["light armor", "medium armor", "shields"],
+    "weapons": ["simple weapons", "martial weapons"],
+    "tools": ["None"],
+    "saving_throws": ["Strength", "Dexterity"],
+    "skills": {
+      "choose_from": ["Animal Handling", "Athletics", "Insight", "Investigation", "Nature", "Perception", "Stealth", "Survival"],
+      "count": 3
+    }
+  },
+  "equipment": [
+    "(a) Scale Mail or (b) leather armor",
+    "(a) two shortswords or (b) two simple melee weapons",
+    "(a) a dungeoneer's pack or (b) an explorer's pack",
+    "A longbow and a quiver of 20 arrows"
+  ],
+  "fighting_styles": {
+    "description": "At 2nd level, you adopt a particular style of fighting as your specialty. Choose one of the following options. You can’t take a Fighting Style option more than once, even if you later get to choose again.",
+    "options": [
+      {
+        "name": "Archery",
+        "description": "You gain a +2 bonus to attack rolls you make with ranged weapons."
+      },
+      {
+        "name": "Defense",
+        "description": "While you are wearing armor, you gain a +1 bonus to AC."
+      },
+      {
+        "name": "Dueling",
+        "description": "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon."
+      },
+      {
+        "name": "Two-Weapon Fighting",
+        "description": "When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack."
+      }
+    ]
+  },
+  "class_table": {
+    "1": {"proficiency_bonus": 2, "features": "Favored Enemy, Natural Explorer", "spells_known": 0, "spell_slots_1st": 0, "spell_slots_2nd": 0, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "2": {"proficiency_bonus": 2, "features": "Fighting Style, Spellcasting", "spells_known": 2, "spell_slots_1st": 2, "spell_slots_2nd": 0, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "3": {"proficiency_bonus": 2, "features": "Ranger Archetype, Primeval Awareness", "spells_known": 3, "spell_slots_1st": 3, "spell_slots_2nd": 0, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "4": {"proficiency_bonus": 2, "features": "Ability Score Improvement", "spells_known": 3, "spell_slots_1st": 3, "spell_slots_2nd": 0, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "5": {"proficiency_bonus": 3, "features": "Extra Attack", "spells_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 2, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "6": {"proficiency_bonus": 3, "features": "Favored Enemy and Natural Explorer improvements", "spells_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 2, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "7": {"proficiency_bonus": 3, "features": "Ranger Archetype feature", "spells_known": 5, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "8": {"proficiency_bonus": 3, "features": "Ability Score Improvement, Land’s Stride", "spells_known": 5, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "9": {"proficiency_bonus": 4, "features": "-", "spells_known": 6, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 2, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "10": {"proficiency_bonus": 4, "features": "Natural Explorer improvement, Hide in Plain Sight", "spells_known": 6, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 2, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "11": {"proficiency_bonus": 4, "features": "Ranger Archetype feature", "spells_known": 7, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "12": {"proficiency_bonus": 4, "features": "Ability Score Improvement", "spells_known": 7, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "13": {"proficiency_bonus": 5, "features": "-", "spells_known": 8, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 1, "spell_slots_5th": 0},
+    "14": {"proficiency_bonus": 5, "features": "Favored Enemy improvement, Vanish", "spells_known": 8, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 1, "spell_slots_5th": 0},
+    "15": {"proficiency_bonus": 5, "features": "Ranger Archetype feature", "spells_known": 9, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 2, "spell_slots_5th": 0},
+    "16": {"proficiency_bonus": 5, "features": "Ability Score Improvement", "spells_known": 9, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 2, "spell_slots_5th": 0},
+    "17": {"proficiency_bonus": 6, "features": "-", "spells_known": 10, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 1},
+    "18": {"proficiency_bonus": 6, "features": "Feral Senses", "spells_known": 10, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 1},
+    "19": {"proficiency_bonus": 6, "features": "Ability Score Improvement", "spells_known": 11, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2},
+    "20": {"proficiency_bonus": 6, "features": "Foe Slayer", "spells_known": 11, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2}
+  },
+  "subclasses_title": "Ranger Archetype",
+  "subclasses": [
+    {
+      "name": "Hunter",
+      "source": "Player's Handbook",
+      "description": "Emulating the Hunter archetype means accepting your place as a bulwark between civilization and the terrors of the wilderness. As you walk the Hunter’s path, you learn specialized techniques for fighting the threats you face.",
+      "features_by_level": {
+        "3": {
+          "name": "Hunter's Prey",
+          "description": "At 3rd level, you gain one of the following features of your choice.",
+          "options": [
+            {"name": "Colossus Slayer", "description": "Your tenacity can wear down the most potent foes. When you hit a creature with a weapon attack, the creature takes an extra 1d8 damage if it’s below its hit point maximum. You can deal this extra damage only once per turn."},
+            {"name": "Giant Killer", "description": "When a Large or larger creature within 5 feet of you hits or misses you with an attack, you can use your reaction to attack that creature immediately after its attack, provided that you can see the creature."},
+            {"name": "Horde Breaker", "description": "Once on each of your turns when you make a weapon attack, you can make another attack with the same weapon against a different creature that is within 5 feet of the original target and within range of your weapon."}
+          ]
+        },
+        "7": {
+          "name": "Defensive Tactics",
+          "description": "At 7th level, you gain one of the following features of your choice.",
+          "options": [
+            {"name": "Escape the Horde", "description": "Opportunity attacks against you are made with disadvantage."},
+            {"name": "Multiattack Defense", "description": "When a creature hits you with an attack, you gain a +4 bonus to AC against all subsequent attacks made by that creature for the rest of the turn."},
+            {"name": "Steel Will", "description": "You have advantage on saving throws against being frightened."}
+          ]
+        },
+        "11": {
+          "name": "Multiattack",
+          "description": "At 11th level, you gain one of the following features of your choice.",
+          "options": [
+            {"name": "Volley", "description": "You can use your action to make a ranged attack against any number of creatures within 10 feet of a point you can see within your weapon’s range. You must have ammunition for each target, as normal, and you make a separate attack roll for each target."},
+            {"name": "Whirlwind Attack", "description": "You can use your action to make a melee attack against any number of creatures within 5 feet of you, with a separate attack roll for each target."}
+          ]
+        },
+        "15": {
+          "name": "Superior Hunter's Defense",
+          "description": "At 15th level, you gain one of the following features of your choice.",
+          "options": [
+            {"name": "Evasion", "description": "When you are subjected to an effect, such as a red dragon’s fiery breath or a lightning bolt spell, that allows you to make a Dexterity saving throw to take only half damage, you instead take no damage if you succeed on the saving throw, and only half damage if you fail."},
+            {"name": "Stand Against the Tide", "description": "When a hostile creature misses you with a melee attack, you can use your reaction to force that creature to repeat the same attack against another creature (other than itself) of your choice."},
+            {"name": "Uncanny Dodge", "description": "When an attacker that you can see hits you with an attack, you can use your reaction to halve the attack’s damage against you."}
+          ]
+        }
+      }
+    }
+  ]
+}
