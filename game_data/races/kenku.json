@@ -1,0 +1,102 @@
+{
+  "name": "Kenku",
+  "variants": [
+    {
+      "version_name": "Mordenkainen's Multiverse",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "source_url": "http://dnd5e.wikidot.com/kenku",
+      "ability_score_increase": [
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 1,
+              "increase": 2
+            },
+            {
+              "choose": 1,
+              "increase": 1
+            }
+          ],
+          "description": "Increase one score by 2 and increase a different score by 1."
+        },
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 3,
+              "increase": 1
+            }
+          ],
+          "description": "Or increase three different scores by 1."
+        }
+      ],
+      "size": "Medium or Small (player choice)",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Expert Duplication",
+          "description": "When you copy writing or craftwork produced by yourself or someone else, you have advantage on any ability checks you make to produce an exact duplicate."
+        },
+        {
+          "name": "Kenku Recall",
+          "description": "Thanks to your supernaturally good memory, you have proficiency in two skills of your choice.\nMoreover, when you make an ability check using any skill in which you have proficiency, you can give yourself advantage on the check before rolling the d20. You can give yourself advantage in this way a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a long rest."
+        },
+        {
+          "name": "Mimicry",
+          "description": "You can accurately mimic sounds you have heard, including voices. A creature that hears the sounds you make can tell they are imitations only with a successful Wisdom (Insight) check against a DC of 8 + your proficiency bonus + your Charisma modifier."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ],
+        "choose": 1,
+        "options_description": "one other language that you and your DM agree is appropriate for the character."
+      }
+    },
+    {
+      "version_name": "Volo's Guide",
+      "source": "Volo's Guide to Monsters",
+      "source_url": "http://dnd5e.wikidot.com/kenku",
+      "ability_score_increase": [
+        {
+          "ability": "Dexterity",
+          "increase": 2
+        },
+        {
+          "ability": "Wisdom",
+          "increase": 1
+        }
+      ],
+      "size": "Medium (~5 feet tall)",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Expert Forgery",
+          "description": "You can duplicate other creatures' handwriting and craftwork. You have advantage on all checks made to produce forgeries or duplicates of existing objects."
+        },
+        {
+          "name": "Kenku Training",
+          "description": "You are proficient in your choice of two of the following skills: Acrobatics, Deception, Stealth, and Sleight of Hand."
+        },
+        {
+          "name": "Mimicry",
+          "description": "You can mimic sounds you have heard, including voices. A creature that hears the sounds you make can tell they are imitations with a successful Wisdom (Insight) check opposed by your Charisma (Deception) check."
+        }
+      ],
+      "languages": {
+        "known": [],
+        "can_read_write": ["Common", "Auran"],
+        "can_speak": "only by using Mimicry trait",
+        "description": "You can read and write Common and Auran, but you can speak only by using your Mimicry trait."
+      }
+    }
+  ]
+}

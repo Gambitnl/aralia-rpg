@@ -1,0 +1,102 @@
+{
+  "name": "Air Genasi",
+  "variants": [
+    {
+      "version_name": "Mordenkainen's Multiverse",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "source_url": "http://dnd5e.wikidot.com/lineage:genasi-air",
+      "ability_score_increase": [
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 1,
+              "increase": 2
+            },
+            {
+              "choose": 1,
+              "increase": 1
+            }
+          ],
+          "description": "Increase one score by 2 and increase a different score by 1."
+        },
+        {
+          "type": "flexible",
+          "options": [
+            {
+              "choose": 3,
+              "increase": 1
+            }
+          ],
+          "description": "Or increase three different scores by 1."
+        }
+      ],
+      "size": "Medium or Small (player choice)",
+      "speed": {
+        "base": 35
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Darkvision",
+          "description": "You can see in dim light within 60 feet of you as if it were bright light and in darkness as if it were dim light. You discern colors in that darkness only as shades of gray."
+        },
+        {
+          "name": "Unending Breath",
+          "description": "You can hold your breath indefinitely while you’re not incapacitated."
+        },
+        {
+          "name": "Lightning Resistance",
+          "description": "You have resistance to lightning damage."
+        },
+        {
+          "name": "Mingle with the Wind",
+          "description": "You know the Shocking Grasp cantrip. Starting at 3rd level, you can cast the Feather Fall spell with this trait, without requiring a material component. Starting at 5th level, you can also cast the Levitate spell with this trait, without requiring a material component. Once you cast Feather Fall or Levitate with this trait, you can’t cast that spell with it again until you finish a long rest. You can also cast either of those spells using any spell slots you have of the appropriate level.\nIntelligence, Wisdom, or Charisma is your spellcasting ability for these spells when you cast them with this trait (choose when you select this race)."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common"
+        ],
+        "choose": 1,
+        "options_description": "one other language that you and your DM agree is appropriate for the character."
+      }
+    },
+    {
+      "version_name": "Elemental Evil Player's Companion",
+      "source": "Elemental Evil Player's Companion",
+      "source_url": "http://dnd5e.wikidot.com/lineage:genasi-air",
+      "ability_score_increase": [
+        {
+          "ability": "Constitution",
+          "increase": 2
+        },
+        {
+          "ability": "Dexterity",
+          "increase": 1
+        }
+      ],
+      "size": "Medium",
+      "speed": {
+        "base": 30
+      },
+      "creature_type": "Humanoid",
+      "traits": [
+        {
+          "name": "Unending Breath",
+          "description": "You can hold your breath indefinitely while you’re not incapacitated."
+        },
+        {
+          "name": "Mingle with the Wind",
+          "description": "You can cast the Levitate spell once with this trait, requiring no material components, and you regain the ability to cast it this way when you finish a long rest. Constitution is your spellcasting ability for this spell."
+        }
+      ],
+      "languages": {
+        "known": [
+          "Common",
+          "Primordial"
+        ]
+      }
+    }
+  ]
+}
