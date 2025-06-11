@@ -1,0 +1,112 @@
+{
+  "name": "Druid",
+  "source": "Player's Handbook",
+  "description": "A priest of the Old Faith, wielding the powers of nature—moonlight and plant growth, fire and lightning—and adopting animal forms.",
+  "hit_points": {
+    "hit_dice": "1d8 per druid level",
+    "hp_at_1st_level": "8 + your Constitution modifier",
+    "hp_at_higher_levels": "1d8 (or 5) + your Constitution modifier per druid level after 1st"
+  },
+  "proficiencies": {
+    "armor": ["light armor", "medium armor", "shields (druids will not wear armor or use shields made of metal)"],
+    "weapons": ["clubs", "daggers", "darts", "javelins", "maces", "quarterstaffs", "scimitars", "sickles", "slings", "spears"],
+    "tools": ["herbalism kit"],
+    "saving_throws": ["Intelligence", "Wisdom"],
+    "skills": {
+      "choose_from": ["Arcana", "Animal Handling", "Insight", "Medicine", "Nature", "Perception", "Religion", "Survival"],
+      "count": 2
+    }
+  },
+  "equipment": [
+    "(a) a wooden shield or (b) any simple weapon",
+    "(a) a scimitar or (b) any simple melee weapon",
+    "Leather Armor, an explorer's pack, and a druidic focus"
+  ],
+  "class_table": {
+    "1": {"proficiency_bonus": 2, "features": "Druidic, Spellcasting", "cantrips_known": 2, "spell_slots_1st": 2, "spell_slots_2nd": 0, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0, "spell_slots_6th": 0, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "2": {"proficiency_bonus": 2, "features": "Wild Shape, Druid Circle", "cantrips_known": 2, "spell_slots_1st": 3, "spell_slots_2nd": 0, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0, "spell_slots_6th": 0, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "3": {"proficiency_bonus": 2, "features": "-", "cantrips_known": 2, "spell_slots_1st": 4, "spell_slots_2nd": 2, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0, "spell_slots_6th": 0, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "4": {"proficiency_bonus": 2, "features": "Wild Shape improvement, Ability Score Improvement", "cantrips_known": 3, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0, "spell_slots_6th": 0, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "5": {"proficiency_bonus": 3, "features": "-", "cantrips_known": 3, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 2, "spell_slots_4th": 0, "spell_slots_5th": 0, "spell_slots_6th": 0, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "6": {"proficiency_bonus": 3, "features": "Druid Circle feature", "cantrips_known": 3, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 0, "spell_slots_5th": 0, "spell_slots_6th": 0, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "7": {"proficiency_bonus": 3, "features": "-", "cantrips_known": 3, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 1, "spell_slots_5th": 0, "spell_slots_6th": 0, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "8": {"proficiency_bonus": 3, "features": "Wild Shape improvement, Ability Score Improvement", "cantrips_known": 3, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 2, "spell_slots_5th": 0, "spell_slots_6th": 0, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "9": {"proficiency_bonus": 4, "features": "-", "cantrips_known": 3, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 1, "spell_slots_6th": 0, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "10": {"proficiency_bonus": 4, "features": "Druid Circle feature", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2, "spell_slots_6th": 0, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "11": {"proficiency_bonus": 4, "features": "-", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2, "spell_slots_6th": 1, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "12": {"proficiency_bonus": 4, "features": "Ability Score Improvement", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2, "spell_slots_6th": 1, "spell_slots_7th": 0, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "13": {"proficiency_bonus": 5, "features": "-", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2, "spell_slots_6th": 1, "spell_slots_7th": 1, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "14": {"proficiency_bonus": 5, "features": "Druid Circle feature", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2, "spell_slots_6th": 1, "spell_slots_7th": 1, "spell_slots_8th": 0, "spell_slots_9th": 0},
+    "15": {"proficiency_bonus": 5, "features": "-", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2, "spell_slots_6th": 1, "spell_slots_7th": 1, "spell_slots_8th": 1, "spell_slots_9th": 0},
+    "16": {"proficiency_bonus": 5, "features": "Ability Score Improvement", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2, "spell_slots_6th": 1, "spell_slots_7th": 1, "spell_slots_8th": 1, "spell_slots_9th": 0},
+    "17": {"proficiency_bonus": 6, "features": "-", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2, "spell_slots_6th": 1, "spell_slots_7th": 1, "spell_slots_8th": 1, "spell_slots_9th": 1},
+    "18": {"proficiency_bonus": 6, "features": "Timeless Body, Beast Spells", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 3, "spell_slots_6th": 1, "spell_slots_7th": 1, "spell_slots_8th": 1, "spell_slots_9th": 1},
+    "19": {"proficiency_bonus": 6, "features": "Ability Score Improvement", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 3, "spell_slots_6th": 2, "spell_slots_7th": 1, "spell_slots_8th": 1, "spell_slots_9th": 1},
+    "20": {"proficiency_bonus": 6, "features": "Archdruid", "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 3, "spell_slots_6th": 2, "spell_slots_7th": 2, "spell_slots_8th": 1, "spell_slots_9th": 1}
+  },
+  "subclasses_title": "Druid Circle",
+  "subclasses": [
+    {
+      "name": "Circle of the Land",
+      "source": "Player's Handbook",
+      "description": "The Circle of the Land is made up of mystics and sages who safeguard ancient knowledge and rites through a vast oral tradition. These druids meet within sacred circles of trees or standing stones to whisper primal secrets in Druidic.",
+      "features_by_level": {
+        "2": ["Bonus Cantrip", "Natural Recovery"],
+        "3": ["Circle Spells"],
+        "5": ["Circle Spells"],
+        "6": ["Land’s Stride"],
+        "7": ["Circle Spells"],
+        "9": ["Circle Spells"],
+        "10": ["Nature’s Ward"],
+        "14": ["Nature’s Sanctuary"]
+      },
+      "circle_spells_options": {
+        "description": "Your mystical connection to the land infuses you with the ability to cast certain spells. At 3rd, 5th, 7th, and 9th level you gain access to circle spells connected to the land where you became a druid. Choose that land—arctic, coast, desert, forest, grassland, mountain, or swamp—and consult the associated list of spells. Once you gain access to a circle spell, you always have it prepared, and it doesn’t count against the number of spells you can prepare each day. If you gain access to a spell that doesn’t appear on the druid spell list, the spell is nonetheless a druid spell for you.",
+        "lands": {
+          "Arctic": {
+            "3": ["Hold Person", "Spike Growth"],
+            "5": ["Sleet Storm", "Slow"],
+            "7": ["Freedom of Movement", "Ice Storm"],
+            "9": ["Commune with Nature", "Cone of Cold"]
+          },
+          "Coast": {
+            "3": ["Mirror Image", "Misty Step"],
+            "5": ["Water Breathing", "Water Walk"],
+            "7": ["Control Water", "Freedom of Movement"],
+            "9": ["Conjure Elemental", "Scrying"]
+          },
+          "Desert": {
+            "3": ["Blur", "Silence"],
+            "5": ["Create Food and Water", "Protection from Energy"],
+            "7": ["Blight", "Hallucinatory Terrain"],
+            "9": ["Insect Plague", "Wall of Stone"]
+          },
+          "Forest": {
+            "3": ["Barkskin", "Spider Climb"],
+            "5": ["Call Lightning", "Plant Growth"],
+            "7": ["Divination", "Freedom of Movement"],
+            "9": ["Commune with Nature", "Tree Stride"]
+          },
+          "Grassland": {
+            "3": ["Invisibility", "Pass Without Trace"],
+            "5": ["Daylight", "Haste"],
+            "7": ["Divination", "Freedom of Movement"],
+            "9": ["Dream", "Insect Plague"]
+          },
+          "Mountain": {
+            "3": ["Spider Climb", "Spike Growth"],
+            "5": ["Lightning Bolt", "Meld into Stone"],
+            "7": ["Stone Shape", "Stoneskin"],
+            "9": ["Passwall", "Wall of Stone"]
+          },
+          "Swamp": {
+            "3": ["Acid Arrow", "Darkness"],
+            "5": ["Water Walk", "Stinking Cloud"],
+            "7": ["Freedom of Movement", "Locate Creature"],
+            "9": ["Insect Plague", "Scrying"]
+          }
+        }
+      }
+    }
+  ]
+}

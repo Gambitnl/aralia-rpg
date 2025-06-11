@@ -1,0 +1,61 @@
+{
+  "name": "Monk",
+  "source": "Player's Handbook",
+  "description": "A master of martial arts, harnessing the power of the body in pursuit of physical and spiritual perfection.",
+  "hit_points": {
+    "hit_dice": "1d8 per monk level",
+    "hp_at_1st_level": "8 + your Constitution modifier",
+    "hp_at_higher_levels": "1d8 (or 5) + your Constitution modifier per monk level after 1st"
+  },
+  "proficiencies": {
+    "armor": ["None"],
+    "weapons": ["simple weapons", "shortswords"],
+    "tools": ["Choose one type of artisan's tools or one musical instrument"],
+    "saving_throws": ["Strength", "Dexterity"],
+    "skills": {
+      "choose_from": ["Acrobatics", "Athletics", "History", "Insight", "Religion", "Stealth"],
+      "count": 2
+    }
+  },
+  "equipment": [
+    "(a) a shortsword or (b) any simple weapon",
+    "(a) a dungeoneer's pack or (b) an explorer's pack",
+    "10 darts"
+  ],
+  "class_table": {
+    "1": {"proficiency_bonus": 2, "features": "Unarmored Defense, Martial Arts", "martial_arts": "1d4", "ki_points": 0, "unarmored_movement": "+0 ft."},
+    "2": {"proficiency_bonus": 2, "features": "Ki, Unarmored Movement", "martial_arts": "1d4", "ki_points": 2, "unarmored_movement": "+10 ft."},
+    "3": {"proficiency_bonus": 2, "features": "Monastic Tradition, Deflect Missiles", "martial_arts": "1d4", "ki_points": 3, "unarmored_movement": "+10 ft."},
+    "4": {"proficiency_bonus": 2, "features": "Ability Score Improvement, Slow Fall", "martial_arts": "1d4", "ki_points": 4, "unarmored_movement": "+10 ft."},
+    "5": {"proficiency_bonus": 3, "features": "Extra Attack, Stunning Strike", "martial_arts": "1d6", "ki_points": 5, "unarmored_movement": "+10 ft."},
+    "6": {"proficiency_bonus": 3, "features": "Ki-Empowered Strikes, Monastic Tradition feature", "martial_arts": "1d6", "ki_points": 6, "unarmored_movement": "+15 ft."},
+    "7": {"proficiency_bonus": 3, "features": "Evasion, Stillness of Mind", "martial_arts": "1d6", "ki_points": 7, "unarmored_movement": "+15 ft."},
+    "8": {"proficiency_bonus": 3, "features": "Ability Score Improvement", "martial_arts": "1d6", "ki_points": 8, "unarmored_movement": "+15 ft."},
+    "9": {"proficiency_bonus": 4, "features": "Unarmored Movement improvement", "martial_arts": "1d6", "ki_points": 9, "unarmored_movement": "+15 ft."},
+    "10": {"proficiency_bonus": 4, "features": "Purity of Body", "martial_arts": "1d6", "ki_points": 10, "unarmored_movement": "+20 ft."},
+    "11": {"proficiency_bonus": 4, "features": "Monastic Tradition feature", "martial_arts": "1d8", "ki_points": 11, "unarmored_movement": "+20 ft."},
+    "12": {"proficiency_bonus": 4, "features": "Ability Score Improvement", "martial_arts": "1d8", "ki_points": 12, "unarmored_movement": "+20 ft."},
+    "13": {"proficiency_bonus": 5, "features": "Tongue of the Sun and Moon", "martial_arts": "1d8", "ki_points": 13, "unarmored_movement": "+20 ft."},
+    "14": {"proficiency_bonus": 5, "features": "Diamond Soul", "martial_arts": "1d8", "ki_points": 14, "unarmored_movement": "+25 ft."},
+    "15": {"proficiency_bonus": 5, "features": "Timeless Body", "martial_arts": "1d8", "ki_points": 15, "unarmored_movement": "+25 ft."},
+    "16": {"proficiency_bonus": 5, "features": "Ability Score Improvement", "martial_arts": "1d8", "ki_points": 16, "unarmored_movement": "+25 ft."},
+    "17": {"proficiency_bonus": 6, "features": "Monastic Tradition feature", "martial_arts": "1d10", "ki_points": 17, "unarmored_movement": "+25 ft."},
+    "18": {"proficiency_bonus": 6, "features": "Empty Body", "martial_arts": "1d10", "ki_points": 18, "unarmored_movement": "+30 ft."},
+    "19": {"proficiency_bonus": 6, "features": "Ability Score Improvement", "martial_arts": "1d10", "ki_points": 19, "unarmored_movement": "+30 ft."},
+    "20": {"proficiency_bonus": 6, "features": "Perfect Self", "martial_arts": "1d10", "ki_points": 20, "unarmored_movement": "+30 ft."}
+  },
+  "subclasses_title": "Monastic Tradition",
+  "subclasses": [
+    {
+      "name": "Way of the Open Hand",
+      "source": "Player's Handbook",
+      "description": "Monks of the Way of the Open Hand are the ultimate masters of martial arts combat, whether armed or unarmed. They learn techniques to push and trip their opponents, manipulate ki to heal damage to their bodies, and practice advanced meditation that can protect them from harm.",
+      "features_by_level": {
+        "3": ["Open Hand Technique"],
+        "6": ["Wholeness of Body"],
+        "11": ["Tranquility"],
+        "17": ["Quivering Palm"]
+      }
+    }
+  ]
+}

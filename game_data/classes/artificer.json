@@ -1,0 +1,136 @@
+{
+  "name": "Artificer",
+  "source": "Tasha's Cauldron of Everything / Eberron: Rising from the Last War",
+  "description": "Masters of invention, artificers use ingenuity and magic to unlock extraordinary capabilities in objects. They see magic as a complex system waiting to be decoded and then harnessed in their spells and inventions.",
+  "hit_points": {
+    "hit_dice": "1d8 per artificer level",
+    "hp_at_1st_level": "8 + your Constitution modifier",
+    "hp_at_higher_levels": "1d8 (or 5) + your Constitution modifier per artificer level after 1st"
+  },
+  "proficiencies": {
+    "armor": ["Light armor", "medium armor", "shields"],
+    "weapons": ["Simple weapons"],
+    "tools": ["Thieves’ tools", "tinker’s tools", "one type of artisan’s tools of your choice"],
+    "saving_throws": ["Constitution", "Intelligence"],
+    "skills": {
+      "choose_from": ["Arcana", "History", "Investigation", "Medicine", "Nature", "Perception", "Sleight of Hand"],
+      "count": 2
+    }
+  },
+  "equipment": [
+    "any two simple weapons",
+    "a light crossbow and 20 bolts",
+    "(a) studded leather armor or (b) scale mail",
+    "thieves’ tools and a dungeoneer’s pack"
+  ],
+  "class_table": {
+    "1": {"proficiency_bonus": 2, "features": "Magical Tinkering, Spellcasting", "infusions_known": 0, "infused_items": 0, "cantrips_known": 2, "spell_slots_1st": 2, "spell_slots_2nd": 0, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "2": {"proficiency_bonus": 2, "features": "Infuse Item", "infusions_known": 4, "infused_items": 2, "cantrips_known": 2, "spell_slots_1st": 2, "spell_slots_2nd": 0, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "3": {"proficiency_bonus": 2, "features": "Artificer Specialist, The Right Tool for the Job", "infusions_known": 4, "infused_items": 2, "cantrips_known": 2, "spell_slots_1st": 3, "spell_slots_2nd": 0, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "4": {"proficiency_bonus": 2, "features": "Ability Score Improvement", "infusions_known": 4, "infused_items": 2, "cantrips_known": 2, "spell_slots_1st": 3, "spell_slots_2nd": 0, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "5": {"proficiency_bonus": 3, "features": "Artificer Specialist feature", "infusions_known": 4, "infused_items": 2, "cantrips_known": 2, "spell_slots_1st": 4, "spell_slots_2nd": 2, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "6": {"proficiency_bonus": 3, "features": "Tool Expertise", "infusions_known": 6, "infused_items": 3, "cantrips_known": 2, "spell_slots_1st": 4, "spell_slots_2nd": 2, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "7": {"proficiency_bonus": 3, "features": "Flash of Genius", "infusions_known": 6, "infused_items": 3, "cantrips_known": 2, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "8": {"proficiency_bonus": 3, "features": "Ability Score Improvement", "infusions_known": 6, "infused_items": 3, "cantrips_known": 2, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 0, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "9": {"proficiency_bonus": 4, "features": "Artificer Specialist feature", "infusions_known": 6, "infused_items": 3, "cantrips_known": 2, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 2, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "10": {"proficiency_bonus": 4, "features": "Magic Item Adept", "infusions_known": 8, "infused_items": 4, "cantrips_known": 3, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 2, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "11": {"proficiency_bonus": 4, "features": "Spell-Storing Item", "infusions_known": 8, "infused_items": 4, "cantrips_known": 3, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "12": {"proficiency_bonus": 4, "features": "Ability Score Improvement", "infusions_known": 8, "infused_items": 4, "cantrips_known": 3, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 0, "spell_slots_5th": 0},
+    "13": {"proficiency_bonus": 5, "features": "-", "infusions_known": 8, "infused_items": 4, "cantrips_known": 3, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 1, "spell_slots_5th": 0},
+    "14": {"proficiency_bonus": 5, "features": "Magic Item Savant", "infusions_known": 10, "infused_items": 5, "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 1, "spell_slots_5th": 0},
+    "15": {"proficiency_bonus": 5, "features": "Artificer Specialist feature", "infusions_known": 10, "infused_items": 5, "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 2, "spell_slots_5th": 0},
+    "16": {"proficiency_bonus": 5, "features": "Ability Score Improvement", "infusions_known": 10, "infused_items": 5, "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 2, "spell_slots_5th": 0},
+    "17": {"proficiency_bonus": 6, "features": "-", "infusions_known": 10, "infused_items": 5, "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 1},
+    "18": {"proficiency_bonus": 6, "features": "Magic Item Master", "infusions_known": 12, "infused_items": 6, "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 1},
+    "19": {"proficiency_bonus": 6, "features": "Ability Score Improvement", "infusions_known": 12, "infused_items": 6, "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2},
+    "20": {"proficiency_bonus": 6, "features": "Soul of Artifice", "infusions_known": 12, "infused_items": 6, "cantrips_known": 4, "spell_slots_1st": 4, "spell_slots_2nd": 3, "spell_slots_3rd": 3, "spell_slots_4th": 3, "spell_slots_5th": 2}
+  },
+  "subclasses_title": "Artificer Specialist",
+  "subclasses": [
+    {
+      "name": "Alchemist",
+      "source": "Tasha's Cauldron of Everything / Eberron: Rising from the Last War",
+      "description": "An Alchemist is an expert at combining reagents to produce mystical effects. Alchemists use their creations to give life and to leech it away. Alchemy is the oldest of artificer traditions, and its versatility has long been valued during times of war and peace.",
+      "specialist_spells": {
+        "3": ["Healing Word", "Ray of Sickness"],
+        "5": ["Flaming Sphere", "Melf's Acid Arrow"],
+        "9": ["Gaseous Form", "Mass Healing Word"],
+        "13": ["Blight", "Death Ward"],
+        "17": ["Cloudkill", "Raise Dead"]
+      },
+      "features_by_level": {
+        "3": [
+          {"name": "Tool Proficiency", "description": "You gain proficiency with alchemist's supplies. If you already have this proficiency, you gain proficiency with one other type of artisan's tools of your choice."},
+          {"name": "Alchemist Spells", "description": "You always have certain spells prepared after you reach particular levels in this class, as shown in the Alchemist Spells table. These spells count as artificer spells for you, but they don’t count against the number of artificer spells you prepare."},
+          {"name": "Experimental Elixir", "description": "Whenever you finish a long rest, you can magically produce an experimental elixir in an empty flask you touch. Roll on the Experimental Elixir table for the elixir's effect, which is triggered when someone drinks the elixir. As an action, a creature can drink the elixir or administer it to an incapacitated creature. You can create additional experimental elixirs by expending a spell slot of 1st level or higher for each one. When you do so, you use your action to create the elixir in an empty flask you touch, and you choose the elixir's effect from the Experimental Elixir table. Creating an experimental elixir requires you to have alchemist supplies on your person, and any elixir you create with this feature lasts until it is drunk or until the end of your next long rest. When you reach certain levels in this class, you can make more elixirs at the end of a long rest: two at 6th level and three at 15th level. Roll for each elixir's effect separately. Each elixir requires its own flask."}
+        ],
+        "5": [
+          {"name": "Alchemical Savant", "description": "You've developed masterful command of magical chemicals, enhancing the healing and damage you create through them. Whenever you cast a spell using your alchemist's supplies as the spellcasting focus, you gain a bonus to one roll of the spell. That roll must restore hit points or be a damage roll that deals acid, fire, necrotic, or poison damage, and the bonus equals your Intelligence modifier (minimum of +1)."}
+        ],
+        "9": [
+          {"name": "Restorative Reagents", "description": "You can incorporate restorative reagents into some of your works: Whenever a creature drinks an experimental elixir you created, the creature gains temporary hit points equal to 2d6 + your Intelligence modifier (minimum of 1 temporary hit point). You can cast Lesser Restoration without expending a spell slot and without preparing the spell, provided you use alchemist's supplies as the spellcasting focus. You can do so a number of times equal to your Intelligence modifier (minimum of once), and you regain all expended uses when you finish a long rest."}
+        ],
+        "15": [
+          {"name": "Chemical Mastery", "description": "You have been exposed to so many chemicals that they pose little risk to you, and you can use them to quickly end certain ailments: You gain resistance to acid damage and poison damage, and you are now immune to the poisoned condition. You can cast Greater Restoration and Heal without expending a spell slot, without preparing the spell, and without providing the material component, provided you use alchemist’s supplies as the spellcasting focus. Once you cast either spell with this feature, you can't cast that spell with it again until you finish a long rest."}
+        ]
+      }
+    },
+    {
+      "name": "Armorer",
+      "source": "Tasha's Cauldron of Everything",
+      "description": "An artificer who specializes as an Armorer modifies armor to function almost like a second skin. The armor is enhanced to hone the artificer's magic, unleash potent attacks, and generate a formidable defense.",
+      "specialist_spells": {
+        "3": ["Magic Missile", "Thunderwave"],
+        "5": ["Mirror Image", "Shatter"],
+        "9": ["Hypnotic Pattern", "Lightning Bolt"],
+        "13": ["Fire Shield", "Greater Invisibility"],
+        "17": ["Passwall", "Wall of Force"]
+      },
+      "features_by_level": {
+        "3": [
+          {"name": "Tools of the Trade", "description": "You gain proficiency with heavy armor. You also gain proficiency with smith's tools. If you already have this tool proficiency, you gain proficiency with one other type of artisan's tools of your choice."},
+          {"name": "Armorer Spells", "description": "You always have certain spells prepared after you reach particular levels in this class, as shown in the Armorer Spells table. These spells count as artificer spells for you, but they don’t count against the number of artificer spells you prepare."},
+          {"name": "Arcane Armor", "description": "Your metallurgical pursuits have led to you making armor a conduit for your magic. As an action, you can turn a suit of armor you are wearing into Arcane Armor, provided you have smith's tools in hand. You gain benefits while wearing this armor: lacks Strength requirement, can be spellcasting focus, attaches to you and can’t be removed against your will, replaces missing limbs, can be donned/doffed as an action. Continues until you don another suit or die."},
+          {"name": "Armor Model", "description": "Choose Guardian or Infiltrator model. Each includes a special weapon (use Int for attack/damage). Can change model on short/long rest. Guardian: Thunder Gauntlets (1d8 thunder, target has disadvantage on attacks vs others), Defensive Field (bonus action for temp HP = level, PB uses/long rest). Infiltrator: Lightning Launcher (1d6 lightning, 90/300ft range, extra 1d6 once/turn), Powered Steps (+5ft speed), Dampening Field (Adv. on Stealth)."}
+        ],
+        "5": [
+          {"name": "Extra Attack", "description": "You can attack twice, rather than once, whenever you take the Attack action on your turn."}
+        ],
+        "9": [
+          {"name": "Armor Modifications", "description": "Your Arcane Armor now counts as separate items for Infuse Items: armor (chest piece), boots, helmet, and special weapon. Each can bear one infusion. Max infused items increases by 2 (must be part of Arcane Armor)."}
+        ],
+        "15": [
+          {"name": "Perfected Armor", "description": "Guardian: Reaction to force Huge or smaller creature within 30ft to make Str save or be pulled 25ft; if pulled to within 5ft, can make melee attack. PB uses/long rest. Infiltrator: Creature taking lightning damage from Lightning Launcher glimmers (dim light 5ft radius), has disadvantage on attacks vs you, next attack vs it has advantage and deals extra 1d6 lightning."}
+        ]
+      }
+    },
+    {
+      "name": "Artillerist",
+      "source": "Tasha's Cauldron of Everything / Eberron: Rising from the Last War",
+      "description": "An Artillerist specializes in using magic to hurl energy, projectiles, and explosions on a battlefield. This destructive power is valued by armies in the wars on many different worlds.",
+      "specialist_spells": {
+        "3": ["Shield", "Thunderwave"],
+        "5": ["Scorching Ray", "Shatter"],
+        "9": ["Fireball", "Wind Wall"],
+        "13": ["Ice Storm", "Wall of Fire"],
+        "17": ["Cone of Cold", "Wall of Force"]
+      },
+      "features_by_level": {
+        "3": [
+          {"name": "Tool Proficiency", "description": "You gain proficiency with woodcarver's tools. If you already have this proficiency, you gain proficiency with one other type of artisan's tools of your choice."},
+          {"name": "Artillerist Spells", "description": "You always have certain spells prepared after you reach particular levels in this class, as shown in the Artillerist Spells table. These spells count as artificer spells for you, but they don’t count against the number of artificer spells you prepare."},
+          {"name": "Eldritch Cannon", "description": "You've learned how to create a magical cannon. Using woodcarver's tools or smith's tools, you can take an action to magically create a Small or Tiny eldritch cannon. You decide its appearance and if it has legs. Choose its type: Flamethrower (15-foot cone, 2d8 fire damage, Dex save for half), Force Ballista (ranged spell attack, 120ft, 2d8 force damage, push 5ft), or Protector (grants self and creatures within 10ft 1d8 + Int mod temp HP). You can activate the cannon as a bonus action (can also move it 15ft if it has legs). AC 18, HP = 5 x artificer level. Immune to poison/psychic. Regains 2d6 HP from mending. Disappears if 0 HP or after 1 hour. Can create one per long rest or by expending a spell slot."}
+        ],
+        "5": [
+          {"name": "Arcane Firearm", "description": "You know how to turn a wand, staff, or rod into an arcane firearm. When you finish a long rest, you can use woodcarver's tools to carve special sigils into it. You can use your arcane firearm as a spellcasting focus. When you cast an artificer spell through the firearm, roll a d8, and you gain a bonus to one of the spell's damage rolls equal to the number rolled."}
+        ],
+        "9": [
+          {"name": "Explosive Cannon", "description": "The cannon's damage rolls all increase by 1d8. As an action, you can command the cannon to detonate if you are within 60 feet of it. Doing so destroys the cannon and forces each creature within 20 feet of it to make a Dexterity saving throw against your spell save DC, taking 3d8 force damage on a failed save or half as much damage on a successful one."}
+        ],
+        "15": [
+          {"name": "Fortified Position", "description": "You and your allies have half cover while within 10 feet of a cannon you create with Eldritch Cannon. You can now have two cannons at the same time. You can create two with the same action (but not the same spell slot), and you can activate both of them with the same bonus action. You determine whether the cannons are identical to each other or different. You can't create a third cannon while you have two."}
+        ]
+      }
+    }
+  ]
+}
