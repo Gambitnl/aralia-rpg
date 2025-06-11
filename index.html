@@ -516,6 +516,7 @@ const game = {
                 overlay.classList.remove('hidden');
                 document.getElementById('start-game-btn').onclick = finishCharacterCreation;
             }
+            window.startCharacterCreator = startCharacterCreator;
 
             function finishCharacterCreation() {
                 const name = document.getElementById('character-name-input').value.trim() || 'Adventurer';
@@ -538,6 +539,7 @@ const game = {
                     game.generateContextualActions();
                 }
             }
+            window.finishCharacterCreation = finishCharacterCreation;
 
             // Main menu logic moved to main-menu.js
 
