@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Character Creator</title>
+    <link rel="stylesheet" href="character_creator.css">
+</head>
+<body>
+    <h1>Character Creator</h1>
+
+    <div id="character-summary-area">
+        <h2>Character Summary</h2>
+        <p><strong>Species:</strong> <span id="summary-species">-</span></p>
+        <p><strong>Class:</strong> <span id="summary-class">-</span></p>
+        <p><strong>Subclass:</strong> <span id="summary-subclass">-</span></p>
+        <p><strong>Background:</strong> <span id="summary-background">-</span></p>
+        <p><strong>Background Feat:</strong> <span id="summary-background-feat">-</span></p>
+        <h3>Ability Scores:</h3>
+        <ul id="summary-ability-scores">
+            <li><strong>STR:</strong> <span id="summary-STR">-</span></li>
+            <li><strong>DEX:</strong> <span id="summary-DEX">-</span></li>
+            <li><strong>CON:</strong> <span id="summary-CON">-</span></li>
+            <li><strong>INT:</strong> <span id="summary-INT">-</span></li>
+            <li><strong>WIS:</strong> <span id="summary-WIS">-</span></li>
+            <li><strong>CHA:</strong> <span id="summary-CHA">-</span></li>
+        </ul>
+        <p><strong>Equipment:</strong> <span id="summary-equipment">-</span></p>
+    </div>
+
+    <div id="creator-sections-container">
+        <div id="species-selection-area" class="selection-area">
+            <h2>Choose Your Species</h2>
+            <div id="species-list-container" class="list-container">
+                <!-- Species options will be dynamically inserted here -->
+            </div>
+            <div id="species-details" class="details-container">
+                <!-- Details of selected species will be shown here -->
+                <p>Select a species to see its details.</p>
+            </div>
+        </div>
+
+        <!-- Placeholder for Class Selection Area -->
+        <div id="class-selection-area" class="selection-area" style="display:none;">
+            <h2>Choose Your Class</h2>
+            <div id="class-list-container" class="list-container">
+                <!-- Class options will be dynamically inserted here -->
+            </div>
+            <div id="class-details" class="details-container">
+                <!-- Details of selected class will be shown here -->
+                <p>Select a class to see its details.</p>
+            </div>
+        </div>
+
+        <div id="ability-score-area" class="selection-area" style="display:none;">
+            <h2>Assign Ability Scores (Point Buy)</h2>
+            <div id="point-buy-summary">Points Spent: 0 / 27</div>
+            <div id="ability-scores-container">
+                <!-- Ability score entries will be dynamically inserted here by JS -->
+            </div>
+            <p class="note">Base scores are between 8 and 15. Modifiers and point costs will update automatically.</p>
+        </div>
+
+        <div id="subclass-selection-area" class="selection-area" style="display:none;">
+            <h2>Choose Your Subclass</h2>
+            <div id="subclass-list-container" class="list-container">
+                <!-- Subclass options will be dynamically inserted here -->
+            </div>
+            <div id="subclass-details" class="details-container">
+                <!-- Details of selected subclass will be shown here -->
+                <p>Select a subclass to see its details, if applicable for your class at level 1.</p>
+            </div>
+        </div>
+
+        <div id="background-selection-area" class="selection-area" style="display:none;">
+            <h2>Choose Your Background</h2>
+            <div id="background-list-container" class="list-container">
+                <!-- Background options will be dynamically inserted here -->
+            </div>
+            <div id="background-details" class="details-container">
+                <!-- Details of selected background will be shown here -->
+                <p>Select a background to see its details and associated feat.</p>
+            </div>
+        </div>
+
+        <div id="equipment-selection-area" class="selection-area" style="display:none;">
+            <h2>Choose Your Starting Equipment</h2>
+            <div id="equipment-options-container">
+                <!-- Equipment options will be dynamically inserted here -->
+            </div>
+        </div>
+        <!-- More sections (final review, etc.) will be added here -->
+    </div>
+
+    <script src="character_creator.js"></script>
+</body>
+</html>
