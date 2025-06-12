@@ -91,7 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (openTownViewButton) {
             const hasTown = Boolean(gameState.current_town_id);
-            openTownViewButton.style.display = hasTown ? 'inline-block' : 'none';
+            openTownViewButton.disabled = !hasTown;
+            openTownViewButton.title = hasTown ? '' : 'No town discovered yet.';
         }
         // Add logic for other contextual buttons here if needed
 
@@ -186,13 +187,21 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Enter Town button clicked. Sending 'enter town' action to backend.");
         performGameAction("enter town");
     }
-    function handleOpenTownView() {
+    async function handleOpenTownView() {
         if (!gameState || !gameState.current_town_id) {
             console.warn("No town ID available for town view navigation.");
             return;
         }
-        sessionStorage.setItem('currentTownId', gameState.current_town_id);
-        window.location.href = 'town_view.html';
+        try {
+            const resp = await fetch('town_view.html', { method: 'HEAD' });
+            if (!resp.ok) throw new Error(`town_view.html unreachable: ${resp.status}`);
+            const url = new URL('town_view.html', window.location.href);
+            url.searchParams.set('town', gameState.current_town_id);
+            window.location.href = url.toString();
+        } catch (err) {
+            console.error('Failed to load town view:', err);
+            addMessage('Error: Town view could not be loaded.');
+        }
     }
 
     // --- Event Listeners ---
