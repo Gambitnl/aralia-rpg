@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, request, send_from_directory, session
 from flask_cors import CORS
+import os
+import requests
 from dataclasses import asdict, is_dataclass
 from math import floor # Added for HP calculation
 from math import floor # Added for HP calculation
@@ -358,6 +360,44 @@ def handle_game_action():
     session.modified = True
 
     return jsonify(response_data) # Return the response_data, which includes the one-time trigger if set
+
+# --- Gemini API Proxy (for local development) ---
+@app.route('/api/gemini', methods=['POST'])
+def gemini_proxy():
+    data = request.get_json()
+    if not data or 'prompt' not in data:
+        return jsonify({'message': 'Prompt is required'}), 400
+
+    api_key = os.environ.get('GEMINI_API_KEY')
+    if not api_key:
+        app.logger.warning('GEMINI_API_KEY not set')
+        return jsonify({'message': 'API key not configured'}), 500
+
+    api_url = (
+        'https://generativelanguage.googleapis.com/v1beta/models/'
+        f'gemini-2.0-flash:generateContent?key={api_key}'
+    )
+    payload = {
+        'contents': [{'role': 'user', 'parts': [{'text': data['prompt']}]}]
+    }
+
+    try:
+        resp = requests.post(api_url, json=payload)
+        if not resp.ok:
+            app.logger.error('Gemini API Error: %s', resp.text)
+            return jsonify({'message': 'Error from Gemini API'}), resp.status_code
+
+        gemini_result = resp.json()
+        text = (
+            gemini_result.get('candidates', [{}])[0]
+            .get('content', {})
+            .get('parts', [{}])[0]
+            .get('text', '')
+        )
+        return jsonify({'text': text})
+    except Exception as e:
+        app.logger.error('Error calling Gemini API: %s', e)
+        return jsonify({'message': 'Internal server error'}), 500
 
 # --- Static File Serving ---
 # It's important that API routes are defined before the generic static file routes,
