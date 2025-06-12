@@ -1,6 +1,9 @@
-The `main_character_creator.py` file serves as the primary interactive script that drives the Dungeons & Dragons character creation process. It orchestrates the user's journey from starting with a blank slate to having a character with defined core attributes.
+The `main_character_creator.py` file originally provided a text-driven workflow for building a character.  The
+interactive prompts have since been removed.  Today the module exposes a
+single helper, `create_character()`, which returns a minimal `CharacterState`
+instance without any console input.
 
-The central function, `create_character()`, meticulously guides the user through a sequence of steps:
+Historically the function guided the user through a sequence of steps:
 
 1.  **Initialization**: It begins by setting up the necessary components:
     *   An instance of `DataManagementModule` is created to load and provide access to all predefined game data (species, classes, etc.).
@@ -18,10 +21,9 @@ Throughout this process, `main_character_creator.py` demonstrates clear interact
 *   As the user makes choices, the `CharacterState` object is progressively updated to reflect these selections (e.g., storing the chosen species, class, and assigned ability scores).
 *   The `RulesEngine` is utilized for crucial tasks like validating the legality of point buy ability score distributions and for calculating and displaying final ability scores along with their modifiers.
 
-User interaction is managed through console input and output, facilitated by helper functions:
-
-*   `display_options()`: Presents lists of choices (like species or classes) to the user in a numbered format.
-*   `get_user_choice()`: Captures and validates the user's numerical input corresponding to their selection.
+In the removed CLI version, user interaction was handled through helper
+functions such as `display_options()` and `get_user_choice()` which worked with
+console input.  These helpers are no longer used.
 
 A notable feature for development and testing is the try-except block around the import of the core logic modules (`DataManagementModule`, `CharacterState`, `RulesEngine`). If these primary modules are not found (e.g., during early UI development or for isolated testing of the main script's flow), it attempts to load dummy versions (`DummyDataManagementModule`, `DummyCharacterState`, `DummyRulesEngine`). This fallback mechanism allows the main script to run and test the user interaction flow even without the full backend logic being present or functional.
 
