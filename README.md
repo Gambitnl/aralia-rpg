@@ -50,3 +50,7 @@ vercel
 
 Make sure to set `GEMINI_API_KEY` in your Vercel project settings so that `/api/gemini.js` can call the Gemini API correctly.
 When running the Flask server locally, the `/api/gemini` route will proxy to the same API if `GEMINI_API_KEY` is set in your environment.
+
+### GitHub Integration
+
+This repository is linked to Vercel via the GitHub app. Every push to `main` automatically deploys a new production build, while pull requests create preview deployments. These development snapshots use the Gemini serverless API for any AI prompts.
