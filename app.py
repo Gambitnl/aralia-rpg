@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request, send_from_directory, session
 from flask_cors import CORS
 from dataclasses import asdict, is_dataclass
-from math import floor # Added for HP calculation
-from math import floor # Added for HP calculation
+from math import floor  # Added for HP calculation
+from math import floor  # Added for HP calculation
+import os
+import json
 
 # Attempt to import DataManagementModule and RulesEngine
 try:
@@ -187,6 +189,21 @@ def get_feats():
     except Exception as e:
         app.logger.error(f"Error in /api/feats: {e}")
         return jsonify({"error": "Could not load feat data", "details": str(e)}), 500
+
+@app.route('/api/races', methods=['GET'])
+def get_races():
+    """Return race data from game_data/races JSON files."""
+    try:
+        races_dir = os.path.join(os.path.dirname(__file__), 'game_data', 'races')
+        race_files = [f for f in os.listdir(races_dir) if f.endswith('.json')]
+        races = []
+        for filename in race_files:
+            with open(os.path.join(races_dir, filename), 'r', encoding='utf-8') as f:
+                races.append(json.load(f))
+        return jsonify(races)
+    except Exception as e:
+        app.logger.error(f"Error in /api/races: {e}")
+        return jsonify({"error": "Could not load race data", "details": str(e)}), 500
 
 # --- Town Generation API ---
 @app.route('/api/town/<town_id>/map', methods=['GET'])

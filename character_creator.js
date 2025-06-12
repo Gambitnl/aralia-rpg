@@ -32,130 +32,7 @@ const PLACEHOLDER_LEVEL_1_SPELLS = [
 const DEFAULT_CANTRIPS_TO_CHOOSE = 2;
 const DEFAULT_LEVEL_1_SPELLS_TO_CHOOSE = 2;
 
-// Local race data used when not fetching from an API
-const LOCAL_RACES = [
-    {
-        name: "Human",
-        description: "Resourceful and adaptable, humans are found throughout the multiverse.",
-        racial_traits: [
-            "Resourceful (Extra Skill Prof)",
-            "Skillful (Extra Tool Prof or Language)",
-            "Versatile (Extra Feat at L1 - often assumed to be Tough or Skilled)"
-        ],
-        speed: 30,
-        languages: ["Common", "Choose one extra"],
-        size: "Medium"
-    },
-    {
-        name: "Elf",
-        description: "Graceful and perceptive, with a long lifespan and deep connection to magic or nature.",
-        racial_traits: [
-            "Darkvision",
-            "Fey Ancestry (Adv. on saves vs. Charmed)",
-            "Keen Senses (Prof. in Perception)",
-            "Trance (Meditate 4 hrs for long rest benefit)"
-        ],
-        speed: 30,
-        languages: ["Common", "Elvish"],
-        size: "Medium"
-    },
-    {
-        name: "Dwarf",
-        description: "Resilient and steadfast, known for their craftsmanship and endurance.",
-        racial_traits: [
-            "Darkvision",
-            "Dwarven Resilience (Adv. on saves vs. Poison, resistance to Poison dmg)",
-            "Dwarven Toughness (+1 HP/level)",
-            "Stonecunning (Bonus to History checks related to stonework)"
-        ],
-        speed: 25,
-        languages: ["Common", "Dwarvish"],
-        size: "Medium"
-    },
-    {
-        name: "Halfling",
-        description: "Optimistic and cheerful, known for their luck and ability to avoid danger.",
-        racial_traits: [
-            "Brave (Adv. on saves vs. Frightened)",
-            "Halfling Nimbleness (Move through space of larger creature)",
-            "Lucky (Reroll 1s on attack, ability, saving throws)"
-        ],
-        speed: 25,
-        languages: ["Common", "Halfling"],
-        size: "Small"
-    },
-    {
-        name: "Dragonborn",
-        description: "Proud and honorable, with draconic ancestry.",
-        racial_traits: [
-            "Draconic Ancestry (Choose dragon type for damage resistance and breath weapon)",
-            "Breath Weapon (Action, damage type and save based on ancestry)",
-            "Damage Resistance (Type based on ancestry)"
-        ],
-        speed: 30,
-        languages: ["Common", "Draconic"],
-        size: "Medium"
-    },
-    {
-        name: "Gnome",
-        description: "Curious and inventive, with a natural talent for illusion or engineering.",
-        racial_traits: [
-            "Darkvision",
-            "Gnome Cunning (Adv. on Int, Wis, Cha saves vs. magic)"
-        ],
-        speed: 25,
-        languages: ["Common", "Gnomish"],
-        size: "Small"
-    },
-    {
-        name: "Tiefling",
-        description: "Descended from fiends, bearing physical marks of their infernal heritage.",
-        racial_traits: [
-            "Darkvision",
-            "Hellish Resistance (Fire resistance)",
-            "Infernal Legacy (Thaumaturgy cantrip, Hellish Rebuke at L3, Darkness at L5)"
-        ],
-        speed: 30,
-        languages: ["Common", "Infernal"],
-        size: "Medium"
-    },
-    {
-        name: "Orc",
-        description: "Strong and fierce, often finding their place through might and determination.",
-        racial_traits: [
-            "Darkvision",
-            "Adrenaline Rush (Bonus action dash, temp HP)",
-            "Powerful Build (Count as one size larger for carry capacity)"
-        ],
-        speed: 30,
-        languages: ["Common", "Orc"],
-        size: "Medium"
-    },
-    {
-        name: "Ardling",
-        description: "Celestial-touched beings with animalistic features and divine power.",
-        racial_traits: [
-            "Celestial Legacy (Choose one: Exalted, Idyllic, or Heavenly)",
-            "Divine Wings (Flight at L5, limited use)",
-            "Animalistic Head (Varies, e.g., eagle, lion, bear)"
-        ],
-        speed: 30,
-        languages: ["Common", "Celestial"],
-        size: "Medium"
-    },
-    {
-        name: "Goliath",
-        description: "Towering folk from mountainous regions, known for their strength and athleticism.",
-        racial_traits: [
-            "Giant Ancestry (Prof. Athletics)",
-            "Little Giant (Adv. on Str saves and checks)",
-            "Mountain Born (Cold resistance, acclimatized to high altitude)"
-        ],
-        speed: 30,
-        languages: ["Common", "Giant"],
-        size: "Medium"
-    }
-];
+
 
 // Minimal local class data used instead of fetching from an API
 const LOCAL_CLASSES = [
@@ -221,7 +98,11 @@ async function displayRaces() {
     }
 
     try {
-        const raceArray = LOCAL_RACES;
+        const response = await fetch(`${API_BASE_URL}/races`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const raceArray = await response.json();
 
         raceSelect.innerHTML = '<option value="">-- Choose Race --</option>';
         raceDetailsContainer.innerHTML = '<p>Select a race to see its details.</p>';

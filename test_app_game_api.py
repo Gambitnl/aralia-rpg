@@ -44,6 +44,17 @@ class TestGameAPI(unittest.TestCase):
             # sess.clear()
             pass
 
+    def test_00_get_races(self):
+        """Test fetching race data from the new endpoint."""
+        with self.client:
+            response = self.client.get('/api/races')
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data.decode('utf-8'))
+            self.assertIsInstance(data, list)
+            self.assertGreaterEqual(len(data), 10)
+            if data:
+                self.assertIn('name', data[0])
+
 
     def test_01_get_initial_game_state(self):
         """Test fetching the initial game state."""
