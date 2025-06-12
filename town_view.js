@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const params = new URLSearchParams(window.location.search);
-    let effectiveTownId = params.get('town') || 'test_town_id';
+    let effectiveTownId = params.get('town') || sessionStorage.getItem('currentTownId') || 'test_town_id';
     if (!params.get('town')) {
         console.warn(`Town View: No town ID in URL. Using fallback: ${effectiveTownId}.`);
         if (townInfoPanel) {
@@ -140,7 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (backButton) {
-        backButton.addEventListener('click', () => {
+        backButton.addEventListener('click', async () => {
+            try {
+                await fetch('/api/game/leave_town', { method: 'POST' });
+            } catch (e) {
+                console.warn('Failed to notify server about leaving town:', e);
+            }
             window.location.href = 'main_game.html';
         });
     }

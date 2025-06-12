@@ -38,11 +38,8 @@ class TestGameAPI(unittest.TestCase):
         # unless explicitly designed to. For these sequence-named tests,
         # we'll allow session state to persist across them within a single run.
         # If tests were to be run in isolation, each would need full setup.
-        with self.client:
-            # Clearing session if needed:
-            # with self.client.session_transaction() as sess:
-            # sess.clear()
-            pass
+        with self.client.session_transaction() as sess:
+            sess.clear()
 
 
     def test_01_get_initial_game_state(self):
@@ -58,6 +55,7 @@ class TestGameAPI(unittest.TestCase):
             self.assertIn('messages', data)
             self.assertTrue(len(data['messages']) > 0)
             self.assertIn("Welcome to the adventure!", data['messages'][0])
+            self.assertEqual(data.get('current_town_id'), 'starting_town')
 
 
     def test_02_initialize_with_character(self):
@@ -232,6 +230,16 @@ class TestGameAPI(unittest.TestCase):
             self.assertEqual(data.get('name'), 'testville')
             self.assertEqual(data.get('environment_type'), 'plains')
             self.assertIn('buildings', data)
+
+    def test_09_leave_town_endpoint(self):
+        """Ensure leave_town endpoint clears the current town."""
+        with self.client:
+            self.client.post('/api/game/action', json={"action": "enter town"})
+            resp = self.client.post('/api/game/leave_town')
+            self.assertEqual(resp.status_code, 200)
+            data = json.loads(resp.data.decode('utf-8'))
+            self.assertNotIn('current_town_id', data)
+
 
 if __name__ == '__main__':
     unittest.main()

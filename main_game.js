@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (openTownViewButton) {
             const hasTown = Boolean(gameState.current_town_id);
             openTownViewButton.disabled = !hasTown;
+            openTownViewButton.classList.toggle('disabled', !hasTown);
             openTownViewButton.title = hasTown ? '' : 'No town discovered yet.';
         }
         // Add logic for other contextual buttons here if needed
@@ -192,16 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("No town ID available for town view navigation.");
             return;
         }
-        try {
-            const resp = await fetch('town_view.html', { method: 'HEAD' });
-            if (!resp.ok) throw new Error(`town_view.html unreachable: ${resp.status}`);
-            const url = new URL('town_view.html', window.location.href);
-            url.searchParams.set('town', gameState.current_town_id);
-            window.location.href = url.toString();
-        } catch (err) {
-            console.error('Failed to load town view:', err);
-            addMessage('Error: Town view could not be loaded.');
-        }
+        const url = new URL('town_view.html', window.location.href);
+        url.searchParams.set('town', gameState.current_town_id);
+        window.location.assign(url.toString());
     }
 
     // --- Event Listeners ---
@@ -218,4 +212,5 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchGameState(); // Fetch initial game state when the DOM is ready.
 
     console.log("Main game interface JS initialized. Attempting to fetch initial game state.");
+    window.__mainGame = { handleOpenTownView, updateUI };
 });
