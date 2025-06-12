@@ -321,7 +321,12 @@ def handle_game_action():
         message = f"You look around. {description}"
     elif action == "explore":
         current_loc = game_state.get('current_location', 'the area')
-        message = f"You explore deeper into the {current_loc}... but nothing specific happens yet."
+        message = f"You explore deeper into the {current_loc}... You've discovered a path leading to a small settlement!"
+        game_state['location_description'] = "You are at the outskirts of a small settlement. A well-worn path leads into it."
+        if "enter town" not in game_state['available_actions']:
+            game_state['available_actions'].append("enter town")
+        response_data['available_actions'] = list(game_state['available_actions']) # Ensure it's a fresh copy for response
+        response_data['location_description'] = game_state['location_description']
     elif action == "inventory":
         inventory_items = game_state.get('inventory', [])
         if not inventory_items:
