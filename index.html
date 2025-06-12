@@ -562,7 +562,7 @@ const game = {
                         x: 25, // Default starting X
                         y: 25, // Default starting Y
                         name: characterData.name || 'Adventurer',
-                        species: characterData.species,
+                        race: characterData.race,
                         class: characterData.class,
                         subclass: characterData.subclass,
                         background: characterData.background,
@@ -584,7 +584,7 @@ const game = {
                     gameState.companions = []; // Reset companions
                     gameState.log = []; // Clear log for new game
 
-                    game.logMessage(`New game started for ${gameState.player.name}, the ${gameState.player.species} ${gameState.player.class}.`);
+                    game.logMessage(`New game started for ${gameState.player.name}, the ${gameState.player.race} ${gameState.player.class}.`);
                 } else {
                     // Fallback if character data isn't available (e.g., creator not fully implemented)
                     // This part matches the old simple character creation
