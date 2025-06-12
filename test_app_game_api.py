@@ -123,7 +123,10 @@ class TestGameAPI(unittest.TestCase):
             self.assertIn('messages', data)
             self.assertTrue(len(data['messages']) > 0)
             # Default location is "Mysterious Forest Clearing"
-            self.assertIn("You explore deeper into the Mysterious Forest Clearing... but nothing specific happens yet.", data['messages'][-1])
+            self.assertIn(
+                "You explore deeper into the Mysterious Forest Clearing... You've discovered a path leading to a small settlement!",
+                data['messages'][-1]
+            )
 
     def test_05_perform_action_inventory_empty(self):
         """Test the 'inventory' action when inventory is empty."""
