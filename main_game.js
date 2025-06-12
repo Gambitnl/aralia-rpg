@@ -1,5 +1,6 @@
 // Wait for the DOM to be fully loaded before running scripts
 document.addEventListener('DOMContentLoaded', () => {
+    let gameState = null;
     // --- DOM Element References ---
     // Header
     // Corrected to target the dynamic span for player name in header
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const inventoryButton = document.getElementById('action-inventory');
     const skillsButton = document.getElementById('action-skills'); // Assuming this might exist
     const enterTownButton = document.getElementById('action-enter-town');
+    const openTownViewButton = document.getElementById('action-open-town-view');
 
     // --- addMessage Function ---
     /**
@@ -50,12 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
      * Updates all relevant DOM elements with data from the gameState object.
      * @param {object} gameState - The game state object from the backend.
      */
-    function updateUI(gameState) {
-        if (!gameState) {
+    function updateUI(newState) {
+        if (!newState) {
             console.error("UpdateUI called with null or undefined gameState.");
             addMessage("Error: Could not update UI, game state is missing.");
             return;
         }
+        gameState = newState;
 
         console.log("Updating UI with gameState:", gameState);
 
@@ -85,6 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (enterTownButton) {
             const canEnterTown = gameState.available_actions && gameState.available_actions.includes('enter town');
             enterTownButton.style.display = canEnterTown ? 'inline-block' : 'none';
+        }
+        if (openTownViewButton) {
+            const hasTown = Boolean(gameState.current_town_id);
+            openTownViewButton.style.display = hasTown ? 'inline-block' : 'none';
         }
         // Add logic for other contextual buttons here if needed
 
@@ -122,8 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (e) { /* Ignore if response body isn't JSON */ }
                 throw new Error(errorMsg);
             }
-            const gameState = await response.json();
-            updateUI(gameState);
+            const state = await response.json();
+            updateUI(state);
             // Message indicating successful load is implicitly handled by updateUI repopulating messages
         } catch (error) {
             console.error("Error fetching game state:", error);
@@ -179,6 +186,14 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Enter Town button clicked. Sending 'enter town' action to backend.");
         performGameAction("enter town");
     }
+    function handleOpenTownView() {
+        if (!gameState || !gameState.current_town_id) {
+            console.warn("No town ID available for town view navigation.");
+            return;
+        }
+        sessionStorage.setItem('currentTownId', gameState.current_town_id);
+        window.location.href = '/town_view.html';
+    }
 
     // --- Event Listeners ---
     // Ensure buttons exist before adding listeners, good practice though DOMContentLoaded should mean they are there.
@@ -187,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (inventoryButton) inventoryButton.addEventListener('click', handleViewInventory);
     if (skillsButton) skillsButton.addEventListener('click', handleViewSkills);
     if (enterTownButton) enterTownButton.addEventListener('click', handleEnterTown);
+    if (openTownViewButton) openTownViewButton.addEventListener('click', handleOpenTownView);
 
     // --- Initialization Logic ---
     addMessage("main_game.js loaded successfully. Initializing...");

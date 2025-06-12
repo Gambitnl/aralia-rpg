@@ -3,19 +3,19 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #1e1e1e; /* Dark background for the game */
-    color: #e0e0e0; /* Light text color for readability */
+    background: radial-gradient(circle, #f5efe0 0%, #d8caa6 100%); /* parchment style */
+    color: #3a2f1c; /* Darker text for parchment */
     line-height: 1.6;
-    font-size: 16px; /* Base font size */
+    font-size: 16px;
 }
 
 /* --- 2.1. Header Area (from main_game_interface.md) --- */
 #header-area {
-    background-color: #0c0c0c; /* Very dark, almost black header */
-    color: #ffffff;
-    padding: 12px 25px; /* Slightly more padding */
+    background-color: #5a3e1b; /* Adventure brown */
+    color: #fff8e6;
+    padding: 12px 25px;
     text-align: center;
-    border-bottom: 4px solid #d32f2f; /* A prominent accent color (e.g., a deep red) */
+    border-bottom: 4px solid #8b5a2b;
 }
 
 #header-area h1#game-title { /* More specific selector */
@@ -129,7 +129,7 @@ body {
 
 /* General styling for headings within panels */
 h2 {
-    color: #d32f2f; /* Accent color for headings */
+    color: #8b5a2b;
     margin-top: 0;
     font-size: 1.35em; /* Slightly larger panel titles */
     border-bottom: 1px solid #4f4f4f; /* Clearer separator */
@@ -143,7 +143,7 @@ h2 {
     width: 100%;
     padding: 12px 18px; /* More padding for easier clicking */
     margin-bottom: 12px; /* Increased spacing */
-    background-color: #c62828; /* Main action color (red) */
+    background-color: #8b5a2b;
     color: white;
     border: none;
     border-radius: 5px; /* Slightly more rounded */
@@ -154,12 +154,12 @@ h2 {
 }
 
 .action-button:hover {
-    background-color: #e53935; /* Lighter red on hover */
+    background-color: #a56d3b;
     transform: translateY(-1px); /* Slight lift effect */
 }
 
 .action-button:active {
-    background-color: #b71c1c; /* Darker red when pressed */
+    background-color: #704422;
     transform: translateY(0px);
 }
 
