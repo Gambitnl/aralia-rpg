@@ -3,7 +3,7 @@
     <div id="character-summary-area">
         <h2>Character Summary</h2>
         <p><strong>Name:</strong> <span id="summary-name">-</span></p>
-        <p><strong>Species:</strong> <span id="summary-species">-</span></p>
+        <p><strong>Race:</strong> <span id="summary-race">-</span></p>
         <p><strong>Class:</strong> <span id="summary-class">-</span></p>
         <p><strong>Subclass:</strong> <span id="summary-subclass">-</span></p>
         <p><strong>Background:</strong> <span id="summary-background">-</span></p>
@@ -28,28 +28,21 @@
             <h2>Character Name</h2>
             <input type="text" id="character-name-input" placeholder="Enter character name" class="p-2 border rounded w-full">
         </div>
-        <div id="species-selection-area" class="selection-area">
-            <h2>Choose Your Species</h2>
-            <div id="species-list-container" class="list-container">
-                <!-- Species options will be dynamically inserted here -->
-            </div>
-            <div id="species-details" class="details-container">
-                <!-- Details of selected species will be shown here -->
-                <p>Select a species to see its details.</p>
+        <div id="race-selection-area" class="selection-area">
+            <h2>Choose Your Race</h2>
+            <select id="race-select" class="select-dropdown"></select>
+            <div id="race-details" class="details-container">
+                <p>Select a race to see its details.</p>
             </div>
         </div>
 
         <!-- Placeholder for Class Selection Area -->
         <div id="class-selection-area" class="selection-area" style="display:none;">
             <h2>Choose Your Class</h2>
-            <div id="class-list-container" class="list-container">
-                <!-- Class options will be dynamically inserted here -->
-            </div>
+            <select id="class-select" class="select-dropdown"></select>
             <div id="class-details" class="details-container">
-                <!-- Details of selected class will be shown here -->
                 <p>Select a class to see its details.</p>
                 <div id="class-skill-choices-container">
-                    <!-- Skill choices will be dynamically inserted here by JS -->
                 </div>
             </div>
         </div>

@@ -44,6 +44,12 @@ h1 {
     margin-bottom: 20px; /* Space before the details section */
 }
 
+.select-dropdown {
+    padding: 8px;
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
 .selectable-item {
     padding: 10px 15px;
     border: 1px solid #bdc3c7;

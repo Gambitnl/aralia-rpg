@@ -3,7 +3,7 @@ console.log("Character Creator JS loaded");
 
 let characterInProgress = {
     name: "", // Added for character name
-    species: null,
+    race: null,
     class: null,
     subclass: null,
     background: null,
@@ -32,6 +32,169 @@ const PLACEHOLDER_LEVEL_1_SPELLS = [
 const DEFAULT_CANTRIPS_TO_CHOOSE = 2;
 const DEFAULT_LEVEL_1_SPELLS_TO_CHOOSE = 2;
 
+// Local race data used when not fetching from an API
+const LOCAL_RACES = [
+    {
+        name: "Human",
+        description: "Resourceful and adaptable, humans are found throughout the multiverse.",
+        racial_traits: [
+            "Resourceful (Extra Skill Prof)",
+            "Skillful (Extra Tool Prof or Language)",
+            "Versatile (Extra Feat at L1 - often assumed to be Tough or Skilled)"
+        ],
+        speed: 30,
+        languages: ["Common", "Choose one extra"],
+        size: "Medium"
+    },
+    {
+        name: "Elf",
+        description: "Graceful and perceptive, with a long lifespan and deep connection to magic or nature.",
+        racial_traits: [
+            "Darkvision",
+            "Fey Ancestry (Adv. on saves vs. Charmed)",
+            "Keen Senses (Prof. in Perception)",
+            "Trance (Meditate 4 hrs for long rest benefit)"
+        ],
+        speed: 30,
+        languages: ["Common", "Elvish"],
+        size: "Medium"
+    },
+    {
+        name: "Dwarf",
+        description: "Resilient and steadfast, known for their craftsmanship and endurance.",
+        racial_traits: [
+            "Darkvision",
+            "Dwarven Resilience (Adv. on saves vs. Poison, resistance to Poison dmg)",
+            "Dwarven Toughness (+1 HP/level)",
+            "Stonecunning (Bonus to History checks related to stonework)"
+        ],
+        speed: 25,
+        languages: ["Common", "Dwarvish"],
+        size: "Medium"
+    },
+    {
+        name: "Halfling",
+        description: "Optimistic and cheerful, known for their luck and ability to avoid danger.",
+        racial_traits: [
+            "Brave (Adv. on saves vs. Frightened)",
+            "Halfling Nimbleness (Move through space of larger creature)",
+            "Lucky (Reroll 1s on attack, ability, saving throws)"
+        ],
+        speed: 25,
+        languages: ["Common", "Halfling"],
+        size: "Small"
+    },
+    {
+        name: "Dragonborn",
+        description: "Proud and honorable, with draconic ancestry.",
+        racial_traits: [
+            "Draconic Ancestry (Choose dragon type for damage resistance and breath weapon)",
+            "Breath Weapon (Action, damage type and save based on ancestry)",
+            "Damage Resistance (Type based on ancestry)"
+        ],
+        speed: 30,
+        languages: ["Common", "Draconic"],
+        size: "Medium"
+    },
+    {
+        name: "Gnome",
+        description: "Curious and inventive, with a natural talent for illusion or engineering.",
+        racial_traits: [
+            "Darkvision",
+            "Gnome Cunning (Adv. on Int, Wis, Cha saves vs. magic)"
+        ],
+        speed: 25,
+        languages: ["Common", "Gnomish"],
+        size: "Small"
+    },
+    {
+        name: "Tiefling",
+        description: "Descended from fiends, bearing physical marks of their infernal heritage.",
+        racial_traits: [
+            "Darkvision",
+            "Hellish Resistance (Fire resistance)",
+            "Infernal Legacy (Thaumaturgy cantrip, Hellish Rebuke at L3, Darkness at L5)"
+        ],
+        speed: 30,
+        languages: ["Common", "Infernal"],
+        size: "Medium"
+    },
+    {
+        name: "Orc",
+        description: "Strong and fierce, often finding their place through might and determination.",
+        racial_traits: [
+            "Darkvision",
+            "Adrenaline Rush (Bonus action dash, temp HP)",
+            "Powerful Build (Count as one size larger for carry capacity)"
+        ],
+        speed: 30,
+        languages: ["Common", "Orc"],
+        size: "Medium"
+    },
+    {
+        name: "Ardling",
+        description: "Celestial-touched beings with animalistic features and divine power.",
+        racial_traits: [
+            "Celestial Legacy (Choose one: Exalted, Idyllic, or Heavenly)",
+            "Divine Wings (Flight at L5, limited use)",
+            "Animalistic Head (Varies, e.g., eagle, lion, bear)"
+        ],
+        speed: 30,
+        languages: ["Common", "Celestial"],
+        size: "Medium"
+    },
+    {
+        name: "Goliath",
+        description: "Towering folk from mountainous regions, known for their strength and athleticism.",
+        racial_traits: [
+            "Giant Ancestry (Prof. Athletics)",
+            "Little Giant (Adv. on Str saves and checks)",
+            "Mountain Born (Cold resistance, acclimatized to high altitude)"
+        ],
+        speed: 30,
+        languages: ["Common", "Giant"],
+        size: "Medium"
+    }
+];
+
+// Minimal local class data used instead of fetching from an API
+const LOCAL_CLASSES = [
+    {
+        name: "Fighter",
+        description: "A master of martial combat, skilled with a variety of weapons and armor.",
+        hit_die: 10,
+        saving_throw_proficiencies: ["Strength", "Constitution"],
+        armor_proficiencies: ["Light armor", "Medium armor", "Heavy armor", "Shields"],
+        weapon_proficiencies: ["Simple weapons", "Martial weapons"],
+        skill_proficiency_options: ["Acrobatics", "Animal Handling", "Athletics", "History", "Insight", "Intimidation", "Perception", "Survival"],
+        skill_proficiency_count: 2,
+        starting_equipment_options: [
+            {"Option A": ["Chain Mail", "Longsword", "Shield", "Dungeoneer's Pack"]},
+            {"Option B": ["Leather Armor", "Rapier", "Longbow", "Explorer's Pack"]}
+        ],
+        subclasses: [
+            { name: "Champion", description: "Focuses on raw physical power.", features: {"1": [{name: "Improved Critical", description: "Your weapon attacks score a critical hit on a roll of 19 or 20."}]}}
+        ]
+    },
+    {
+        name: "Wizard",
+        description: "A scholarly magic-user capable of manipulating the structures of reality.",
+        hit_die: 6,
+        saving_throw_proficiencies: ["Intelligence", "Wisdom"],
+        armor_proficiencies: [],
+        weapon_proficiencies: ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light crossbows"],
+        skill_proficiency_options: ["Arcana", "History", "Insight", "Investigation", "Medicine", "Religion"],
+        skill_proficiency_count: 2,
+        starting_equipment_options: [
+            {"Option A": ["Quarterstaff", "Component pouch", "Spellbook"]},
+            {"Option B": ["Dagger", "Arcane focus", "Spellbook"]}
+        ],
+        subclasses: [
+            { name: "School of Evocation", description: "Harness the elements for powerful spells.", features: {"1": []}}
+        ]
+    }
+];
+
 const API_BASE_URL = "http://localhost:5001/api";
 let allFeatsData = []; // To store all feats fetched once
 
@@ -47,105 +210,103 @@ const defaultScore = 8;
 const minScore = 8;
 const maxScore = 15;
 
-// --- Species Selection ---
-async function fetchAndDisplaySpecies() {
-    const speciesListContainer = document.getElementById('species-list-container');
-    const speciesDetailsContainer = document.getElementById('species-details');
+// --- Race Selection ---
+async function displayRaces() {
+    const raceSelect = document.getElementById('race-select');
+    const raceDetailsContainer = document.getElementById('race-details');
 
-    if (!speciesListContainer || !speciesDetailsContainer) {
-        console.error("Species selection HTML elements not found.");
+    if (!raceSelect || !raceDetailsContainer) {
+        console.error("Race selection HTML elements not found.");
         return;
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/species`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const speciesArray = await response.json();
+        const raceArray = LOCAL_RACES;
 
-        speciesListContainer.innerHTML = ''; // Clear existing content
-        speciesDetailsContainer.innerHTML = '<p>Select a species to see its details.</p>'; // Reset details
+        raceSelect.innerHTML = '<option value="">-- Choose Race --</option>';
+        raceDetailsContainer.innerHTML = '<p>Select a race to see its details.</p>';
 
-        speciesArray.forEach(species => {
-            const speciesElement = document.createElement('button'); // Using button for better accessibility
-            speciesElement.classList.add('selectable-item');
-            speciesElement.textContent = species.name;
-            speciesElement.dataset.speciesName = species.name; // Store name for easy access
-
-            speciesElement.addEventListener('click', () => {
-                // The full species data is passed directly from the closure
-                selectSpecies(species, speciesElement, speciesListContainer);
-            });
-            speciesListContainer.appendChild(speciesElement);
+        raceArray.forEach((race, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = race.name;
+            raceSelect.appendChild(option);
         });
 
+        raceSelect.onchange = () => {
+            const idx = raceSelect.value;
+            if (idx === '') return;
+            selectRace(raceArray[idx]);
+        };
+
     } catch (error) {
-        console.error("Error fetching species:", error);
-        speciesListContainer.innerHTML = '<p class="error-message">Could not load species. Is the API server running?</p>';
+        console.error("Error loading races:", error);
+        raceSelect.innerHTML = '<option>Could not load races</option>';
     }
 }
 
-function selectSpecies(speciesData, selectedElement, container) {
-    characterInProgress.species = speciesData;
-    console.log("Selected Species:", characterInProgress.species);
+function selectRace(raceData, selectedElement = null, container = null) {
+    characterInProgress.race = raceData;
+    console.log("Selected Race:", characterInProgress.race);
     // updateCharacterSummary(); // Will be called by applyRacialASIs
     applyRacialASIs();
 
     // Update details display
-    const speciesDetailsContainer = document.getElementById('species-details');
-    if (speciesDetailsContainer) {
-        let detailsHtml = `<h3>${speciesData.name}</h3>`;
-        // Assuming 'description' and 'racial_traits' are fields in your SpeciesData.
+    const raceDetailsContainer = document.getElementById('race-details');
+    if (raceDetailsContainer) {
+        let detailsHtml = `<h3>${raceData.name}</h3>`;
+        // Assuming 'description' and 'racial_traits' are fields in your race data.
         // Adjust if your data structure is different.
-        if (speciesData.description) {
-            detailsHtml += `<p>${speciesData.description}</p>`;
+        if (raceData.description) {
+            detailsHtml += `<p>${raceData.description}</p>`;
         }
-        if (speciesData.fixed_ability_bonuses && Object.keys(speciesData.fixed_ability_bonuses).length > 0) {
-            const bonuses = Object.entries(speciesData.fixed_ability_bonuses)
+        if (raceData.fixed_ability_bonuses && Object.keys(raceData.fixed_ability_bonuses).length > 0) {
+            const bonuses = Object.entries(raceData.fixed_ability_bonuses)
                 .map(([ability, bonus]) => `${ability} +${bonus}`)
                 .join(', ');
             detailsHtml += `<p><strong>Ability Score Increase:</strong> ${bonuses}</p>`;
         }
-        if (speciesData.size) {
-            detailsHtml += `<p><strong>Size:</strong> ${speciesData.size}</p>`;
+        if (raceData.size) {
+            detailsHtml += `<p><strong>Size:</strong> ${raceData.size}</p>`;
         }
-        if (speciesData.speed) {
-            detailsHtml += `<p><strong>Speed:</strong> ${speciesData.speed} ft.</p>`;
+        if (raceData.speed) {
+            detailsHtml += `<p><strong>Speed:</strong> ${raceData.speed} ft.</p>`;
         }
-        if (speciesData.racial_traits && speciesData.racial_traits.length > 0) {
+        if (raceData.racial_traits && raceData.racial_traits.length > 0) {
             detailsHtml += `<h4>Traits:</h4><ul>`;
-            speciesData.racial_traits.forEach(trait => {
+            raceData.racial_traits.forEach(trait => {
                 detailsHtml += `<li>${trait}</li>`;
             });
             detailsHtml += `</ul>`;
         }
         // Add more fields as necessary, e.g., languages, proficiencies.
-        // This depends on the exact structure of your SpeciesData.
+        // This depends on the exact structure of your race data.
         // For example, if racial_traits is a list of objects:
-        // if (speciesData.racial_traits && speciesData.racial_traits.length > 0) {
+        // if (raceData.racial_traits && raceData.racial_traits.length > 0) {
         //     detailsHtml += `<p><strong>Racial Traits:</strong></p><ul>`;
-        //     speciesData.racial_traits.forEach(trait => {
+        //     raceData.racial_traits.forEach(trait => {
         //         detailsHtml += `<li>${trait.name}: ${trait.description}</li>`;
         //     });
         //     detailsHtml += `</ul>`;
         // }
-        speciesDetailsContainer.innerHTML = detailsHtml;
+        raceDetailsContainer.innerHTML = detailsHtml;
     }
 
-    // Update visual selection
-    const allItems = container.querySelectorAll('.selectable-item');
-    allItems.forEach(item => item.classList.remove('selected'));
-    selectedElement.classList.add('selected');
+    // Update visual selection if buttons are used
+    if (container && selectedElement) {
+        const allItems = container.querySelectorAll('.selectable-item');
+        allItems.forEach(item => item.classList.remove('selected'));
+        selectedElement.classList.add('selected');
+    }
 
-    // For now, after selecting a species, show the class selection area
+    // For now, after selecting a race, show the class selection area
     // This is a simplified progression logic.
     const classSelectionArea = document.getElementById('class-selection-area');
     if (classSelectionArea) {
         classSelectionArea.style.display = 'block'; // Make it visible
     }
-    // document.getElementById('species-selection-area').style.display = 'none'; // Optionally hide species section
-    fetchAndDisplayClasses(); // Fetch classes once a species is selected
+    // document.getElementById('race-selection-area').style.display = 'none'; // Optionally hide race section
+    displayClasses(); // Load classes once a race is selected
 }
 
 // --- Class Skill Choice Visuals Update ---
@@ -288,44 +449,41 @@ function displaySpellOptions(classData) {
 }
 
 // --- Class Selection ---
-async function fetchAndDisplayClasses() {
-    const classListContainer = document.getElementById('class-list-container');
+async function displayClasses() {
+    const classSelect = document.getElementById('class-select');
     const classDetailsContainer = document.getElementById('class-details');
 
-    if (!classListContainer || !classDetailsContainer) {
+    if (!classSelect || !classDetailsContainer) {
         console.error("Class selection HTML elements not found.");
         return;
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/classes`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const classArray = await response.json();
+        const classArray = LOCAL_CLASSES;
 
-        classListContainer.innerHTML = ''; // Clear existing content
-        classDetailsContainer.innerHTML = '<p>Select a class to see its details.</p>'; // Reset details
+        classSelect.innerHTML = '<option value="">-- Choose Class --</option>';
+        classDetailsContainer.innerHTML = '<p>Select a class to see its details.</p>';
 
-        classArray.forEach(classData => {
-            const classElement = document.createElement('button');
-            classElement.classList.add('selectable-item');
-            classElement.textContent = classData.name;
-            classElement.dataset.className = classData.name;
-
-            classElement.addEventListener('click', () => {
-                selectClass(classData, classElement, classListContainer);
-            });
-            classListContainer.appendChild(classElement);
+        classArray.forEach((cls, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = cls.name;
+            classSelect.appendChild(option);
         });
 
+        classSelect.onchange = () => {
+            const idx = classSelect.value;
+            if (idx === '') return;
+            selectClass(classArray[idx]);
+        };
+
     } catch (error) {
-        console.error("Error fetching classes:", error);
-        classListContainer.innerHTML = '<p class="error-message">Could not load classes. Is the API server running?</p>';
+        console.error("Error loading classes:", error);
+        classSelect.innerHTML = '<option>Could not load classes</option>';
     }
 }
 
-function selectClass(classData, selectedElement, container) {
+function selectClass(classData, selectedElement = null, container = null) {
     characterInProgress.class = classData;
     characterInProgress.subclass = null; // Reset subclass when class changes
     characterInProgress.chosen_class_skills = []; // Reset chosen class skills
@@ -449,9 +607,11 @@ function selectClass(classData, selectedElement, container) {
     }
     // The redundant classDetailsContainer.innerHTML = detailsHtml was here and is now removed.
 
-    const allItems = container.querySelectorAll('.selectable-item');
-    allItems.forEach(item => item.classList.remove('selected'));
-    selectedElement.classList.add('selected');
+    if (container && selectedElement) {
+        const allItems = container.querySelectorAll('.selectable-item');
+        allItems.forEach(item => item.classList.remove('selected'));
+        selectedElement.classList.add('selected');
+    }
 
     // Handle subclasses
     const subclassSelectionArea = document.getElementById('subclass-selection-area');
@@ -648,7 +808,7 @@ function applyRacialASIs() {
         // Deep copy base scores to final scores
         characterInProgress.final_ability_scores = JSON.parse(JSON.stringify(characterInProgress.base_ability_scores));
     } else {
-        // If base scores aren't set (e.g. species selected before point buy visited),
+        // If base scores aren't set (e.g. race selected before point buy visited),
         // initialize final_ability_scores with default scores for each ability.
         characterInProgress.final_ability_scores = {};
         abilities.forEach(ability => {
@@ -656,10 +816,10 @@ function applyRacialASIs() {
         });
     }
 
-    if (characterInProgress.species && characterInProgress.species.fixed_ability_bonuses) {
-        for (const abilityKey in characterInProgress.species.fixed_ability_bonuses) {
+    if (characterInProgress.race && characterInProgress.race.fixed_ability_bonuses) {
+        for (const abilityKey in characterInProgress.race.fixed_ability_bonuses) {
             // Ensure the abilityKey from bonuses matches the case used in final_ability_scores (e.g., "Strength")
-            const bonusValue = characterInProgress.species.fixed_ability_bonuses[abilityKey];
+            const bonusValue = characterInProgress.race.fixed_ability_bonuses[abilityKey];
             if (characterInProgress.final_ability_scores.hasOwnProperty(abilityKey)) {
                 characterInProgress.final_ability_scores[abilityKey] += bonusValue;
             } else {
@@ -922,7 +1082,7 @@ function selectEquipmentSet(optionIndex) {
 // --- Initialization ---
 async function initializeCreator() {
     console.log("Initializing character creator...");
-    await fetchAndDisplaySpecies(); // Wait for species to load first, or run in parallel
+    await displayRaces(); // Wait for races to load first, or run in parallel
 
     // Fetch all feats once and store them
     try {
@@ -938,7 +1098,7 @@ async function initializeCreator() {
     }
 
     // Other initializations if needed
-    // fetchAndDisplayClasses(); // Called after species selection
+    // displayClasses(); // Called after race selection
     // initializeAbilityScores(); // Called after class/subclass selection
     // fetchAndDisplayBackgrounds(); // Called after ability scores are validated
     initializeNameInput(); // Added for character name
@@ -962,8 +1122,8 @@ function handleFinalizeCharacter() {
         messageElement.textContent = "Please enter a character name.";
         return;
     }
-    if (!characterInProgress.species) {
-        messageElement.textContent = "Please select a species.";
+    if (!characterInProgress.race) {
+        messageElement.textContent = "Please select a race.";
         return;
     }
     if (!characterInProgress.class) {
@@ -1010,7 +1170,7 @@ function initializeNameInput() {
 // --- Character Summary Panel ---
 function updateCharacterSummary() {
     document.getElementById('summary-name').textContent = characterInProgress.name || '-'; // Added for character name
-    document.getElementById('summary-species').textContent = characterInProgress.species ? characterInProgress.species.name : '-';
+    document.getElementById('summary-race').textContent = characterInProgress.race ? characterInProgress.race.name : '-';
     document.getElementById('summary-class').textContent = characterInProgress.class ? characterInProgress.class.name : '-';
     document.getElementById('summary-subclass').textContent = characterInProgress.subclass ? characterInProgress.subclass.name : '-';
     document.getElementById('summary-background').textContent = characterInProgress.background ? characterInProgress.background.name : '-';
@@ -1032,7 +1192,7 @@ function updateCharacterSummary() {
             }
         });
     } else if (Object.keys(characterInProgress.base_ability_scores).length > 0) {
-        // Fallback: if final_ability_scores is empty for some reason (e.g. before species selected), show base_ability_scores
+        // Fallback: if final_ability_scores is empty for some reason (e.g. before race selected), show base_ability_scores
         abilities.forEach(ability => {
             const score = characterInProgress.base_ability_scores[ability] || defaultScore;
             const modifier = Math.floor((score - 10) / 2);
