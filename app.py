@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from dataclasses import asdict, is_dataclass
 
@@ -6,11 +6,23 @@ from dataclasses import asdict, is_dataclass
 try:
     from dnd_data_structures import DataManagementModule, SpeciesData, ClassData, SubclassData, FeatData, BackgroundData
     from dnd_character_logic import RulesEngine
+    # Import town generator classes and function
+    from town_generator import Town, Building, Road, generate_town_layout
 except ImportError:
-    print("Error: Could not import DataManagementModule or RulesEngine.")
-    print("Ensure dnd_data_structures.py is in the same directory or accessible in PYTHONPATH.")
+    print("Error: Could not import DataManagementModule, RulesEngine, or town_generator modules.")
+    print("Ensure dnd_data_structures.py and town_generator.py are in the same directory or accessible in PYTHONPATH.")
     # Provide dummy implementations if the main module can't be loaded,
     # so the Flask app can still run for basic route testing.
+
+    # Dummy town generator classes if import fails
+    class Town: pass
+    class Building: pass
+    class Road: pass
+    def generate_town_layout(town_name, environment):
+        print("Using dummy generate_town_layout")
+        return Town() # Return a dummy Town object
+
+
     class DataManagementModule:
         def get_all_species(self):
             print("Using dummy get_all_species")
@@ -78,6 +90,9 @@ def custom_asdict(obj):
                 data['subclasses'] = [custom_asdict(s) for s in data['subclasses']]
             return data
         return asdict(obj)
+    # Handle custom classes like Town, Building, Road if they are not dataclasses
+    if hasattr(obj, '__dict__'): # Check if it's a custom class instance
+        return custom_asdict(obj.__dict__) # Recursively process the instance's dictionary
     return obj
 
 
@@ -152,6 +167,47 @@ def get_feats():
         app.logger.error(f"Error in /api/feats: {e}")
         return jsonify({"error": "Could not load feat data", "details": str(e)}), 500
 
+# --- Town Generation API ---
+@app.route('/api/town/<town_id>/map', methods=['GET'])
+def get_town_map(town_id):
+    """
+    Generates and returns town map data.
+    """
+    try:
+        # For now, environment can be hardcoded or potentially passed as a query param later
+        # Example: environment = request.args.get('environment', 'forest')
+        environment = "forest" # Hardcoded for now
+
+        town_object = generate_town_layout(town_name=town_id, environment=environment)
+
+        # Convert the Town object (and its nested Building/Road objects) to a dictionary
+        town_dict = custom_asdict(town_object)
+
+        return jsonify(town_dict)
+
+    except FileNotFoundError: # Example: if town_generator.py itself is missing (though caught by top import)
+        app.logger.error(f"Error: town_generator.py not found when generating town {town_id}.")
+        return jsonify({"error": "Town generation module not found"}), 500
+    except Exception as e:
+        app.logger.error(f"Error generating town map for {town_id}: {e}")
+        return jsonify({"error": "Could not generate town map", "details": str(e)}), 500
+
+# --- Static File Serving ---
+@app.route('/town_view.html')
+def serve_town_view_html():
+    """Serves the main town view HTML page."""
+    # Serves from the root directory where app.py is located
+    return send_from_directory('.', 'town_view.html')
+
+@app.route('/<path:filename>')
+def serve_static_files(filename):
+    """
+    Serves other static files like CSS and JS from the root directory.
+    This allows town_view.html to correctly load town_view.css and town_view.js.
+    """
+    # Serves from the root directory where app.py is located
+    return send_from_directory('.', filename)
+
 
 if __name__ == '__main__':
     # Before running, ensure dnd_data_structures.py can be loaded
@@ -159,4 +215,6 @@ if __name__ == '__main__':
     # Example: PYTHONPATH=. python app.py
     print("Attempting to start Flask server...")
     print("Data Management Module loaded:", "Dummy" if isinstance(data_manager, DataManagementModule) and not hasattr(data_manager, '_load_classes') else "Real")
+    # Ensure town_generator parts are loaded for the new endpoint
+    print("Town Generator loaded:", "Dummy" if Town.__module__ == __name__ else "Real") # Basic check if dummy Town is used
     app.run(debug=True, port=5001)

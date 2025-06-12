@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional
 import json
+import webbrowser # Added for opening web pages
 from dataclasses import asdict, is_dataclass
 
 
@@ -92,6 +93,22 @@ def game_loop(character_data: Any):
             break
         elif action == 'look':
             print("You look around. It's a world full of possibilities (and placeholders).")
+        elif action == 'enter town':
+            print("You approach the gates of a nearby settlement...")
+            # For now, town_id is not explicitly passed to town_view.html via URL parameters
+            # town_view.js currently uses a hardcoded 'test_town_id' for its API call.
+            # This setup assumes app.py serves town_view.html at the root.
+            town_url = "http://127.0.0.1:5001/town_view.html"
+            try:
+                if webbrowser.open(town_url):
+                    print(f"The town view has been opened in your web browser at {town_url}")
+                    print("Interact with it there. Type 'exit town' here when you are done.")
+                else:
+                    print(f"Attempted to open town view. Please manually open this URL in your browser: {town_url}")
+            except Exception as e:
+                print(f"Could not open web browser: {e}. Please manually open this URL: {town_url}")
+        elif action == 'exit town':
+            print("You have left the town and returned to your previous location.")
         else:
             print(f"You try to '{action}'. Nothing happens yet.")
     print("Returning to main menu...")

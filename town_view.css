@@ -1,0 +1,88 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    color: #2a2a2a;
+}
+
+/* Styling for the town map container */
+#town-map-container {
+    width: 70%; /* Takes up 70% of the available width */
+    height: 500px; /* Fixed height, can be adjusted */
+    float: left; /* Aligns the map to the left */
+    border: 2px solid #333; /* Dark border around the map */
+    background-color: #fff; /* White background for the map area */
+    position: relative; /* For positioning elements within the map */
+    /* The town map (e.g., SVG or Canvas) will be rendered here by JavaScript */
+}
+
+/* Styling for the town information panel */
+#town-info {
+    width: 25%; /* Takes up 25% of the available width */
+    float: right; /* Aligns the info panel to the right */
+    border: 1px solid #ccc; /* Lighter border for the info panel */
+    padding: 10px;
+    background-color: #f9f9f9; /* Light grey background for the info panel */
+    height: 500px; /* Match map container height for now */
+    overflow-y: auto; /* Add scroll if content exceeds height */
+    /* This section will display details about the town or selected buildings/roads */
+}
+
+/* Placeholder class for a forest environment border */
+.town-border-forest {
+    /*
+       This class will be dynamically applied to the #town-map-container
+       when the town's environment is 'forest'.
+       An actual image should be used for the border in a production version.
+       Example: border-image: url('images/detailed_forest_border.png') 30 stretch;
+    */
+    border: 15px solid #228B22; /* Forest Green */
+    background-color: #e8f5e9; /* Light green tint for the map background */
+    /* A more thematic border, e.g., using an image: */
+    /* border-image-source: url('images/placeholder_forest_border.png'); */
+    /* border-image-slice: 30; */
+    /* border-image-repeat: round; */
+    box-sizing: border-box; /* Ensure border padding doesn't expand the element */
+}
+
+/* Placeholder class for a plains environment border */
+.town-border-plains {
+    /*
+       This class will be dynamically applied for 'plains' environments.
+       An actual image should be used for the border in a production version.
+       Example: border-image: url('images/sweeping_plains_border.png') 30 stretch;
+    */
+    border: 15px solid #F4A460; /* Sandy Brown */
+    background-color: #fff8e1; /* Light yellow tint for the map background */
+    /* A more thematic border, e.g., using an image or different style */
+    /* border-image-source: url('images/placeholder_plains_border.png'); */
+    box-sizing: border-box;
+}
+
+/* Placeholder class for a mountain environment border */
+.town-border-mountain {
+    /*
+       This class will be dynamically applied for 'mountain' environments.
+       An actual image should be used for the border in a production version.
+       Example: border-image: url('images/rocky_mountain_border.png') 30 stretch;
+    */
+    border: 15px solid #A9A9A9; /* Dark Gray */
+    background-color: #f5f5f5; /* Light gray tint for the map background */
+    /* A more thematic border, e.g., using an image or different style */
+    /* border-image-source: url('images/placeholder_mountain_border.png'); */
+    box-sizing: border-box;
+}
+
+/* Clearfix for floated elements */
+body::after {
+    content: "";
+    clear: both;
+    display: table;
+}
