@@ -1,16 +1,35 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory, session
 from flask_cors import CORS
 from dataclasses import asdict, is_dataclass
+from math import floor # Added for HP calculation
+from math import floor # Added for HP calculation
 
 # Attempt to import DataManagementModule and RulesEngine
 try:
     from dnd_data_structures import DataManagementModule, SpeciesData, ClassData, SubclassData, FeatData, BackgroundData
     from dnd_character_logic import RulesEngine
+    # Import town generator classes and function
+    from town_generator import Town, Building, Road, generate_town_layout
 except ImportError:
-    print("Error: Could not import DataManagementModule or RulesEngine.")
-    print("Ensure dnd_data_structures.py is in the same directory or accessible in PYTHONPATH.")
+    print("Error: Could not import DataManagementModule, RulesEngine, or town_generator modules.")
+    print("Ensure dnd_data_structures.py and town_generator.py are in the same directory or accessible in PYTHONPATH.")
     # Provide dummy implementations if the main module can't be loaded,
     # so the Flask app can still run for basic route testing.
+
+    # Dummy town generator classes if import fails
+    class Town: pass
+    class Building: pass
+    class Road: pass
+    def generate_town_layout(town_name, environment):
+        print("Using dummy generate_town_layout")
+        # Return a dictionary structure similar to what custom_asdict would produce from a Town object
+        return {
+            "name": town_name,
+            "environment_type": environment,
+            "buildings": [{"name": "Dummy Building", "type": "dummy", "position": {"x":0, "y":0}}],
+            "roads": [{"name": "Dummy Road", "points": [{"x":0,"y":0}, {"x":1,"y":1}]}]
+        }
+
     class DataManagementModule:
         def get_all_species(self):
             print("Using dummy get_all_species")
@@ -62,6 +81,23 @@ except ImportError:
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+app.secret_key = 'super_secret_key_for_dev_recovery' # Essential for Flask session management
+
+# --- Game State Management ---
+def initialize_player_state():
+    """Returns the initial default state for a new player."""
+    return {
+        "player_name": "Player1", # This can be updated later, e.g., by character creation
+        "player_class": "Adventurer",
+        "player_hp": 100,
+        "player_max_hp": 100,
+        "player_level": 1,
+        "current_location": "Mysterious Forest Clearing",
+        "location_description": "A quiet clearing surrounded by ancient, whispering trees. Paths lead north and east.",
+        "inventory": [], # List of item names or objects
+        "available_actions": ["explore", "look around", "inventory"], # Actions available at current location
+        "messages": ["Welcome to the adventure! (Recovered Session)"] # Log of messages for the player
+    }
 
 # Custom JSON encoder for dataclasses and other complex types if needed
 def custom_asdict(obj):
@@ -152,6 +188,196 @@ def get_feats():
         app.logger.error(f"Error in /api/feats: {e}")
         return jsonify({"error": "Could not load feat data", "details": str(e)}), 500
 
+# --- Town Generation API ---
+@app.route('/api/town/<town_id>/map', methods=['GET'])
+def get_town_map_api(town_id): # Renamed to avoid conflict with any other get_town_map
+    """
+    Generates and returns town map data using town_generator.
+    """
+    try:
+        # For now, environment can be hardcoded or potentially passed as a query param later
+        environment = "forest" # Hardcoded for now
+
+        # generate_town_layout should return a Town object or a dict if using dummy
+        town_data_obj = generate_town_layout(town_name=town_id, environment=environment)
+
+        # Convert the Town object (and its nested Building/Road objects) to a dictionary
+        # If town_data_obj is already a dict (from dummy), custom_asdict should handle it.
+        town_dict = custom_asdict(town_data_obj)
+
+        return jsonify(town_dict)
+
+    except Exception as e: # Catching a broader exception range
+        app.logger.error(f"Error generating town map for {town_id}: {e}")
+        # Fallback to a very basic JSON response in case of error with town generation
+        return jsonify({
+            "name": town_id,
+            "environment_type": "error_environment",
+            "error": str(e),
+            "buildings": [],
+            "roads": []
+        }), 500
+
+# --- Helper Functions ---
+def calculate_hp(character_class_data, final_ability_scores):
+    """
+    Calculates HP for a level 1 character.
+    Args:
+        character_class_data (dict): Dictionary representing the character's class data.
+        final_ability_scores (dict): Dictionary of the character's final ability scores.
+    Returns:
+        int: Calculated HP.
+    """
+    hit_die_value = character_class_data.get('hit_die', 6) # Default to d6 if not specified
+    constitution_score = final_ability_scores.get('Constitution', 10) # Default to 10 if not specified
+    constitution_modifier = floor((constitution_score - 10) / 2)
+    return hit_die_value + constitution_modifier
+
+# --- Main Game API Endpoints ---
+@app.route('/api/game/initialize_with_character', methods=['POST'])
+def initialize_game_with_character():
+    """
+    Initializes or re-initializes the game state in the session
+    using character data received from the character creator.
+    """
+    character_data = request.json
+    if not character_data:
+        return jsonify({"success": False, "error": "No character data received"}), 400
+
+    try:
+        new_game_state = initialize_player_state() # Get a fresh default state
+
+        # Update state with character data
+        new_game_state['player_name'] = character_data.get('name', 'Adventurer')
+
+        player_class_data = character_data.get('class_details', {})
+        if not player_class_data and 'class' in character_data :
+             player_class_data = character_data.get('class', {})
+
+        new_game_state['player_class'] = player_class_data.get('name', 'Unknown Class')
+
+        final_scores = character_data.get('final_ability_scores', {})
+
+        calculated_hp = calculate_hp(player_class_data, final_scores)
+        new_game_state['player_hp'] = calculated_hp
+        new_game_state['player_max_hp'] = calculated_hp
+        new_game_state['player_level'] = 1
+
+        new_game_state['inventory'] = character_data.get('chosen_equipment_set', [])
+
+        new_game_state['messages'] = [
+            f"Welcome, {new_game_state['player_name']} the {new_game_state['player_class']}! Your adventure begins."
+        ]
+
+        session['game_state'] = new_game_state
+        session.modified = True
+
+        return jsonify({"success": True, "message": "Game state initialized with character.", "game_state": new_game_state})
+
+    except Exception as e:
+        app.logger.error(f"Error initializing game with character: {e}")
+        return jsonify({"success": False, "error": "Failed to initialize game with character data", "details": str(e)}), 500
+
+
+@app.route('/api/game/state', methods=['GET'])
+def get_game_state():
+    """
+    Retrieves the current player's game state from the session.
+    Initializes the state if it's not already present.
+    """
+    if 'game_state' not in session:
+        session['game_state'] = initialize_player_state()
+        session.modified = True # Mark session as modified as we've added game_state
+    return jsonify(session['game_state'])
+
+@app.route('/api/game/action', methods=['POST'])
+def handle_game_action():
+    """
+    Handles player actions and updates the game state stored in the session.
+    """
+    if 'game_state' not in session:
+        # This should ideally not happen if client calls /api/game/state first,
+        # but as a fallback, initialize the state.
+        session['game_state'] = initialize_player_state()
+
+    action_data = request.json
+    if not action_data or 'action' not in action_data:
+        return jsonify({"error": "Missing 'action' in request payload"}), 400
+
+    action = action_data['action'].lower() # Normalize action to lowercase
+    game_state = session['game_state']
+    message = ""
+
+    # Prepare response_data by copying the current game_state.
+    # This allows adding transient flags to the response without persisting them in session.
+    response_data = game_state.copy()
+    # Ensure transient flags from previous calls are not accidentally carried over in a new response
+    response_data.pop('trigger_town_navigation', None)
+
+
+    # --- Action Processing Logic ---
+    if action == "look around":
+        description = game_state.get('location_description', "It's a bit murky here.")
+        message = f"You look around. {description}"
+    elif action == "explore":
+        current_loc = game_state.get('current_location', 'the area')
+        message = f"You explore deeper into the {current_loc}... but nothing specific happens yet."
+    elif action == "inventory":
+        inventory_items = game_state.get('inventory', [])
+        if not inventory_items:
+            message = "Your inventory is empty."
+        else:
+            message = "You have: " + ", ".join(inventory_items) + "."
+    elif action == "enter town":
+        message = "You decide to head towards the nearby town..."
+        game_state['current_town_id'] = "test_town" # Persistently store which town player is near/in
+        response_data['current_town_id'] = game_state['current_town_id'] # Ensure response has it
+        response_data['trigger_town_navigation'] = True # Add trigger only to the response
+        # Note: available_actions might change once "in town", handled by subsequent state or specific town API
+    else:
+        message = f"Action '{action}' is not recognized or currently available."
+
+    # --- Update Messages Log (in persistent session state) ---
+    if 'messages' not in game_state:
+        game_state['messages'] = []
+    game_state['messages'].append(message)
+
+    max_messages = 20
+    if len(game_state['messages']) > max_messages:
+        game_state['messages'] = game_state['messages'][-max_messages:]
+
+    # Update the messages in response_data to match the (potentially truncated) list
+    response_data['messages'] = game_state['messages']
+
+    # Mark the session as modified because game_state (messages, current_town_id) was changed
+    session.modified = True
+
+    return jsonify(response_data) # Return the response_data, which includes the one-time trigger if set
+
+# --- Static File Serving ---
+# It's important that API routes are defined before the generic static file routes,
+# to avoid '<path:filename>' accidentally catching API calls.
+
+@app.route('/')
+def serve_index():
+    """Serves the main index.html page."""
+    return send_from_directory('.', 'index.html')
+
+@app.route('/game')
+def serve_main_game_html():
+    """Serves the main game interface HTML page."""
+    # Assumes main_game.html is in the root directory alongside app.py
+    return send_from_directory('.', 'main_game.html')
+
+@app.route('/<path:filename>')
+def serve_static_files(filename):
+    """
+    Serves other static files like CSS and JS from the root directory.
+    This allows HTML pages to correctly load their associated assets.
+    Example: main_game.html can load main_game.js and main_game.css
+    """
+    # Serves from the root directory where app.py is located
+    return send_from_directory('.', filename)
 
 if __name__ == '__main__':
     # Before running, ensure dnd_data_structures.py can be loaded
@@ -159,4 +385,7 @@ if __name__ == '__main__':
     # Example: PYTHONPATH=. python app.py
     print("Attempting to start Flask server...")
     print("Data Management Module loaded:", "Dummy" if isinstance(data_manager, DataManagementModule) and not hasattr(data_manager, '_load_classes') else "Real")
+    # Check if Town class is the dummy one or the real one for logging
+    town_module_origin = "town_generator" if 'Town' in globals() and hasattr(Town, '__module__') and Town.__module__ == 'town_generator' else "dummy"
+    print(f"Town module loaded: {town_module_origin}")
     app.run(debug=True, port=5001)

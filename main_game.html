@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Game</title>
+    <link rel="stylesheet" href="main_game.css">
+    <!-- Including town_view.css for potential style reuse or future embedding -->
+    <link rel="stylesheet" href="town_view.css">
+</head>
+<body>
+
+    <!-- 2.1. Header Area (from main_game_interface.md) -->
+    <div id="header-area">
+        <h1 id="game-title">Text Adventure RPG</h1>
+        <!-- Player name will be dynamically inserted here by main_game.js -->
+        <span id="player-name-header">Player: <span id="header-player-name-dynamic">Loading...</span></span>
+    </div>
+
+    <!-- Main container for game interface layout -->
+    <div id="main-container">
+
+        <!-- 2.3. Player Stats Panel (from main_game_interface.md) -->
+        <div id="player-stats-panel">
+            <h2>Character</h2>
+            <p>Name: <span id="stat-player-name">N/A</span></p>
+            <p>Class: <span id="stat-player-class">N/A</span></p>
+            <p>Level: <span id="stat-player-level">N/A</span></p> <!-- Added based on common stats -->
+            <p>HP: <span id="stat-player-hp">N/A</span></p>
+            <!-- More stats can be added here by main_game.js -->
+        </div>
+
+        <!-- Wrapper for Main Content and Message Log -->
+        <div id="game-world-view">
+            <!-- 2.2. Main Content Area (from main_game_interface.md) -->
+            <div id="main-content-area">
+                <h2>Current Location</h2>
+                <p id="location-description">You are in a dimly lit room...</p>
+                <!-- Dynamic content will update this area via main_game.js -->
+            </div>
+
+            <!-- 2.5. Message Log Panel (from main_game_interface.md) -->
+            <div id="message-log-panel">
+                <h2>Event Log</h2>
+                <ul id="message-list">
+                    <li>Welcome to the game!</li>
+                    <!-- Messages will be added here by main_game.js -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- 2.4. Action Panel (from main_game_interface.md) -->
+        <div id="action-panel">
+            <h2>Actions</h2>
+            <button id="action-explore" class="action-button">Explore Area</button>
+            <button id="action-look" class="action-button">Look Around</button>
+            <button id="action-inventory" class="action-button">View Inventory</button>
+            <button id="action-skills" class="action-button">Skills</button> <!-- Placeholder, as in previous JS -->
+            <button id="action-enter-town" class="action-button" style="display: none;">Enter Town</button>
+            <!-- More actions can be added here or dynamically by main_game.js -->
+        </div>
+
+    </div> <!-- End of #main-container -->
+
+    <script src="main_game.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e8e8e8; /* Light gray background for the page */
+    margin: 0;
+    padding: 0;
+    /* overflow: auto; Simple way to contain floats if #town-view-container doesn't use clearfix */
+}
+
+.header {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+/* Container for the town view, using clearfix to handle floated children */
+#town-view-container.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* Styling for the town map container */
+#town-map-container {
+    width: 70%; /* Takes up 70% of the available width */
+    height: 500px; /* Fixed height, can be adjusted */
+    float: left; /* Aligns the map to the left */
+    border: 2px solid #333; /* Dark border around the map */
+    background-color: #f0f0f0; /* Background for the map area itself */
+    position: relative; /* For potential absolute positioning of map elements */
+    /* The town map (e.g., SVG or Canvas) will be rendered here by JavaScript */
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* Styling for the town information panel */
+#town-info {
+    width: 28%; /* Adjusted width to allow some spacing if needed, considering borders/padding */
+    float: right; /* Aligns the info panel to the right */
+    border: 1px solid #ccc; /* Lighter border for the info panel */
+    padding: 15px;
+    height: 500px; /* Match map container height for now */
+    background-color: #f9f9f9; /* Light background for the info panel */
+    overflow-y: auto; /* Add scroll if content exceeds height */
+    box-sizing: border-box;
+    /* This section will display details about the town or selected buildings/roads */
+}
+
+/* Placeholder classes for environment-specific borders on #town-map-container */
+/* These would be added dynamically by JavaScript based on town.environment_type */
+.town-border-forest {
+    border: 10px solid darkgreen;
+    /* In a real application, consider using border-image for more thematic borders */
+    /* e.g., border-image: url('path/to/forest-border.png') 30 stretch; */
+}
+
+.town-border-plains {
+    border: 10px solid peru; /* A sandy/earthy color for plains */
+}
+
+.town-border-mountain {
+    border: 10px solid dimgray; /* A rocky color for mountains */
+}
+
+/* Basic styling for headings within the info panel, if any */
+#town-info h2 {
+    margin-top: 0;
+    font-size: 1.4em;
+    color: #333;
+}
+
+#town-info p {
+    font-size: 0.9em;
+    line-height: 1.5;
+}

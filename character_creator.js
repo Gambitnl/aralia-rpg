@@ -1113,45 +1113,89 @@ async function initializeCreator() {
 }
 
 // --- Handle Finalize Character ---
-function handleFinalizeCharacter() {
+async function handleFinalizeCharacter() { // Made async to use await for fetch
     const messageElement = document.getElementById('finalize-message');
+    const finalizeButton = document.getElementById('finalize-character-button');
+
     messageElement.textContent = ''; // Clear previous messages
+    messageElement.style.color = 'inherit'; // Reset color
 
     // Validation checks
     if (!characterInProgress.name) {
         messageElement.textContent = "Please enter a character name.";
+        messageElement.style.color = 'orange';
         return;
     }
     if (!characterInProgress.race) {
         messageElement.textContent = "Please select a race.";
+        messageElement.style.color = 'orange';
         return;
     }
     if (!characterInProgress.class) {
         messageElement.textContent = "Please select a class.";
+        messageElement.style.color = 'orange';
         return;
     }
 
     const pointBuySummaryEl = document.getElementById('point-buy-summary');
     if (pointBuySummaryEl && pointBuySummaryEl.classList.contains('invalid')) {
         messageElement.textContent = "Please ensure ability scores are valid (Point Buy rules).";
+        messageElement.style.color = 'orange';
         return;
     }
-    // Add more validation as needed (e.g., skills, spells if limits are known)
+    // Add more validation as needed (e.g., skills, spells if limits are known and required)
 
-    // If all checks pass
-    characterInProgress.is_finalized = true;
-    console.log("Character Finalized Data:", JSON.stringify(characterInProgress, null, 2));
-    // TODO: Send characterInProgress object to a backend save endpoint,
-    // e.g., fetch('/api/characters', { method: 'POST', body: JSON.stringify(characterInProgress) });
-
-    messageElement.textContent = "Character Finalized! Data logged to console. You can start a new character or refresh the page.";
-    messageElement.style.color = 'lightgreen'; // Or a success color from your CSS
-
-    const finalizeButton = document.getElementById('finalize-character-button');
+    // Disable button before async operation
     if (finalizeButton) {
         finalizeButton.disabled = true;
     }
-    // Consider disabling other inputs or hiding sections to prevent further edits.
+    messageElement.textContent = "Finalizing character and starting game...";
+    messageElement.style.color = 'lightblue';
+
+
+    // If all checks pass
+    characterInProgress.is_finalized = true; // Mark as finalized
+    // Ensure final ability scores are up-to-date before sending
+    applyRacialASIs(); // This also calls updateCharacterSummary which might be redundant if we navigate away
+
+    console.log("Character Data to be sent:", JSON.stringify(characterInProgress, null, 2));
+
+    try {
+        const response = await fetch('/api/game/initialize_with_character', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(characterInProgress),
+        });
+
+        const result = await response.json(); // Try to parse JSON regardless of response.ok
+
+        if (response.ok && result.success) {
+            messageElement.textContent = "Character saved! Starting game...";
+            messageElement.style.color = 'lightgreen';
+            console.log("Game initialized successfully with character:", result.game_state);
+            // Redirect to the main game page
+            window.location.href = '/game';
+        } else {
+            // Handle backend error or validation failure
+            const errorDetail = result.message || (result.error ? `${result.error} - ${result.details || ''}` : 'Unknown error from server.');
+            messageElement.textContent = `Failed to initialize game: ${errorDetail}. Please try again.`;
+            messageElement.style.color = 'red';
+            console.error("Failed to initialize game with character:", result);
+            if (finalizeButton) {
+                finalizeButton.disabled = false; // Re-enable button on failure
+            }
+        }
+    } catch (error) {
+        // Handle network error or other fetch-related issues
+        console.error("Error during fetch to initialize_with_character:", error);
+        messageElement.textContent = "Error communicating with server. Please check your connection and try again.";
+        messageElement.style.color = 'red';
+        if (finalizeButton) {
+            finalizeButton.disabled = false; // Re-enable button on failure
+        }
+    }
 }
 
 // --- Name Input ---
