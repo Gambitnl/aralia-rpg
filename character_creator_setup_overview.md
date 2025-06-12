@@ -66,10 +66,9 @@ Throughout this process, `main_character_creator.py` demonstrates clear interact
 *   As the user makes choices, the `CharacterState` object is progressively updated to reflect these selections (e.g., storing the chosen species, class, and assigned ability scores).
 *   The `RulesEngine` is utilized for crucial tasks like validating the legality of point buy ability score distributions and for calculating and displaying final ability scores along with their modifiers.
 
-User interaction is managed through console input and output, facilitated by helper functions:
-
-*   `display_options()`: Presents lists of choices (like species or classes) to the user in a numbered format.
-*   `get_user_choice()`: Captures and validates the user's numerical input corresponding to their selection.
+In the deprecated CLI version, interaction was handled via helper functions
+such as `display_options()` and `get_user_choice()` that read from the
+terminal.  These functions remain in history but are no longer invoked.
 
 A notable feature for development and testing is the try-except block around the import of the core logic modules (`DataManagementModule`, `CharacterState`, `RulesEngine`). If these primary modules are not found (e.g., during early UI development or for isolated testing of the main script's flow), it attempts to load dummy versions (`DummyDataManagementModule`, `DummyCharacterState`, `DummyRulesEngine`). This fallback mechanism allows the main script to run and test the user interaction flow even without the full backend logic being present or functional.
 
@@ -85,7 +84,9 @@ The Dungeons & Dragons character creator is built upon these three core Python f
 
 *   **`dnd_character_logic.py` (`CharacterState` & `RulesEngine`)**: Focuses on the dynamic aspects. `CharacterState` holds the evolving character build, while `RulesEngine` applies game mechanics, using data from `DataManagementModule` and `CharacterState` for calculations and validation.
 
-*   **`main_character_creator.py`**: Drives the interactive user experience. It fetches options from `DataManagementModule`, updates `CharacterState` with user choices, and uses `RulesEngine` for validation and calculations, presenting the step-by-step creation process through the console.
+*   **`main_character_creator.py`**: Originally handled an interactive console
+    workflow. It now exposes a lightweight `create_character()` helper that
+    returns a basic `CharacterState` without prompting the user.
 
 **Flow of Information & Modularity:**
 
@@ -96,4 +97,4 @@ The system is designed with a clear flow of information:
 3.  User choices are captured by `main_character_creator.py` and stored in `CharacterState`.
 4.  `RulesEngine` then uses both the raw data from `DataManagementModule` and the current `CharacterState` to apply logic, validate, and calculate results. These results are often displayed back to the user via `main_character_creator.py`.
 
-This separation of concerns—data definition, character state/rules logic, and user interaction/process orchestration—makes the system modular. Each component has a distinct responsibility. This design facilitates easier understanding, maintenance, and future expansion. For example, the console-based user interface in `main_character_creator.py` could be replaced with a graphical user interface (GUI) with minimal impact on the underlying data structures or rules engine. Similarly, new game elements like classes, species, or rules can be added to `dnd_data_structures.py` and `dnd_character_logic.py` without requiring a complete overhaul of the user interaction flow.
+This separation of concerns—data definition, character state/rules logic, and user interaction/process orchestration—makes the system modular. Each component has a distinct responsibility. The earlier console interface in `main_character_creator.py` has already been removed, so future replacements (such as a GUI) can build directly on the underlying logic and data structures without major restructuring.
