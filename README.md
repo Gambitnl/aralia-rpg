@@ -12,6 +12,12 @@ npm install
 
 This installs Jest and any other packages declared in `package.json`.
 
+Install Python dependencies as well:
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Running Tests
 
 ### JavaScript
@@ -30,7 +36,7 @@ All Python tests are compatible with pytest:
 pytest
 ```
 
-Both suites should pass without additional configuration.
+After installing these dependencies, both suites should pass.
 
 ## Deployment
 
@@ -41,3 +47,4 @@ vercel
 ```
 
 Make sure to set `GEMINI_API_KEY` in your Vercel project settings so that `/api/gemini.js` can call the Gemini API correctly.
+When running the Flask server locally, the `/api/gemini` route will proxy to the same API if `GEMINI_API_KEY` is set in your environment.
