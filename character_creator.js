@@ -157,6 +157,44 @@ const LOCAL_RACES = [
     }
 ];
 
+// Minimal local class data used instead of fetching from an API
+const LOCAL_CLASSES = [
+    {
+        name: "Fighter",
+        description: "A master of martial combat, skilled with a variety of weapons and armor.",
+        hit_die: 10,
+        saving_throw_proficiencies: ["Strength", "Constitution"],
+        armor_proficiencies: ["Light armor", "Medium armor", "Heavy armor", "Shields"],
+        weapon_proficiencies: ["Simple weapons", "Martial weapons"],
+        skill_proficiency_options: ["Acrobatics", "Animal Handling", "Athletics", "History", "Insight", "Intimidation", "Perception", "Survival"],
+        skill_proficiency_count: 2,
+        starting_equipment_options: [
+            {"Option A": ["Chain Mail", "Longsword", "Shield", "Dungeoneer's Pack"]},
+            {"Option B": ["Leather Armor", "Rapier", "Longbow", "Explorer's Pack"]}
+        ],
+        subclasses: [
+            { name: "Champion", description: "Focuses on raw physical power.", features: {"1": [{name: "Improved Critical", description: "Your weapon attacks score a critical hit on a roll of 19 or 20."}]}}
+        ]
+    },
+    {
+        name: "Wizard",
+        description: "A scholarly magic-user capable of manipulating the structures of reality.",
+        hit_die: 6,
+        saving_throw_proficiencies: ["Intelligence", "Wisdom"],
+        armor_proficiencies: [],
+        weapon_proficiencies: ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light crossbows"],
+        skill_proficiency_options: ["Arcana", "History", "Insight", "Investigation", "Medicine", "Religion"],
+        skill_proficiency_count: 2,
+        starting_equipment_options: [
+            {"Option A": ["Quarterstaff", "Component pouch", "Spellbook"]},
+            {"Option B": ["Dagger", "Arcane focus", "Spellbook"]}
+        ],
+        subclasses: [
+            { name: "School of Evocation", description: "Harness the elements for powerful spells.", features: {"1": []}}
+        ]
+    }
+];
+
 const API_BASE_URL = "http://localhost:5001/api";
 let allFeatsData = []; // To store all feats fetched once
 
@@ -174,10 +212,10 @@ const maxScore = 15;
 
 // --- Race Selection ---
 async function displayRaces() {
-    const raceListContainer = document.getElementById('race-list-container');
+    const raceSelect = document.getElementById('race-select');
     const raceDetailsContainer = document.getElementById('race-details');
 
-    if (!raceListContainer || !raceDetailsContainer) {
+    if (!raceSelect || !raceDetailsContainer) {
         console.error("Race selection HTML elements not found.");
         return;
     }
@@ -185,29 +223,29 @@ async function displayRaces() {
     try {
         const raceArray = LOCAL_RACES;
 
-        raceListContainer.innerHTML = ''; // Clear existing content
-        raceDetailsContainer.innerHTML = '<p>Select a race to see its details.</p>'; // Reset details
+        raceSelect.innerHTML = '<option value="">-- Choose Race --</option>';
+        raceDetailsContainer.innerHTML = '<p>Select a race to see its details.</p>';
 
-        raceArray.forEach(race => {
-            const raceElement = document.createElement('button'); // Using button for better accessibility
-            raceElement.classList.add('selectable-item');
-            raceElement.textContent = race.name;
-            raceElement.dataset.raceName = race.name; // Store name for easy access
-
-            raceElement.addEventListener('click', () => {
-                // The full race data is passed directly from the closure
-                selectRace(race, raceElement, raceListContainer);
-            });
-            raceListContainer.appendChild(raceElement);
+        raceArray.forEach((race, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = race.name;
+            raceSelect.appendChild(option);
         });
+
+        raceSelect.onchange = () => {
+            const idx = raceSelect.value;
+            if (idx === '') return;
+            selectRace(raceArray[idx]);
+        };
 
     } catch (error) {
         console.error("Error loading races:", error);
-        raceListContainer.innerHTML = '<p class="error-message">Could not load races.</p>';
+        raceSelect.innerHTML = '<option>Could not load races</option>';
     }
 }
 
-function selectRace(raceData, selectedElement, container) {
+function selectRace(raceData, selectedElement = null, container = null) {
     characterInProgress.race = raceData;
     console.log("Selected Race:", characterInProgress.race);
     // updateCharacterSummary(); // Will be called by applyRacialASIs
@@ -254,10 +292,12 @@ function selectRace(raceData, selectedElement, container) {
         raceDetailsContainer.innerHTML = detailsHtml;
     }
 
-    // Update visual selection
-    const allItems = container.querySelectorAll('.selectable-item');
-    allItems.forEach(item => item.classList.remove('selected'));
-    selectedElement.classList.add('selected');
+    // Update visual selection if buttons are used
+    if (container && selectedElement) {
+        const allItems = container.querySelectorAll('.selectable-item');
+        allItems.forEach(item => item.classList.remove('selected'));
+        selectedElement.classList.add('selected');
+    }
 
     // For now, after selecting a race, show the class selection area
     // This is a simplified progression logic.
@@ -266,7 +306,7 @@ function selectRace(raceData, selectedElement, container) {
         classSelectionArea.style.display = 'block'; // Make it visible
     }
     // document.getElementById('race-selection-area').style.display = 'none'; // Optionally hide race section
-    fetchAndDisplayClasses(); // Fetch classes once a race is selected
+    displayClasses(); // Load classes once a race is selected
 }
 
 // --- Class Skill Choice Visuals Update ---
@@ -409,44 +449,41 @@ function displaySpellOptions(classData) {
 }
 
 // --- Class Selection ---
-async function fetchAndDisplayClasses() {
-    const classListContainer = document.getElementById('class-list-container');
+async function displayClasses() {
+    const classSelect = document.getElementById('class-select');
     const classDetailsContainer = document.getElementById('class-details');
 
-    if (!classListContainer || !classDetailsContainer) {
+    if (!classSelect || !classDetailsContainer) {
         console.error("Class selection HTML elements not found.");
         return;
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/classes`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const classArray = await response.json();
+        const classArray = LOCAL_CLASSES;
 
-        classListContainer.innerHTML = ''; // Clear existing content
-        classDetailsContainer.innerHTML = '<p>Select a class to see its details.</p>'; // Reset details
+        classSelect.innerHTML = '<option value="">-- Choose Class --</option>';
+        classDetailsContainer.innerHTML = '<p>Select a class to see its details.</p>';
 
-        classArray.forEach(classData => {
-            const classElement = document.createElement('button');
-            classElement.classList.add('selectable-item');
-            classElement.textContent = classData.name;
-            classElement.dataset.className = classData.name;
-
-            classElement.addEventListener('click', () => {
-                selectClass(classData, classElement, classListContainer);
-            });
-            classListContainer.appendChild(classElement);
+        classArray.forEach((cls, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = cls.name;
+            classSelect.appendChild(option);
         });
 
+        classSelect.onchange = () => {
+            const idx = classSelect.value;
+            if (idx === '') return;
+            selectClass(classArray[idx]);
+        };
+
     } catch (error) {
-        console.error("Error fetching classes:", error);
-        classListContainer.innerHTML = '<p class="error-message">Could not load classes. Is the API server running?</p>';
+        console.error("Error loading classes:", error);
+        classSelect.innerHTML = '<option>Could not load classes</option>';
     }
 }
 
-function selectClass(classData, selectedElement, container) {
+function selectClass(classData, selectedElement = null, container = null) {
     characterInProgress.class = classData;
     characterInProgress.subclass = null; // Reset subclass when class changes
     characterInProgress.chosen_class_skills = []; // Reset chosen class skills
@@ -570,9 +607,11 @@ function selectClass(classData, selectedElement, container) {
     }
     // The redundant classDetailsContainer.innerHTML = detailsHtml was here and is now removed.
 
-    const allItems = container.querySelectorAll('.selectable-item');
-    allItems.forEach(item => item.classList.remove('selected'));
-    selectedElement.classList.add('selected');
+    if (container && selectedElement) {
+        const allItems = container.querySelectorAll('.selectable-item');
+        allItems.forEach(item => item.classList.remove('selected'));
+        selectedElement.classList.add('selected');
+    }
 
     // Handle subclasses
     const subclassSelectionArea = document.getElementById('subclass-selection-area');
@@ -1059,7 +1098,7 @@ async function initializeCreator() {
     }
 
     // Other initializations if needed
-    // fetchAndDisplayClasses(); // Called after race selection
+    // displayClasses(); // Called after race selection
     // initializeAbilityScores(); // Called after class/subclass selection
     // fetchAndDisplayBackgrounds(); // Called after ability scores are validated
     initializeNameInput(); // Added for character name
