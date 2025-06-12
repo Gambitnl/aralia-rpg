@@ -1,15 +1,24 @@
 /* General body styling */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: #e8e8e8; /* Light gray background for the page */
     margin: 0;
-    padding: 20px;
-    color: #333;
+    padding: 0;
+    /* overflow: auto; Simple way to contain floats if #town-view-container doesn't use clearfix */
 }
 
-h1 {
+.header {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
     text-align: center;
-    color: #2a2a2a;
+}
+
+/* Container for the town view, using clearfix to handle floated children */
+#town-view-container.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
 }
 
 /* Styling for the town map container */
@@ -18,71 +27,50 @@ h1 {
     height: 500px; /* Fixed height, can be adjusted */
     float: left; /* Aligns the map to the left */
     border: 2px solid #333; /* Dark border around the map */
-    background-color: #fff; /* White background for the map area */
-    position: relative; /* For positioning elements within the map */
+    background-color: #f0f0f0; /* Background for the map area itself */
+    position: relative; /* For potential absolute positioning of map elements */
     /* The town map (e.g., SVG or Canvas) will be rendered here by JavaScript */
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 /* Styling for the town information panel */
 #town-info {
-    width: 25%; /* Takes up 25% of the available width */
+    width: 28%; /* Adjusted width to allow some spacing if needed, considering borders/padding */
     float: right; /* Aligns the info panel to the right */
     border: 1px solid #ccc; /* Lighter border for the info panel */
-    padding: 10px;
-    background-color: #f9f9f9; /* Light grey background for the info panel */
+    padding: 15px;
     height: 500px; /* Match map container height for now */
+    background-color: #f9f9f9; /* Light background for the info panel */
     overflow-y: auto; /* Add scroll if content exceeds height */
+    box-sizing: border-box;
     /* This section will display details about the town or selected buildings/roads */
 }
 
-/* Placeholder class for a forest environment border */
+/* Placeholder classes for environment-specific borders on #town-map-container */
+/* These would be added dynamically by JavaScript based on town.environment_type */
 .town-border-forest {
-    /*
-       This class will be dynamically applied to the #town-map-container
-       when the town's environment is 'forest'.
-       An actual image should be used for the border in a production version.
-       Example: border-image: url('images/detailed_forest_border.png') 30 stretch;
-    */
-    border: 15px solid #228B22; /* Forest Green */
-    background-color: #e8f5e9; /* Light green tint for the map background */
-    /* A more thematic border, e.g., using an image: */
-    /* border-image-source: url('images/placeholder_forest_border.png'); */
-    /* border-image-slice: 30; */
-    /* border-image-repeat: round; */
-    box-sizing: border-box; /* Ensure border padding doesn't expand the element */
+    border: 10px solid darkgreen;
+    /* In a real application, consider using border-image for more thematic borders */
+    /* e.g., border-image: url('path/to/forest-border.png') 30 stretch; */
 }
 
-/* Placeholder class for a plains environment border */
 .town-border-plains {
-    /*
-       This class will be dynamically applied for 'plains' environments.
-       An actual image should be used for the border in a production version.
-       Example: border-image: url('images/sweeping_plains_border.png') 30 stretch;
-    */
-    border: 15px solid #F4A460; /* Sandy Brown */
-    background-color: #fff8e1; /* Light yellow tint for the map background */
-    /* A more thematic border, e.g., using an image or different style */
-    /* border-image-source: url('images/placeholder_plains_border.png'); */
-    box-sizing: border-box;
+    border: 10px solid peru; /* A sandy/earthy color for plains */
 }
 
-/* Placeholder class for a mountain environment border */
 .town-border-mountain {
-    /*
-       This class will be dynamically applied for 'mountain' environments.
-       An actual image should be used for the border in a production version.
-       Example: border-image: url('images/rocky_mountain_border.png') 30 stretch;
-    */
-    border: 15px solid #A9A9A9; /* Dark Gray */
-    background-color: #f5f5f5; /* Light gray tint for the map background */
-    /* A more thematic border, e.g., using an image or different style */
-    /* border-image-source: url('images/placeholder_mountain_border.png'); */
-    box-sizing: border-box;
+    border: 10px solid dimgray; /* A rocky color for mountains */
 }
 
-/* Clearfix for floated elements */
-body::after {
-    content: "";
-    clear: both;
-    display: table;
+/* Basic styling for headings within the info panel, if any */
+#town-info h2 {
+    margin-top: 0;
+    font-size: 1.4em;
+    color: #333;
+}
+
+#town-info p {
+    font-size: 0.9em;
+    line-height: 1.5;
 }

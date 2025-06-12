@@ -7,18 +7,22 @@
     <link rel="stylesheet" href="town_view.css">
 </head>
 <body>
-    <h1>Town Map</h1>
-
-    <!-- Container for the town map visualization -->
-    <div id="town-map-container">
-        <!-- The town map will be rendered here by JavaScript -->
+    <div class="header">
+        <h1>Town View</h1>
     </div>
 
-    <!-- Container for displaying town/building information -->
-    <div id="town-info">
-        <!-- Information about the town or selected elements will be displayed here -->
-        <h2>Town Information</h2>
-        <p>Select an element on the map to see details.</p>
+    <!-- Main container for town view layout -->
+    <div id="town-view-container" class="clearfix">
+        <!-- Town map will be rendered here by JavaScript -->
+        <div id="town-map-container">
+            <p>Loading map...</p>
+        </div>
+
+        <!-- Information about the town or selected buildings will be displayed here -->
+        <div id="town-info">
+            <h2>Town Information</h2>
+            <p>Select an element on the map or see general town details here.</p>
+        </div>
     </div>
 
     <script src="town_view.js"></script>
