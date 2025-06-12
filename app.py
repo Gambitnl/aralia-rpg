@@ -97,7 +97,8 @@ def initialize_player_state():
         "current_location": "Mysterious Forest Clearing",
         "location_description": "A quiet clearing surrounded by ancient, whispering trees. Paths lead north and east.",
         "inventory": [], # List of item names or objects
-        "available_actions": ["explore", "look around", "inventory"], # Actions available at current location
+        "available_actions": ["explore", "look around", "inventory", "enter town"], # Actions available at current location
+        "current_town_id": "starting_town",
         "messages": ["Welcome to the adventure! (Recovered Session)"] # Log of messages for the player
     }
 
@@ -341,6 +342,9 @@ def handle_game_action():
         response_data['current_town_id'] = game_state['current_town_id'] # Ensure response has it
         response_data['trigger_town_navigation'] = True # Add trigger only to the response
         # Note: available_actions might change once "in town", handled by subsequent state or specific town API
+    elif action == "leave town":
+        message = "You leave the town and return to the wilds."
+        game_state.pop('current_town_id', None)
     else:
         message = f"Action '{action}' is not recognized or currently available."
 
@@ -360,6 +364,16 @@ def handle_game_action():
     session.modified = True
 
     return jsonify(response_data) # Return the response_data, which includes the one-time trigger if set
+
+
+@app.route('/api/game/leave_town', methods=['POST'])
+def leave_town():
+    if 'game_state' not in session:
+        session['game_state'] = initialize_player_state()
+    game_state = session['game_state']
+    game_state.pop('current_town_id', None)
+    session.modified = True
+    return jsonify(game_state)
 
 # --- Gemini API Proxy (for local development) ---
 @app.route('/api/gemini', methods=['POST'])

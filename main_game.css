@@ -167,6 +167,12 @@ h2 {
     margin-bottom: 0;
 }
 
+.action-button.disabled {
+    opacity: 0.5;
+    filter: grayscale(100%);
+    cursor: not-allowed;
+}
+
 /* Responsive adjustments for smaller screens */
 @media (max-width: 800px) { /* Adjusted breakpoint */
     #main-container {
