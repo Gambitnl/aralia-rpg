@@ -223,5 +223,15 @@ class TestGameAPI(unittest.TestCase):
         scores_5 = {}
         self.assertEqual(calculate_hp(class_data_5, scores_5), 12 + 0)
 
+    def test_08_get_town_map(self):
+        """Test town map API returns JSON structure."""
+        with self.client:
+            response = self.client.get('/api/town/testville/map?env=plains')
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data.decode('utf-8'))
+            self.assertEqual(data.get('name'), 'testville')
+            self.assertEqual(data.get('environment_type'), 'plains')
+            self.assertIn('buildings', data)
+
 if __name__ == '__main__':
     unittest.main()

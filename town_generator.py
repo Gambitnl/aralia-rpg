@@ -1,5 +1,7 @@
 from typing import List, Dict, Tuple, Any
+from dataclasses import dataclass
 
+@dataclass
 class Building:
     """
     Represents a building within a town.
@@ -10,11 +12,11 @@ class Building:
         position (Dict[str, int]): The x, y coordinates of the building's center or entrance.
                                    Example: {"x": 50, "y": 50}
     """
-    def __init__(self, name: str, type: str, position: Dict[str, int]):
-        self.name = name
-        self.type = type
-        self.position = position
+    name: str
+    type: str
+    position: Dict[str, int]
 
+@dataclass
 class Road:
     """
     Represents a road or path within a town.
@@ -26,10 +28,10 @@ class Road:
                                        connecting these points sequentially.
                                        Example: [{"x": 0, "y": 75}, {"x": 200, "y": 75}]
     """
-    def __init__(self, name: str, points: List[Dict[str, int]]):
-        self.name = name
-        self.points = points
+    name: str
+    points: List[Dict[str, int]]
 
+@dataclass
 class Town:
     """
     Represents an entire town, including its layout and environment.
@@ -41,11 +43,10 @@ class Town:
         buildings (List[Building]): A list of Building objects located within the town.
         roads (List[Road]): A list of Road objects that make up the town's infrastructure.
     """
-    def __init__(self, name: str, environment_type: str, buildings: List[Building], roads: List[Road]):
-        self.name = name
-        self.environment_type = environment_type
-        self.buildings = buildings
-        self.roads = roads
+    name: str
+    environment_type: str
+    buildings: List[Building]
+    roads: List[Road]
 
 def generate_town_layout(town_name: str, environment: str) -> Town:
     """

@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const townMapContainer = document.getElementById('town-map-container');
     const townInfoPanel = document.getElementById('town-info');
+    const errorPanel = document.getElementById('town-error');
+
+    const defaultEnvironment = 'plains';
+    let selectedEnvironment = sessionStorage.getItem('currentEnvironment') || defaultEnvironment;
 
     if (!townMapContainer) {
         console.error("Town View: #town-map-container not found.");
@@ -19,21 +23,21 @@ document.addEventListener('DOMContentLoaded', () => {
      * Fetches town data from API or returns sample data.
      * @param {string} townId - The ID of the town to fetch.
      */
-    async function fetchTownData(townId) {
-        console.log(`Fetching data for town: ${townId}...`);
+    async function fetchTownData(townId, environment = 'plains') {
+        console.log(`Fetching data for town: ${townId} in ${environment}...`);
         if (!townId) {
             console.error("fetchTownData called without a townId.");
             townId = "default_error_town"; // Fallback to prevent API call with undefined
         }
         try {
-            // This API endpoint /api/town/${townId}/map does not have its Python generator (town_generator.py)
-            // in the current workspace due to the reset. So, this fetch will likely fail.
-            const response = await fetch(`/api/town/${townId}/map`);
+            const response = await fetch(`/api/town/${townId}/map?env=${environment}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status} for town ${townId}`);
             }
             const data = await response.json();
             console.log("Fetched town data:", data);
+            sessionStorage.setItem('currentEnvironment', data.environment_type);
+            selectedEnvironment = data.environment_type;
             return data;
         } catch (error) {
             console.error("Failed to fetch real town data:", error);
@@ -41,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Return a more detailed sample object
             return {
                 name: townId === "default_error_town" ? "ErrorTown" : `Sample Town (${townId})`,
-                environment_type: "plains", // Default environment
+                environment_type: environment,
                 buildings: [
                     { name: "The Empty Mug Tavern", type: "tavern", position: { x: 10, y: 10 } },
                     { name: "Closed Shop", type: "shop", position: { x: 50, y: 80 } }
@@ -65,6 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Rendering town:", townData.name);
 
         if (townMapContainer) {
+            ['forest','plains','mountain'].forEach(env => townMapContainer.classList.remove(`town-border-${env}`));
+            townMapContainer.classList.add(`town-border-${townData.environment_type}`);
+
             townMapContainer.innerHTML = `<h2>Welcome to ${townData.name} (${townData.environment_type})</h2>`;
             if(townData.description) {
                 const descP = document.createElement('p');
@@ -75,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             townData.buildings.forEach(b => {
                 const li = document.createElement('li');
                 li.textContent = `${b.name} (${b.type}) at X:${b.position.x}, Y:${b.position.y}`;
+                li.addEventListener('click', () => handleBuildingClick(b));
                 buildingList.appendChild(li);
             });
             townMapContainer.appendChild(buildingList);
@@ -116,14 +124,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Fetch and render town data
-    fetchTownData(effectiveTownId).then(townData => {
+    fetchTownData(effectiveTownId, selectedEnvironment).then(townData => {
         renderTown(townData);
     }).catch(error => {
         console.error("Error in town_view.js initialization:", error);
-        if (townInfoPanel) {
-             townInfoPanel.innerHTML = `<p style="color:red;">Could not load town: ${error.message}</p>`;
-        } else if (townMapContainer) {
-            townMapContainer.innerHTML = `<p style="color:red;">Could not load town: ${error.message}</p>`;
+        if (errorPanel) {
+            errorPanel.textContent = `Could not load town: ${error.message}`;
+            errorPanel.style.color = 'red';
         }
     });
+
+    window.__townView = { fetchTownData, renderTown, handleBuildingClick };
 });

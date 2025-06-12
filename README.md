@@ -10,13 +10,15 @@ Install Node dependencies first:
 npm install
 ```
 
-This installs Jest and any other packages declared in `package.json`.
+This installs Jest, jsdom, and any other packages declared in `package.json`.
 
 Install Python dependencies as well:
 
 ```bash
 pip install -r requirements.txt
 ```
+
+These dependencies include Flask for the API and pytest for running the tests.
 
 ## Running Tests
 

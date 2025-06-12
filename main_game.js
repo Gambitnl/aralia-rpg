@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Short delay to allow the message to be rendered, then redirect.
             setTimeout(() => {
-                window.location.href = '/town_view.html';
+                window.location.href = 'town_view.html';
             }, 500); // 0.5 second delay
             // The trigger_town_navigation flag was part of the transient response from backend.
             // No client-side reset of the flag is needed as the page will reload/navigate away.
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         sessionStorage.setItem('currentTownId', gameState.current_town_id);
-        window.location.href = '/town_view.html';
+        window.location.href = 'town_view.html';
     }
 
     // --- Event Listeners ---

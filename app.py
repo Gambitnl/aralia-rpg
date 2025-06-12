@@ -197,8 +197,8 @@ def get_town_map_api(town_id): # Renamed to avoid conflict with any other get_to
     Generates and returns town map data using town_generator.
     """
     try:
-        # For now, environment can be hardcoded or potentially passed as a query param later
-        environment = "forest" # Hardcoded for now
+        # Allow environment to be selected via query string, defaulting to 'forest'
+        environment = request.args.get('env', 'forest')
 
         # generate_town_layout should return a Town object or a dict if using dummy
         town_data_obj = generate_town_layout(town_name=town_id, environment=environment)
