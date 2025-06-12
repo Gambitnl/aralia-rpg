@@ -7,16 +7,8 @@ const html = fs.readFileSync(path.join(process.cwd(), 'town_view.html'), 'utf8')
 const js = fs.readFileSync(path.join(process.cwd(), 'town_view.js'), 'utf8');
 
 test('renderTown attaches click handlers', async () => {
-  const dom = new JSDOM(html, { runScripts: 'dangerously' });
+  const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'http://localhost/town_view.html?town=test_town_id' });
   const { window } = dom;
-  Object.defineProperty(window, 'sessionStorage', {
-    value: {
-      getItem: () => null,
-      setItem: () => {},
-    },
-    configurable: true,
-  });
-  global.sessionStorage = window.sessionStorage;
   window.fetch = jest.fn(() =>
     Promise.resolve({
       ok: true,

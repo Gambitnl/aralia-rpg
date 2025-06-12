@@ -6,17 +6,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const townMapContainer = document.getElementById('town-map-container');
     const townInfoPanel = document.getElementById('town-info');
     const errorPanel = document.getElementById('town-error');
+    const backButton = document.getElementById('back-to-game');
 
     const defaultEnvironment = 'plains';
     let selectedEnvironment = sessionStorage.getItem('currentEnvironment') || defaultEnvironment;
 
     if (!townMapContainer) {
         console.error("Town View: #town-map-container not found.");
-        // Potentially update a general error div if one exists on town_view.html
+        if (errorPanel) {
+            errorPanel.textContent = "Town map container missing; cannot display town view.";
+            errorPanel.style.color = 'red';
+        }
         return;
     }
     if (!townInfoPanel) {
         console.warn("Town View: #town-info panel not found.");
+        if (errorPanel) {
+            const p = document.createElement('p');
+            p.textContent = 'Town info panel missing.';
+            p.style.color = 'orange';
+            errorPanel.appendChild(p);
+        }
     }
 
     /**
@@ -41,8 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return data;
         } catch (error) {
             console.error("Failed to fetch real town data:", error);
+            if (errorPanel) {
+                errorPanel.textContent = `Failed to load town data: ${error.message}`;
+                errorPanel.style.color = 'red';
+            }
             console.log(`Using hardcoded sample town data for townId: ${townId} instead.`);
-            // Return a more detailed sample object
             return {
                 name: townId === "default_error_town" ? "ErrorTown" : `Sample Town (${townId})`,
                 environment_type: environment,
@@ -103,21 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- SessionStorage Logic for Town ID (as per subtask instructions) ---
-    const townIdFromSession = sessionStorage.getItem('currentTownId');
-    let effectiveTownId = 'test_town_id'; // Fallback default
-
-    if (townIdFromSession) {
-        effectiveTownId = townIdFromSession;
-        console.log(`Town View: Found townId in sessionStorage: ${effectiveTownId}`);
-        // Clean up the sessionStorage item
-        sessionStorage.removeItem('currentTownId');
-        console.log("Town View: Removed currentTownId from sessionStorage.");
-    } else {
-        console.warn(`Town View: No currentTownId in sessionStorage. Using fallback: ${effectiveTownId}.`);
+    const params = new URLSearchParams(window.location.search);
+    let effectiveTownId = params.get('town') || 'test_town_id';
+    if (!params.get('town')) {
+        console.warn(`Town View: No town ID in URL. Using fallback: ${effectiveTownId}.`);
         if (townInfoPanel) {
             const p = document.createElement('p');
-            p.style.color = "orange";
+            p.style.color = 'orange';
             p.textContent = `INFO: No specific town ID was passed. Displaying data for default town ('${effectiveTownId}').`;
             townInfoPanel.prepend(p);
         }
@@ -133,6 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
             errorPanel.style.color = 'red';
         }
     });
+
+    if (backButton) {
+        backButton.addEventListener('click', () => {
+            window.location.href = 'main_game.html';
+        });
+    }
 
     window.__townView = { fetchTownData, renderTown, handleBuildingClick };
 });
