@@ -9,7 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const backButton = document.getElementById('back-to-game');
 
     const defaultEnvironment = 'plains';
-    let selectedEnvironment = sessionStorage.getItem('currentEnvironment') || defaultEnvironment;
+    const urlParams = new URLSearchParams(window.location.search);
+    let selectedEnvironment = urlParams.get('env') || sessionStorage.getItem('currentEnvironment') || defaultEnvironment;
+    const API_BASE = window.location.origin + '/api';
 
     if (!townMapContainer) {
         console.error("Town View: #town-map-container not found.");
@@ -40,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             townId = "default_error_town"; // Fallback to prevent API call with undefined
         }
         try {
-            const response = await fetch(`/api/town/${townId}/map?env=${environment}`);
+            const response = await fetch(`${API_BASE}/town/${townId}/map?env=${environment}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status} for town ${townId}`);
             }
@@ -55,17 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorPanel.textContent = `Failed to load town data: ${error.message}`;
                 errorPanel.style.color = 'red';
             }
-            console.log(`Using hardcoded sample town data for townId: ${townId} instead.`);
-            return {
-                name: townId === "default_error_town" ? "ErrorTown" : `Sample Town (${townId})`,
-                environment_type: environment,
-                buildings: [
-                    { name: "The Empty Mug Tavern", type: "tavern", position: { x: 10, y: 10 } },
-                    { name: "Closed Shop", type: "shop", position: { x: 50, y: 80 } }
-                ],
-                roads: [],
-                description: "This is a sample town description. The actual town data could not be loaded."
-            };
+            return null;
         }
     }
 
@@ -116,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    const params = new URLSearchParams(window.location.search);
-    let effectiveTownId = params.get('town') || sessionStorage.getItem('currentTownId') || 'test_town_id';
+    const params = urlParams;
+    let effectiveTownId = params.get('town') || sessionStorage.getItem('currentTownId') || 'starting_town';
     if (!params.get('town')) {
         console.warn(`Town View: No town ID in URL. Using fallback: ${effectiveTownId}.`);
         if (townInfoPanel) {
@@ -142,7 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (backButton) {
         backButton.addEventListener('click', async () => {
             try {
-                await fetch('/api/game/leave_town', { method: 'POST' });
+                const resp = await fetch(`${API_BASE}/game/leave_town`, { method: 'POST' });
+                if (!resp.ok) {
+                    console.warn('leave_town request failed', resp.status);
+                }
             } catch (e) {
                 console.warn('Failed to notify server about leaving town:', e);
             }

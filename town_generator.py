@@ -65,8 +65,15 @@ def generate_town_layout(town_name: str, environment: str) -> Town:
         Town: A Town object populated with a predefined set of buildings and roads.
     """
     # Placeholder: Generate a very simple, hardcoded town
+    if environment == "plains":
+        tavern_name = "The Dusty Hoof"
+    elif environment == "forest":
+        tavern_name = "The Whispering Leaf"
+    else:
+        tavern_name = "The Traveler's Rest"
+
     buildings = [
-        Building(name="The Prancing Pony", type="tavern", position={"x": 50, "y": 50}),
+        Building(name=tavern_name, type="tavern", position={"x": 50, "y": 50}),
         Building(name="Town Market", type="market", position={"x": 100, "y": 100}),
         Building(name="Old Well", type="landmark", position={"x": 75, "y": 75})
     ]

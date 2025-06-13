@@ -193,9 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("No town ID available for town view navigation.");
             return;
         }
-        const url = new URL('town_view.html', window.location.href);
-        url.searchParams.set('town', gameState.current_town_id);
-        window.location.assign(url.toString());
+        const env = sessionStorage.getItem('currentEnvironment');
+        openTownView(gameState.current_town_id, env);
     }
 
     // --- Event Listeners ---
