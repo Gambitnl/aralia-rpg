@@ -669,12 +669,7 @@ function openInventory() {
                document.getElementById('glossary-overlay').classList.remove('hidden');
            }
 
-           function openTownViewFromIndex() {
-               const townId = sessionStorage.getItem('currentTownId');
-               const url = new URL('town_view.html', window.location.href);
-               if (townId) url.searchParams.set('town', townId);
-               window.location.href = url.toString();
-           }
+
 
             function closeGlossary() {
                 document.getElementById('glossary-overlay').classList.add('hidden');
@@ -687,7 +682,11 @@ function openInventory() {
            document.getElementById('close-companion').addEventListener('click', closeCompanion);
            document.getElementById('open-glossary').addEventListener('click', openGlossary);
            document.getElementById('close-glossary').addEventListener('click', closeGlossary);
-           document.getElementById('open-town-view-index').addEventListener('click', openTownViewFromIndex);
+           document.getElementById('open-town-view-index').addEventListener('click', () => {
+               const townId = sessionStorage.getItem('currentTownId');
+               const env = sessionStorage.getItem('currentEnvironment');
+               openTownView(townId, env);
+           });
            // Expose game globally so buttons can access it
             window.game = game;
             window.gameState = gameState;
@@ -696,6 +695,7 @@ function openInventory() {
             game.init();
         };
     </script>
+    <script src="town_nav.js"></script>
     <script src="main-menu.js"></script>
     <script src="character_creator.js" defer></script>
 </body>

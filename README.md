@@ -53,4 +53,4 @@ When running the Flask server locally, the `/api/gemini` route will proxy to the
 
 ### GitHub Integration
 
-This repository is linked to Vercel via the GitHub app. Every push to `main` automatically deploys a new production build, while pull requests create preview deployments. These development snapshots use the Gemini serverless API for any AI prompts.
+This repository is linked to Vercel via the GitHub app. Every push to `main` automatically deploys a new production build, while pull requests create preview deployments. These development snapshots use the Gemini serverless API for any AI prompts. The GitHub connection means the repo acts as the single source of truth: each push triggers a Vercel build that includes the serverless functions in `api/`. Set `FLASK_BASE` if those functions should proxy to a local Flask server during development.
