@@ -49,6 +49,7 @@
             <button id="open-party" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Party</button>
             <button id="open-glossary" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Glossary</button>
             <button id="main-menu-btn" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Main Menu</button>
+            <button id="open-town-view-index" class="mt-2 bg-gray-700 hover:bg-gray-600 text-white rounded px-3 py-1 ml-2">Town View</button>
         </header>
 
         <main class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -664,9 +665,11 @@ function openInventory() {
                document.getElementById('companion-overlay').classList.add('hidden');
            }
 
-            function openGlossary() {
-                document.getElementById('glossary-overlay').classList.remove('hidden');
-            }
+           function openGlossary() {
+               document.getElementById('glossary-overlay').classList.remove('hidden');
+           }
+
+
 
             function closeGlossary() {
                 document.getElementById('glossary-overlay').classList.add('hidden');
@@ -679,6 +682,11 @@ function openInventory() {
            document.getElementById('close-companion').addEventListener('click', closeCompanion);
            document.getElementById('open-glossary').addEventListener('click', openGlossary);
            document.getElementById('close-glossary').addEventListener('click', closeGlossary);
+           document.getElementById('open-town-view-index').addEventListener('click', () => {
+               const townId = sessionStorage.getItem('currentTownId');
+               const env = sessionStorage.getItem('currentEnvironment');
+               openTownView(townId, env);
+           });
            // Expose game globally so buttons can access it
             window.game = game;
             window.gameState = gameState;
@@ -687,6 +695,7 @@ function openInventory() {
             game.init();
         };
     </script>
+    <script src="town_nav.js"></script>
     <script src="main-menu.js"></script>
     <script src="character_creator.js" defer></script>
 </body>

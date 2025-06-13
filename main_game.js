@@ -91,7 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (openTownViewButton) {
             const hasTown = Boolean(gameState.current_town_id);
-            openTownViewButton.style.display = hasTown ? 'inline-block' : 'none';
+            openTownViewButton.disabled = !hasTown;
+            openTownViewButton.classList.toggle('disabled', !hasTown);
+            openTownViewButton.title = hasTown ? '' : 'No town discovered yet.';
         }
         // Add logic for other contextual buttons here if needed
 
@@ -102,10 +104,12 @@ document.addEventListener('DOMContentLoaded', () => {
             addMessage("Navigating to " + gameState.current_town_id + "...");
 
             sessionStorage.setItem('currentTownId', gameState.current_town_id);
+            localStorage.setItem('currentTownId', gameState.current_town_id);
 
             // Short delay to allow the message to be rendered, then redirect.
+            const env = gameState.current_environment || sessionStorage.getItem('currentEnvironment');
             setTimeout(() => {
-                window.location.href = '/town_view.html';
+                openTownView(gameState.current_town_id, env);
             }, 500); // 0.5 second delay
             // The trigger_town_navigation flag was part of the transient response from backend.
             // No client-side reset of the flag is needed as the page will reload/navigate away.
@@ -186,13 +190,13 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Enter Town button clicked. Sending 'enter town' action to backend.");
         performGameAction("enter town");
     }
-    function handleOpenTownView() {
+    async function handleOpenTownView() {
         if (!gameState || !gameState.current_town_id) {
             console.warn("No town ID available for town view navigation.");
             return;
         }
-        sessionStorage.setItem('currentTownId', gameState.current_town_id);
-        window.location.href = '/town_view.html';
+        const env = sessionStorage.getItem('currentEnvironment');
+        openTownView(gameState.current_town_id, env);
     }
 
     // --- Event Listeners ---
@@ -209,4 +213,5 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchGameState(); // Fetch initial game state when the DOM is ready.
 
     console.log("Main game interface JS initialized. Attempting to fetch initial game state.");
+    window.__mainGame = { handleOpenTownView, updateUI };
 });
