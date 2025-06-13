@@ -195,7 +195,7 @@ const LOCAL_CLASSES = [
     }
 ];
 
-const API_BASE_URL = "http://localhost:5001/api";
+const API_BASE_URL = window.location.origin + '/api';
 let allFeatsData = []; // To store all feats fetched once
 
 // --- Ability Score Constants (Point Buy) ---

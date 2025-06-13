@@ -74,11 +74,16 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Rendering town:", townData.name);
 
         if (townMapContainer) {
-            ['forest','plains','mountain'].forEach(env => townMapContainer.classList.remove(`town-border-${env}`));
+            townMapContainer.classList.forEach(cls => {
+                if (cls.startsWith('town-border-')) townMapContainer.classList.remove(cls);
+            });
             townMapContainer.classList.add(`town-border-${townData.environment_type}`);
 
-            townMapContainer.innerHTML = `<h2>Welcome to ${townData.name} (${townData.environment_type})</h2>`;
-            if(townData.description) {
+            townMapContainer.innerHTML = '';
+            const h2 = document.createElement('h2');
+            h2.textContent = `Welcome to ${townData.name} (${townData.environment_type})`;
+            townMapContainer.appendChild(h2);
+            if (townData.description) {
                 const descP = document.createElement('p');
                 descP.textContent = townData.description;
                 townMapContainer.appendChild(descP);
@@ -93,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             townMapContainer.appendChild(buildingList);
         }
         if (townInfoPanel) {
-            townInfoPanel.innerHTML = `<p>Details about ${townData.name} will appear here.</p>`;
+            townInfoPanel.textContent = `Details about ${townData.name} will appear here.`;
         }
     }
 
@@ -101,10 +106,19 @@ document.addEventListener('DOMContentLoaded', () => {
      * Placeholder for handling building clicks.
      * @param {object} building - The building object that was clicked.
      */
-    function handleBuildingClick(building) {
-        console.log("Clicked on building:", building.name);
-        if (townInfoPanel) {
-            townInfoPanel.innerHTML = `<h3>${building.name}</h3><p>Type: ${building.type}</p><p>Position: X:${building.position.x}, Y:${building.position.y}</p>`;
+   function handleBuildingClick(building) {
+       console.log("Clicked on building:", building.name);
+       if (townInfoPanel) {
+            townInfoPanel.innerHTML = '';
+            const h3 = document.createElement('h3');
+            h3.textContent = building.name;
+            const typeP = document.createElement('p');
+            typeP.textContent = `Type: ${building.type}`;
+            const posP = document.createElement('p');
+            posP.textContent = `Position: X:${building.position.x}, Y:${building.position.y}`;
+            townInfoPanel.appendChild(h3);
+            townInfoPanel.appendChild(typeP);
+            townInfoPanel.appendChild(posP);
         }
     }
 
@@ -136,10 +150,20 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const resp = await fetch(`${API_BASE}/game/leave_town`, { method: 'POST' });
                 if (!resp.ok) {
-                    console.warn('leave_town request failed', resp.status);
+                    console.error('leave_town request failed', resp.status);
+                    if (errorPanel) {
+                        errorPanel.textContent = 'Failed to leave town.';
+                        errorPanel.style.color = 'red';
+                    }
+                    return;
                 }
             } catch (e) {
-                console.warn('Failed to notify server about leaving town:', e);
+                console.error('Failed to notify server about leaving town:', e);
+                if (errorPanel) {
+                    errorPanel.textContent = 'Error contacting server.';
+                    errorPanel.style.color = 'red';
+                }
+                return;
             }
             window.location.href = 'main_game.html';
         });
