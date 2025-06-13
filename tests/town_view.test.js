@@ -4,12 +4,14 @@ import path from 'path';
 import { JSDOM } from 'jsdom';
 
 const html = fs.readFileSync(path.join(process.cwd(), 'town_view.html'), 'utf8');
-const js = fs.readFileSync(path.join(process.cwd(), 'town_view.js'), 'utf8');
 
 test('renderTown attaches click handlers', async () => {
-  const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'http://localhost/town_view.html?town=test_town_id' });
-  const { window } = dom;
-  window.fetch = jest.fn(() =>
+  const dom = new JSDOM(html, { url: 'http://localhost/town_view.html?town=test_town_id' });
+  global.window = dom.window;
+  global.document = dom.window.document;
+  global.sessionStorage = { getItem: () => null, setItem: jest.fn() };
+  global.localStorage = { getItem: () => null, setItem: jest.fn() };
+  const mockFetch = jest.fn(() =>
     Promise.resolve({
       ok: true,
       json: () =>
@@ -21,8 +23,10 @@ test('renderTown attaches click handlers', async () => {
         }),
     })
   );
+  window.fetch = mockFetch;
+  global.fetch = mockFetch;
 
-  window.eval(js);
+  await import('../town_view.js');
   window.document.dispatchEvent(new window.Event('DOMContentLoaded', { bubbles: true }));
 
   await new Promise(r => setTimeout(r, 0));
@@ -35,4 +39,10 @@ test('renderTown attaches click handlers', async () => {
 
   li.dispatchEvent(new window.Event('click'));
   expect(window.document.getElementById('town-info').innerHTML).toContain('Type: shop');
+
+  delete global.window;
+  delete global.document;
+  delete global.sessionStorage;
+  delete global.localStorage;
+  delete global.fetch;
 });
