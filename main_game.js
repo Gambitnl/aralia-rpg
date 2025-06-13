@@ -106,8 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
             sessionStorage.setItem('currentTownId', gameState.current_town_id);
 
             // Short delay to allow the message to be rendered, then redirect.
+            const env = gameState.current_environment || sessionStorage.getItem('currentEnvironment');
             setTimeout(() => {
-                window.location.href = 'town_view.html';
+                openTownView(gameState.current_town_id, env);
             }, 500); // 0.5 second delay
             // The trigger_town_navigation flag was part of the transient response from backend.
             // No client-side reset of the flag is needed as the page will reload/navigate away.
