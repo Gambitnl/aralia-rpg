@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addMessage("Navigating to " + gameState.current_town_id + "...");
 
             sessionStorage.setItem('currentTownId', gameState.current_town_id);
+            localStorage.setItem('currentTownId', gameState.current_town_id);
 
             // Short delay to allow the message to be rendered, then redirect.
             const env = gameState.current_environment || sessionStorage.getItem('currentEnvironment');

@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`Fetching data for town: ${townId} in ${environment}...`);
         if (!townId) {
             console.error("fetchTownData called without a townId.");
-            townId = "default_error_town"; // Fallback to prevent API call with undefined
+            return null;
         }
         try {
             const response = await fetch(`${API_BASE}/town/${townId}/map?env=${environment}`);
@@ -68,7 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTown(townData) {
         if (!townData) {
             console.error("renderTown called with no townData.");
-            if (townInfoPanel) townInfoPanel.innerHTML = "<p>No town data to display.</p>";
+            if (townInfoPanel) {
+                const message = errorPanel ? errorPanel.textContent || 'No town data to display.' : 'No town data to display.';
+                townInfoPanel.innerHTML = `<p>${message}</p>`;
+            }
             return;
         }
         console.log("Rendering town:", townData.name);
@@ -123,15 +126,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const params = urlParams;
-    let effectiveTownId = params.get('town') || sessionStorage.getItem('currentTownId') || 'starting_town';
-    if (!params.get('town')) {
-        console.warn(`Town View: No town ID in URL. Using fallback: ${effectiveTownId}.`);
-        if (townInfoPanel) {
-            const p = document.createElement('p');
-            p.style.color = 'orange';
-            p.textContent = `INFO: No specific town ID was passed. Displaying data for default town ('${effectiveTownId}').`;
-            townInfoPanel.prepend(p);
+    const storedId = sessionStorage.getItem('currentTownId') || localStorage.getItem('currentTownId');
+    let effectiveTownId = params.get('town') || storedId;
+    if (!effectiveTownId) {
+        if (errorPanel) {
+            errorPanel.textContent = 'No town specified';
+            errorPanel.style.color = 'red';
         }
+        return;
     }
 
     // Fetch and render town data
@@ -147,25 +149,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (backButton) {
         backButton.addEventListener('click', async () => {
+            let hadError = false;
             try {
                 const resp = await fetch(`${API_BASE}/game/leave_town`, { method: 'POST' });
                 if (!resp.ok) {
-                    console.error('leave_town request failed', resp.status);
-                    if (errorPanel) {
-                        errorPanel.textContent = 'Failed to leave town.';
-                        errorPanel.style.color = 'red';
-                    }
-                    return;
+                    hadError = true;
+                    const msg = `leave_town request failed ${resp.status}`;
+                    console.error(msg);
                 }
             } catch (e) {
+                hadError = true;
                 console.error('Failed to notify server about leaving town:', e);
-                if (errorPanel) {
-                    errorPanel.textContent = 'Error contacting server.';
+            } finally {
+                if (hadError && errorPanel) {
+                    errorPanel.textContent = 'Failed to notify server about leaving town.';
                     errorPanel.style.color = 'red';
                 }
-                return;
+                window.location.href = 'main_game.html';
             }
-            window.location.href = 'main_game.html';
         });
     }
 
