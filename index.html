@@ -682,10 +682,29 @@ function openInventory() {
            document.getElementById('close-companion').addEventListener('click', closeCompanion);
            document.getElementById('open-glossary').addEventListener('click', openGlossary);
            document.getElementById('close-glossary').addEventListener('click', closeGlossary);
-           document.getElementById('open-town-view-index').addEventListener('click', () => {
-               const townId = sessionStorage.getItem('currentTownId');
+           document.getElementById('open-town-view-index').addEventListener('click', async () => {
+               let townId = sessionStorage.getItem('currentTownId') || localStorage.getItem('currentTownId');
                const env = sessionStorage.getItem('currentEnvironment');
-               openTownView(townId, env);
+               if (!townId) {
+                   try {
+                       const resp = await fetch('/api/game/state');
+                       if (resp.ok) {
+                           const state = await resp.json();
+                           townId = state.current_town_id;
+                           if (townId) {
+                               sessionStorage.setItem('currentTownId', townId);
+                               localStorage.setItem('currentTownId', townId);
+                           }
+                       }
+                   } catch (error) {
+                       console.error('Failed to retrieve town ID:', error);
+                   }
+               }
+               if (townId) {
+                   openTownView(townId, env);
+               } else {
+                   console.warn('No town ID available for Town View.');
+               }
            });
            // Expose game globally so buttons can access it
             window.game = game;
